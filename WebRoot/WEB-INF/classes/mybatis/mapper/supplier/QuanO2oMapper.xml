@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.QuanO2oMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.supplier.view.VQuanO2o" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="quan_id" property="quanId" jdbcType="INTEGER" />
+    <result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+    <result column="sp_id" property="spId" jdbcType="INTEGER" />
+    <result column="num" property="num" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="no" property="no" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="start" property="start" jdbcType="DATE" />
+    <result column="end" property="end" jdbcType="DATE" />
+    <result column="xiajia" property="xiajia" jdbcType="VARCHAR" />
+    <result column="cre" property="cre" jdbcType="TIMESTAMP" />
+    <result column="qid" property="qid" jdbcType="INTEGER" />
+    <result column="shangjia" property="shangjia" jdbcType="INTEGER" />
+    <result column="par" property="par" jdbcType="DECIMAL" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="zt" property="zt" jdbcType="VARCHAR" />
+  </resultMap>
+	  <sql id="condition">
+		<if test="city!=null and city!=''">
+		and q.city_domain='${city}'
+		</if>
+		<if test="type!=null and type!=''">
+		and u.type='${type}'
+		</if>
+		<if test="no!=null and no!=''">
+		and u.no=${no}
+		</if>
+		<if test="zt!=null and zt!=''">
+		and u.saleing=${zt}
+		</if>
+		  <if test="startValue!=null and startValue!=''">
+		and u.par_value &gt;=${startValue}
+		</if>
+		<if test="endValue!=null and endValue!=''">
+		and u.par_value &lt;=${endValue}
+		</if>
+		<if test="startDate!=null and startDate!=''">
+		 and u.expire_start >'${startDate}'
+		</if>
+		<if test="endDate!=null and endDate!=''">
+		 and u.expire_end &lt;'${endDate}'
+		</if>
+		<if test="status!=null and status!=''">
+		and u.status=${status}
+		</if>
+	</sql>
+   <select id="findPage" resultMap="BaseResultMap">
+	SELECT 
+		  q.*,
+		  a.city AS city,
+		  u.no AS NO,
+		  CASE
+		    u.type 
+		    WHEN 1 
+		    THEN "全品券" 
+		    WHEN 2 
+		    THEN "店铺圈" 
+		    WHEN 3 
+		    THEN "oto券" 
+		  END AS TYPE,
+		  u.name AS NAME,
+		  u.expire_start AS START,
+		  u.expire_end AS END,
+		CASE
+		  u.saleing 
+		  WHEN 0 
+		  THEN "上架" 
+		  WHEN - 1 
+		  THEN "下架" 
+		END AS xiajia,
+		u.create_time AS cre,
+		u.id AS qid,
+		u.saleing AS shangjia,
+		u.par_value AS par,
+		u.price AS price,
+		CASE
+		  u.status 
+		  WHEN 0 
+		  THEN "未发布" 
+		  WHEN 1 
+		  THEN "已发布" 
+		  WHEN - 1 
+		  THEN "注销" 
+		END AS zt 
+	FROM
+		  quan_o2o q,
+		  quan u,
+		  area_domain a 
+	WHERE q.quan_id = u.id 
+		  AND q.city_domain = a.city_domain 
+   <include refid="condition" />
+   limit ${rowStart}, ${limit}
+  </select>
+  <select id="countPage" parameterType="java.util.Map" resultType="long">
+  	select count(1) 
+  	from 
+	  	quan_o2o q,
+	  	quan u,
+	  	area_domain a 
+  	where 
+	  	q.quan_id=u.id 
+	  	and q.city_domain=a.city_domain
+  	<include refid="condition" />
+  </select>
+  
+  
+  <select id="supplierQuanList" resultMap="BaseResultMap">
+	SELECT 
+		  q.*,
+		  a.city AS city,
+		  u.no AS NO,
+		  CASE
+		    u.type 
+		    WHEN 1 
+		    THEN "全品券" 
+		    WHEN 2 
+		    THEN "店铺圈" 
+		    WHEN 3 
+		    THEN "oto券" 
+		  END AS TYPE,
+		  u.name AS NAME,
+		  u.expire_start AS START,
+		  u.expire_end AS END,
+		CASE
+		  u.saleing 
+		  WHEN 0 
+		  THEN "上架" 
+		  WHEN - 1 
+		  THEN "下架" 
+		END AS xiajia,
+		u.create_time AS cre,
+		u.id AS qid,
+		u.saleing AS shangjia,
+		u.par_value AS par,
+		u.price AS price,
+		CASE
+		  u.status 
+		  WHEN 0 
+		  THEN "未发布" 
+		  WHEN 1 
+		  THEN "已发布" 
+		  WHEN - 1 
+		  THEN "注销" 
+		END AS zt 
+	FROM
+		  quan_o2o q,
+		  quan u,
+		  area_domain a 
+	WHERE q.quan_id = u.id 
+		  AND q.city_domain = a.city_domain
+		  AND q.sp_id=${sId}
+   <include refid="condition" />
+   limit ${rowStart}, ${limit}
+  </select>
+  <select id="supplierQuanCount" parameterType="java.util.Map" resultType="long">
+  	select count(1) 
+  	from 
+	  	quan_o2o q,
+	  	quan u,
+	  	area_domain a 
+  	where 
+	  	q.quan_id=u.id 
+	  	and q.city_domain=a.city_domain
+	  	AND q.sp_id=${sId}
+  	<include refid="condition" />
+  </select>
+  
+  
+</mapper>

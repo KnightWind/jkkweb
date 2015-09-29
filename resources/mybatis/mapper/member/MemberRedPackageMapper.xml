@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.member.mapper.MemberRedPackageMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.member.model.MemberRedPackage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="mobile" property="mobile" jdbcType="CHAR" />
+    <result column="member_id" property="memberId" jdbcType="INTEGER" />
+    <result column="red_package_id" property="redPackageId" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="REAL" />
+    <result column="used_money" property="usedMoney" jdbcType="REAL" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <resultMap id="RedListResultMap" type="com.bean.MemberRedPackageVO" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="red_package_id" property="redPackageId" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="FLOAT" />
+    <result column="used_money" property="usedMoney" jdbcType="FLOAT" />
+    <result column="create_time" property="createTime" jdbcType="DATE" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="use_condition" property="useCondition" jdbcType="INTEGER" />
+    <result column="begin_time" property="beginTime" jdbcType="DATE" />
+    <result column="end_time" property="endTime" jdbcType="DATE" />
+    <result column="platform" property="platform" jdbcType="INTEGER" />
+    <result column="start_money" property="startMoney" jdbcType="FLOAT" />
+    <result column="is_split" property="isSplit" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="findByList" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select id,mobile,red_package_id,price,used_money,create_time from member_red_package t where 1=1 
+  	<if test="mobile!=null and mobile!=''">
+  		and mobile='${mobile}'
+  	</if>
+  	order by create_time
+  </select>
+  
+  <select id="findOrderRedPackageList" parameterType="java.util.Map" resultMap="RedListResultMap">
+  	select  
+  			mrp.id,
+  			mrp.red_package_id,
+		  	mrp.price,
+		  	mrp.used_money,
+		  	mrp.create_time,
+			rp.name,
+			rp.use_condition,
+			rp.begin_time,
+			rp.end_time,
+			rp.platform,
+			rp.start_money,
+			rp.is_split,
+			rp.remark
+	 from member_red_package mrp,red_package rp,red_package_category rpc 
+	 where mrp.red_package_id = rp.id and rpc.red_package_id = rp.id
+  	<if test="memberId!=null">
+  		and mrp.member_id=#{memberId,jdbcType=INTEGER}
+  	</if>
+  	<if test="platform!=null and platform > 0">
+  		and rp.platform=${platform}
+  	</if>
+  	<if test="useCondition!=null">
+  		and rp.use_condition=${useCondition}
+  	</if>
+  	<if test="categoryId!=null and categoryId >0">
+  		and rpc.item_category_id = ${categoryId}
+  	</if>
+  	<if test="orderNum!=null">
+  		and rp.start_money &lt;= ${orderNum}
+  	</if>
+  	 and mrp.used_money &lt; mrp.price 
+	 and SYSDATE() between rp.begin_time and rp.end_time
+  	 order by mrp.create_time
+  </select>
+  
+  <select id="findMemberPurseRedPackgeList" parameterType="java.util.Map" resultMap="RedListResultMap">
+  	select  
+  			mrp.id,
+  			mrp.red_package_id,
+		  	mrp.price,
+		  	mrp.used_money,
+		  	mrp.create_time,
+			rp.name,
+			rp.use_condition,
+			rp.begin_time,
+			rp.end_time,
+			rp.platform,
+			rp.start_money,
+			rp.is_split,
+			rp.remark
+	 from member_red_package mrp,red_package rp 
+	 where mrp.red_package_id = rp.id
+  	<if test="memberId!=null">
+  		and mrp.member_id=#{memberId,jdbcType=INTEGER}
+  	</if>
+  	order by mrp.create_time
+  </select>
+  
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  		select id,member_id,mobile,red_package_id,price,used_money,create_time from member_red_package t where id=#{id,jdbcType=INTEGER}
+  </select>
+  
+  <update id="usedMyRedPackge" parameterType="java.util.Map">
+	 	 	update member_red_package  set used_money=used_money+(price-used_money)
+	  		where 1=1
+		  	<if test="id!=null">
+	  		  and id=#{id,jdbcType=INTEGER}
+	  		</if>
+		  	<if test="memberId!=null">
+	  		  and member_id=#{memberId,jdbcType=INTEGER}
+	  		</if>
+  
+  </update>
+  <update id="usedSplitRedPackge" parameterType="java.util.Map">
+ 	 		update member_red_package  set used_money=used_money+${orderNum}
+	  		where 1=1 
+		  	<if test="id!=null">
+	  		  and id=#{id,jdbcType=INTEGER}
+	  		</if>
+		  	<if test="memberId!=null">
+	  		  and member_id=#{memberId,jdbcType=INTEGER}
+	  		</if>
+  </update>
+  
+  <select id="findUserGetNum" parameterType="java.util.Map" resultType="java.lang.Integer">
+  		select count(*) from member_red_package mrp where mrp.member_id=#{memberId,jdbcType=INTEGER} and mrp.red_package_id=#{redPackageId,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="batchInsertRedPackage" useGeneratedKeys="true" parameterType="java.util.List">
+		insert into member_red_package(red_package_id,member_id,price,used_money,create_time,mobile) values
+  		<foreach collection="list" item="item" index="index" separator=",">
+  			(#{item.redPackageId},#{item.memberId},#{item.price},#{item.usedMoney},#{item.createTime},#{item.mobile})
+  		</foreach>
+  </insert>
+</mapper>

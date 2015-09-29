@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.RegionMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.basedata.model.Region" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="regionid" property="regionid" jdbcType="INTEGER" />
+    <result column="parentid" property="parentid" jdbcType="INTEGER" />
+    <result column="regionname" property="regionname" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="sortby" property="sortby" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="pointx" property="pointx" jdbcType="VARCHAR" />
+    <result column="pointy" property="pointy" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap type="com.jkkp.modules.basedata.view.VRegionName" id="regionName">
+       <result column="thirdName" property="thirdName" jdbcType="VARCHAR" />
+       <result column="secondName" property="secondName" jdbcType="VARCHAR" />
+       <result column="firstName" property="firstName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+    <select id="findRegionByName" resultMap="BaseResultMap" parameterType="java.util.Map">
+      select  *  from	region  where  1 = 1
+    	<if test="cityname != null  and cityname!=''">
+    		and	region.regionname like '%${cityname}%'
+   		</if>
+   		<if test="level!=null and level!=''">
+     	    and region.level = ${level}
+     	</if>
+     	<if test="status!=null and status!=''">
+     	    and region.status = ${status}
+     	</if>
+     	limit 0,1
+  </select>
+  
+  <select id="findByParentid" resultMap="BaseResultMap" parameterType="java.util.Map">
+      select * from   region     where  1 = 1
+     <if test="parentid != null">
+      	 and region.parentid = ${parentid}
+      </if>
+      <if test="regionid!=null and regionid!=''">
+      	 and region.regionid = ${regionid}
+      </if>
+      <if test="status != null">
+      	 and region.status = ${status}
+      </if>
+       <if test="status != null">
+      	 and region.status = ${status}
+      </if>
+  </select>
+  
+  	<select id="selectAllConditionRegion" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT  *  from region a where 1=1
+  		<include refid="condition" /> 
+  		limit ${rowStart},${limit}
+  </select> 
+   <select id="selectAllConditionRegionCount" parameterType="java.util.Map" resultType="long">
+  	   SELECT  count(1) from region a where 1=1
+  	<include refid="condition" />
+  </select>
+  
+  <sql id="condition">
+	<if test="status!=null and status !=''">
+		and a.status=${status}
+	</if>
+	<if test="parentid!=null and parentid!=''">
+	   AND a.`parentid`=${parentid}
+	</if>
+  </sql>
+  
+  <update id="regionPass">
+      UPDATE region a SET a.`status`=1 WHERE a.`regionid`=${id}
+  </update>
+  
+  <update id="regionNoPass">
+      UPDATE region a SET a.`status`=0 WHERE a.`regionid`=${id}
+  </update>
+  
+  <update id="updatePoint">
+    UPDATE region a SET a.`pointx`=${pointx},a.`pointy`=${pointy} WHERE a.`regionid`=${id}
+  </update>
+  
+  <!-- 获取根服务区域 -->
+  <select id="selectAllParentRegion" resultMap="BaseResultMap">
+    SELECT * FROM region a WHERE a.`parentid`=0 AND a.`status`=1 
+  </select>
+  
+  
+  <!-- 获取子服务区域 -->
+  <select id="selectAllChildRegion" resultMap="BaseResultMap">
+   SELECT * FROM region a WHERE a.`parentid`=${pid} AND a.`status`=1;
+  </select>
+  
+  <!-- 获取地区关联名称 -->
+  <select id="selectRegionName" resultMap="regionName">
+    SELECT 
+	  a.`regionname` AS thirdName,
+	  b.`regionname` AS secondName,
+	  c.`regionname` AS firstName 
+	FROM
+	  region a 
+	  LEFT JOIN region b 
+	    ON b.`regionid` = a.`parentid` 
+	  LEFT JOIN region c 
+	    ON c.`regionid` = b.`parentid` 
+	WHERE a.`regionid` = ${id}
+  </select>
+</mapper>

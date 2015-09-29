@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.crowdfunding.mapper.JlServiceMapper">
+	<resultMap id="baseResult" type="com.jkkp.modules.crowdfunding.model.JlService">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="ctype" property="ctype" jdbcType="VARCHAR" />
+		<result column="cprice" property="cprice" jdbcType="FLOAT" />
+		<result column="cispay" property="cispay" jdbcType="INTEGER" />
+		<result column="order_code" property="orderCode" jdbcType="CHAR"/>
+		<result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<update id="updateInfo">
+	 UPDATE jl_service a SET a.`cispay`=1 WHERE id=${id}
+	</update>
+</mapper>

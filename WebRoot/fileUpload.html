@@ -1,0 +1,53 @@
+<!DOCTYPE>
+<html>
+<head>
+<title>后台管理登陆</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Language" content="zh-CN">
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta name="copyright" content="  ">
+<link href="/jtxweb/styles/tissy.css" rel="stylesheet" type="text/css" />
+</head>
+<script type="text/javascript">
+function submitRequest(){
+	//var url = document.getElementById("action").value;
+	var url = document.getElementById("actionSelect").value;
+	document.forms[0].action=url;
+	document.forms[0].submit();
+}
+
+</script>
+<body>
+<form action='' method="post" enctype="multipart/form-data">        
+    <table>  
+    	<tr height="40px">  
+            <td width="100" align="right">请求：</td>  
+            <td><select id="actionSelect" name="action">
+					  <option value ="design_add.do">design_add.do</option>
+					  <option value ="addDesignStaff.do">addDesignStaff.do</option>
+					  <option value="opel">Opel</option>
+					  <option value="audi">Audi</option>
+				</select>
+			</td>   
+        </tr>
+        <tr height="40px">  
+            <td width="100" align="right">现场图：</td>  
+            <td><input type="file" name="LOCALE_TYPE_1_pic1"/></td>   
+        </tr>  
+        <tr height="40px">  
+            <td width="100" align="right">效果图：</td>  
+            <td><input type="file" name="DESIGN_TYPE_2_pic2"/></td>   
+        </tr>  
+         <tr height="40px">  
+            <td width="100" align="right">json：</td>  
+            <td><textArea cols = "100" rows = "20" name="json">{    "login_user": "test",    "login_flag": "WhBei51A4TKXgNYuoiZdig==",    "os": "1",    "appointmentPushId": "1",    "remark": "remark哦也更新了",    "space": "900",    "fangxing": "900",    "huxing": "900",    "designer": "900",    "fengge": "900",    "method": "900",    "workTime": "900",    "startWork": "900",    "whiteFuel": "900",    "tileWood": "900",    "completion": "900",    "duration": "900",     "quote": "900",      "staffid": "900",agreementId:"123"}</textArea></td>   
+        </tr>  
+        <tr height="40px">  
+            <td colspan="2" align="center"><input type="button" id="submitRst" onClick="submitRequest()" value="猛   击     提    交!!!!!" width="300px" height="30px">  </td>   
+        </tr>
+    </table>  
+    
+</form>
+</body>
+</html>

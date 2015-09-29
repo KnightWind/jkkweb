@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.system.mapper.SendSmsRecordMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.system.model.SendSmsRecord">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="smscode" property="smscode" jdbcType="VARCHAR" />
+		<result column="send_date" property="sendDate" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+	</resultMap>
+	<select id="queryByBillId" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+	select * from send_sms_record t where 1=1
+	<if test="memberMobile!=null and memberMobile!=''">
+		and mobile='${memberMobile}'
+	</if>
+	<if test="memberMobile==null or memberMobile==''">
+		and mobile='0'
+	</if>
+	</select>
+</mapper>

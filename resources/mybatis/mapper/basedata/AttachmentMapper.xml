@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.AttachmentMapper" >
+  <resultMap id="AttachmentMap" type="com.jkkp.modules.basedata.model.Attachment" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="filename" property="filename" jdbcType="VARCHAR" />
+    <result column="filepath" property="filepath" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="adminId" property="admin_id" jdbcType="INTEGER" />
+    <result column="memberId" property="member_id" jdbcType="INTEGER" />
+    <result column="mainid" property="mainid" jdbcType="INTEGER" />
+    <result column="filetype" property="filetype" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap type="com.jkkp.modules.basedata.view.VAttachment" id="Attachment_vmap" extends="AttachmentMap">
+    <result column="photoUrl" property="photoUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectAttachmentByParamsOnProperty" resultMap="AttachmentMap">
+      
+      select 
+      		a.*
+      from
+      		 attachment a
+      where  
+      		a.filetype = ${type}
+      		<if test="params != null">
+      		    and		
+      		        a.mainid in
+      			<foreach collection="params" index="index" item="item" open="(" separator="," close=")">
+		            #{item}
+		        </foreach>
+      		</if>
+  </select>
+  
+  <select id="selectAttachmentByParamsOnId" resultMap="AttachmentMap">
+      
+      select 
+      		a.*
+      from
+      		 attachment a
+      where  
+      		a.filetype = ${type}
+      		<if test="params != null">
+      		    and		
+      		        a.id in
+      			<foreach collection="params" index="index" item="item" open="(" separator="," close=")">
+		            #{item}
+		        </foreach>
+      		</if>
+  </select>
+  
+  <delete id="deleteByDesignId" parameterType="int">
+		delete t from	attachment	t where mainid=#{designId}
+ </delete>
+ 
+ <select id="selectAttachmentByMap" resultMap="AttachmentMap">
+      
+      select 
+      		a.*
+      from
+      		 attachment a
+      where  
+      		a.mainid = #{mainid}
+      		and filepath = #{url}
+      		<if test="filetype!=null and filetype!=''">
+      			and filetype = #{filetype}
+      		</if>
+  </select>
+ 
+	<!-- ↓↓ysc============================================= -->
+	<sql id="tbl">attachment</sql>
+	<sql id="temp_tbl">		
+		select	
+		concat(sf.para_value,aa.filepath) as photoUrl,	
+		aa.* from attachment	aa
+		left join sysconfig 	sf on sf.para_name='PHOTO_PREFIX_URL'
+	</sql>
+	<select id="getList" resultMap="Attachment_vmap" parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="Attachment_vmap" parameterType="com.jkkp.utils.Pager">
+		select t.*	from (	<include refid="temp_tbl" />) t	where 1=1 ${value}	limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="Attachment_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from	<include refid="tbl" />	t where 1=1 ${value}
+	</delete>
+	<!-- ↑↑ysc============================================= -->
+ 
+ 
+    <delete id="deleteOneAttachment">
+       DELETE FROM  attachment  WHERE `mainid`=${mainId} AND `filetype`=${fileType};
+    </delete>
+</mapper>

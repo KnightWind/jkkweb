@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.EngineeringStageMxMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.basedata.model.EngineeringStageMx" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
+     <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="mx_desc" property="mxDesc" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  	<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+   <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="ordr_by" property="ordrBy" jdbcType="INTEGER" />
+     <result column="check_rule" property="checkRule" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- web -->
+  <select id="selectAllEngineeringStageMx" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+   	SELECT 
+	  * 
+	FROM
+	  engineering_stage_mx a
+	WHERE 1=1
+	<include refid="condition"/>
+	ORDER BY a.`ordr_by`
+	limit #{rowStart},#{limit}
+  </select> 
+  
+  <select id="selectAllEngineeringStageMxCount" parameterType="java.util.Map"
+		resultType="long">
+  	SELECT 
+	  COUNT(1)
+	FROM
+	  engineering_stage_mx a
+	WHERE 1=1
+	<include refid="condition"/>
+  </select>
+  
+  <sql id="condition">
+     <if test="ppid!=null and ppid!=''">
+       and a.pid=${ppid}
+     </if>
+  </sql>
+  <!-- /web -->
+  
+  <!--  
+	  <update id="hide">
+	     UPDATE 
+		  engineering_stage_mx
+		SET
+		  STATUS =0 
+		WHERE id =#{id}
+	  </update>
+	  
+	  <update id="show">
+	     UPDATE 
+		  engineering_stage_mx
+		SET
+		  STATUS =1 
+		WHERE id =#{id}
+	  </update>
+  -->
+</mapper>

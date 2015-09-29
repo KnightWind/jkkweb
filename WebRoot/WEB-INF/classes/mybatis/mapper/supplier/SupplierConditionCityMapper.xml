@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierConditionCityMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.supplier.model.SupplierConditionCity">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="region_id" property="regionId" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<resultMap id="SimpleMap" type="com.jkkp.modules.supplier.view.VSimpleConditionCity">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="region_id" property="regionId" jdbcType="INTEGER" />
+		<result column="parentId" property="parentId" jdbcType="INTEGER" />
+		<result column="sc_id" property="scId" jdbcType="INTEGER" />
+		<result column="regionname" property="regionName" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<select id="getCityBySpId" resultMap="SimpleMap">
+		SELECT scc.`id`,scc.`sc_id`,scc.`region_id`,r.`regionname`,r.`parentid` as parentId 
+		FROM supplier_condition_city scc 
+		LEFT JOIN supplier s ON scc.`sp_id`  = s.id
+		LEFT JOIN region r   ON r.`regionid` = scc.`region_id`
+		WHERE scc.`sp_id` = #{spId}
+	</select>
+	
+	<select id="getConditionCityBySpId" resultMap="BaseResultMap">
+		SELECT * from supplier_condition_city a where a.sp_id = #{spId}
+	</select>
+	
+</mapper>

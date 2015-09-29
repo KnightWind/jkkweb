@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.system.mapper.LabelMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.system.model.Label" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="lname" property="lname" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_name" property="createName" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  	<select id="getByName" resultMap="BaseResultMap">
+		SELECT * from label where id in  (SELECT lid from supplier_label s WHERE s.sp_id=195 and lid in (SELECT id FROM label where type=2))
+	</select>
+	
+	<select id="queryLabelById" resultMap="BaseResultMap">
+		SELECT * from label t where t.status=1 
+		<if test=" LabelType!=null and LabelType!='' ">
+			and t.type=${labelType} 
+		</if>
+		<if test="createName!=null and createName!='' ">
+			and t.create_name=${createName}
+		</if>
+	</select>
+	
+	<select id="queryAllLabelById" resultMap="BaseResultMap">
+		SELECT * from label t where t.status=2 or( t.status=1 
+		<if test=" LabelType!=null and LabelType!='' ">
+			and t.type=${labelType} 
+		</if>
+		<if test="createName!=null and createName!='' ">
+			and t.create_name=${createName}
+		</if>
+		)
+	</select>
+	
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.crowdfunding.mapper.ActivityMapper" >
+  <resultMap id="activityResult" type="com.jkkp.modules.crowdfunding.model.Activity" >
+    <id column="id" property="actId" jdbcType="INTEGER" />
+    <result column="activityName" property="activityName" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="first_price" property="first_price" jdbcType="FLOAT" />
+    <result column="categoryId" property="id" jdbcType="VARCHAR" />
+    <result column="filepath" property="filepath" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <resultMap id="bannerResult" type="com.jkkp.modules.crowdfunding.model.ActivityBanner" >
+    <id column="id" property="actId" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="seq" property="seq" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createDate" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+    <select id="getCrowdItemType" parameterType="java.util.Map" resultType="java.util.Map">
+  	    SELECT * from 
+		(
+			SELECT  c.id categoryId,c.`name` categoryName,c.seq from zc_itemcategory_info z,item_category c where z.category_id=c.id
+			UNION 
+			(SELECT t.id categoryId,t.`name` categoryName,t.seq 
+			 from zc_item m,item_category t,item d,region r,supplier s 
+			 where m.item_id=d.id and d.cate=t.id and d.sp_id=s.id AND s.region_id=r.regionid and m.`status`=1 and d.`status`=0
+		     <if test="regionidList!=null and regionidList!=''">
+			  and s.region_id in
+		      <foreach collection="regionidList" item="regionidList" index="index"
+	            open="(" close=")" separator=",">
+	            #{regionidList}
+	          </foreach>
+	         </if>
+		    )
+		)t ORDER BY t.seq ASC
+    </select>
+  
+  <select id="getActivityList" resultType="java.util.Map">
+  	    SELECT 
+  	    	t.id,t.category_id categoryId,t.title,a.`name` categoryName ,t.seq
+  	    from zc_itemcategory_info t,item_category a 
+  	 	where t.category_id=a.id
+  	 	and t.`status`=1 
+ 	    ORDER BY t.seq DESC
+  </select>
+  
+    <select id="getActivityHotItem" parameterType="java.util.Map" resultType="java.util.Map">
+  	  SELECT 
+		t.id,t.item_id itemId,t.activity_id activityId,m.cate categoryId,m.title,m.price,t.num_people,
+		<![CDATA[ 
+		     CASE 
+		          WHEN ((SELECT count(*) from zc_item_member m where t.item_id=m.item_id)<=t.privilege) THEN t.top_price
+		          WHEN ((SELECT count(*) from zc_item_member m where t.item_id=m.item_id) <=t.num_people) THEN (ROUND(t.top_price -((t.top_price-t.low_price)/(t.num_people-t.privilege)*((SELECT count(*) from zc_item_member m where t.item_id=m.item_id )-t.privilege)),2))  
+		          WHEN ((SELECT count(*) from zc_item_member m where t.item_id=m.item_id)>t.num_people) THEN t.low_price
+			 END AS activityPrice
+		 ]]>
+		from zc_item t,item m,supplier s
+		where t.item_id=m.id and m.sp_id=s.id
+		and m.zc_flag=1
+		and t.`status`=1
+		and m.`status`=0
+		<if test="regionidList!=null and regionidList!=''">
+		  and s.region_id in
+	      <foreach collection="regionidList" item="regionidList" index="index"
+            open="(" close=")" separator=",">
+            #{regionidList}
+          </foreach>
+	    </if>
+	    <if test="num!=null and num!=''">
+	        limit 0,#{num};
+	    </if>
+  </select>
+    
+  
+   <select id="getJoinUserInfo" parameterType="java.util.Map" resultType="java.util.Map">
+  	    SELECT DISTINCT m.nickname,m.id memberId,z.create_time createTime
+			FROM zc_item_member z  JOIN member m ON z.`member_id`=m.id JOIN zc_item c ON 
+			c.`item_id`=z.`item_id` 
+		<if test="itemId!=null and itemId!=''">
+			 and z.item_id=#{itemId}
+		</if>
+		ORDER BY z.create_time 
+		limit ${(pageNo-1) * pageSize},#{pageSize}
+  </select>
+</mapper>

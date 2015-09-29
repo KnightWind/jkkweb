@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.design.mapper.DesignRecommandMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.design.view.VDesignRecommand" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="design_id" property="designId" jdbcType="INTEGER" />
+    <result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="label" property="label" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="pid" property="pid" jdbcType="VARCHAR" />
+    <result column="img" property="img" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="fin" resultMap="BaseResultMap">
+  	SELECT d.*,g.pid as img  from design_recommand d,design g where d.design_id=g.id and d.label='list' and d.city_domain=#{name} 
+  </select>
+</mapper>

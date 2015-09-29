@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.OwnerOpinionMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.basedata.model.OwnerOpinion">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="check_flag" property="checkFlag" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="eng_id" property="engId" jdbcType="INTEGER" />
+	</resultMap>
+</mapper>

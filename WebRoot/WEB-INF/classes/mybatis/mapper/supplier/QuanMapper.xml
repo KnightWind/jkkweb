@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.QuanMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.supplier.view.VQuan">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="pid" property="pid" jdbcType="VARCHAR" />
+		<result column="par_value" property="parValue" jdbcType="DECIMAL" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="saleing" property="saleing" jdbcType="TINYINT" />
+		<result column="stock" property="stock" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="TINYINT" />
+		<result column="no" property="no" jdbcType="INTEGER" />
+		<result column="expire_start" property="expireStart" jdbcType="DATE" />
+		<result column="expire_end" property="expireEnd" jdbcType="DATE" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="full_quota" property="fullQuota" jdbcType="DECIMAL" />
+		<result column="cate" property="cate" jdbcType="INTEGER" />
+		<result column="follow_num" property="followNum" jdbcType="INTEGER" />
+		<result column="sales_num" property="salesNum" jdbcType="INTEGER" />
+		<result column="is_push" property="isPush" jdbcType="TINYINT" />
+
+
+		<result column="detail" property="detail" jdbcType="LONGVARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="num" property="num" jdbcType="INTEGER" />
+		
+		<result column="qcStatus" property="qcStatus" jdbcType="INTEGER" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="shopId" property="shopId" jdbcType="INTEGER" />
+	</resultMap>
+	<select id="findAll" resultMap="BaseResultMap">
+		select q.*,a.city as city from quan q,quan_city c,area_domain a where
+		q.id=c.quan_id and a.city_domain=c.city_domain
+	</select>
+	<sql id="condition">
+		<if test="city!=null and city!=''">
+			and a.city_domain='${city}'
+		</if>
+		<if test="type!=null and type!=''">
+			and q.type='${type}'
+		</if>
+		<if test="no!=null and no!=''">
+			and q.no=${no}
+		</if>
+		<if test="zt!=null and zt!=''">
+			and q.saleing=${zt}
+		</if>
+		<if test="gq==0">
+			and expire_end &lt;date_add(now(), interval 1 day)
+		</if>
+		<if test="gq==1">
+			and expire_end >date_add(now(), interval -1 day)
+		</if>
+		<if test="startValue!=null and startValue!=''">
+			and q.par_value &gt;='${startValue}'
+		</if>
+		<if test="endValue!=null and endValue!=''">
+			and q.par_value &lt;='${endValue}'
+		</if>
+		<if test="startDate!=null and startDate!=''">
+			and q.expire_start >'${startDate}'
+		</if>
+		<if test="endDate!=null and endDate!=''">
+			and q.expire_start &lt;'${endDate}'
+		</if>
+		<if test="status!=null and status!=''">
+			and q.status=${status}
+		</if>
+	</sql>
+	<select id="findPage" resultMap="BaseResultMap">
+		select q.*,a.city as city,c.num as num from quan q,quan_city
+		c,area_domain a where q.id=c.quan_id
+		<include refid="condition" />
+		limit ${rowStart}, ${limit}
+	</select>
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		select count(1) from quan q,quan_city c,area_domain a where
+		q.id=c.quan_id
+		<include refid="condition" />
+	</select>
+
+	<select id="daiJinQuanList" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		SELECT
+			q.*,
+			qc.shop_id AS shopId,
+			qc.status AS qcStatus,
+			s.sp_name AS spName ,
+			ad.`city`
+		FROM
+		quan q
+		INNER JOIN quan_card qc
+			ON qc.`quan_id` = q.`id`
+		LEFT JOIN shop sp
+			ON qc.`shop_id` = sp.`sp_id`
+		LEFT JOIN supplier s
+			ON s.id = sp.sp_id
+		LEFT JOIN area_domain ad
+			ON sp.`city_domain`=ad.`city_domain`
+		WHERE q.`status` = 1
+			AND q.`is_push` = 0
+			AND qc.`is_lock` = 0
+			AND qc.`status` != - 2
+		<include refid="daiJinCondition" />
+		limit ${rowStart}, ${limit}
+	</select>
+
+	<select id="daiJinQuanCount" parameterType="java.util.Map"
+		resultType="long">
+		SELECT
+			count(1)
+		FROM
+			quan q
+		INNER JOIN quan_card qc
+			ON qc.`quan_id` = q.`id`
+		LEFT JOIN shop sp
+			ON qc.`shop_id` = sp.`sp_id`
+		LEFT JOIN supplier s
+			ON s.id = sp.sp_id
+		LEFT JOIN area_domain ad
+			ON sp.`city_domain`=ad.`city_domain`
+		WHERE q.`status` = 1
+			AND q.`is_push` = 0
+			AND qc.`is_lock` = 0
+			AND qc.`status` != - 2
+		<include refid="daiJinCondition" />
+	</select>
+
+	<sql id="daiJinCondition">
+	    <if test="area!=null and area!=''">          
+           AND sp.`city_domain`='${area}'          
+        </if>      
+        <if test="no!=null and no!=''">
+		  AND  q.`no`='${no}'
+		</if>
+		<if test="type!=null and type!=''">
+		   AND  q.type=${type}
+		</if>
+		<if test="zt!=null and zt!=''">
+		  AND  q.`saleing`=${zt}
+		</if>
+		<if test="gq==0">
+			and q.expire_end &lt;date_add(now(), interval 1 day)
+		</if>
+		<if test="gq==1">
+			AND  q.expire_end > DATE_ADD(NOW(), INTERVAL 1 DAY)
+		</if>
+		<if test="status!=null and status!=''">
+		    AND q.`status`=${status}
+		</if>
+		<if test="startDate!=null and startDate!=''">
+			and q.expire_start >'${startDate}'
+		</if>	
+		<if test="endDate!=null and endDate!=''">
+		     AND q.`expire_end` &lt; '${endDate}'
+		</if>
+		<if test="startValue!=null and startValue!=''">
+			and q.par_value >=${startValue}
+		</if>
+		<if test="endValue!=null and endValue!=''">
+			and q.par_value &lt;=${endValue}
+		</if>
+	</sql>
+</mapper>

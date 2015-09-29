@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.system.mapper.ComplainMapper">
+	<resultMap type="com.jkkp.modules.system.model.Complain" id="ComplaintMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="mid" property="mid" jdbcType="INTEGER" />
+		<result column="admin_id" property="adminId" jdbcType="INTEGER" />
+		<result column="aid" property="aid" jdbcType="INTEGER" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="level" property="level" jdbcType="TINYINT" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap type="com.jkkp.modules.system.view.VComplain" id="VComplaintMap" extends="ComplaintMap">
+		<result column="appId" property="appId" jdbcType="INTEGER" />
+		<result column="source" property="source" jdbcType="INTEGER" />
+		<result column="nickname" property="nickname" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+	    <result column="smobile" property="smobile" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="condition">
+	   <if test="createBegin!=null and createBegin!=''">
+	     AND a.create_time>'${createBegin}'
+	   </if>
+	   <if test="createEnd!=null and createEnd!=''">
+	     AND a.create_time&lt;'${createEnd}'
+	   </if>
+	   <if test="updateBegin!=null and updateBegin!=''">
+	     AND a.update_time>'${updateBegin}'
+	   </if>
+	   <if test="updateEnd!=null and updateEnd!=''">
+	     AND a.update_time&lt;'${updateEnd}'
+	   </if>
+	   <if test="mobile!=null and mobile!=''">
+	     AND c.mobile=${mobile}
+	   </if>
+	   <if test="spName!=null and spName!=''">
+	      AND e.`sp_name` LIKE '%${spName}%'
+	   </if>
+	   <if test="nickName!=null and nickName!=''">
+	      AND d.`nickname`='${nickName}'
+	   </if>
+	   <if test="source!=null and source!=''">
+	      AND b.source=${source}
+	   </if>
+	   <if test="level!=null and level!=''">
+	     AND a.level=${level}
+	   </if>	
+	    <if test="status!=null and status!=''">
+	      AND a.status=${status}
+	   </if>
+	    <if test="aid !=null and aid!=''">
+	     AND a.aid=${aid}
+	   </if>	
+	</sql>
+	
+	<select id="findPage" parameterType="java.util.Map" resultMap="VComplaintMap">
+	   SELECT 
+		  a.*,
+		  b.source,
+		  b.id AS appId,
+		  c.nickname AS userName,
+		  c.mobile,
+		  d.nickname,
+		  e.sp_name AS spName 
+		FROM
+		  complaints a,
+		  appointment b,
+		  member c,
+		  admin d,
+		  supplier e 
+		WHERE a.admin_id = d.id 
+		  AND a.aid = b.id 
+		  AND a.mid = c.id 
+		  AND a.sp_id = e.id 
+		  <include refid="condition" />
+		  limit #{rowStart}, #{limit}
+	</select>
+	
+	<update id="closeOneComplaint">
+		UPDATE 
+		  complaints 
+		SET
+		  status = 1 
+		WHERE id = ${id} 	
+	</update>
+	
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+	   SELECT  
+	    count(1)
+		FROM
+		  complaints a,
+		  appointment b,
+		  member c,
+		  admin d,
+		  supplier e 
+		WHERE a.admin_id = d.id 
+		  AND a.aid = b.id 
+		  AND a.mid = c.id 
+		  AND a.sp_id = e.id 
+		  <include refid="condition" />
+	</select>
+	
+	<select id="complaintDetail" resultMap="VComplaintMap">
+	  SELECT 
+		  a.*,
+		  b.source,
+		  b.id AS appId,
+		  c.nickname AS userName,
+		  c.mobile,
+		  d.nickname,
+		  e.sp_name AS spName,
+		  e.contact_mobile AS smobile
+		FROM
+		  complaints a,
+		  appointment b,
+		  member c,
+		  admin d,
+		  supplier e 
+		WHERE a.admin_id = d.id 
+		  AND a.aid = b.id 
+		  AND a.mid = c.id 
+		  AND a.sp_id = e.id 
+		  AND a.id=${id}
+	</select>
+	
+	
+	<sql id="tbl">complain</sql><!-- ysc -->
+	<sql id="temp_tbl">
+		select	aa.* from	<include refid="tbl" />		aa
+	</sql>
+	<select id="getList" resultMap="VComplaintMap" parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="VComplaintMap" parameterType="com.jkkp.utils.Pager">
+		select t.*	from (<include refid="temp_tbl" />) t	where 1=1 ${value}	limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="VComplaintMap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where t.id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from	<include refid="tbl" />	t where 1=1 ${value}
+	</delete><!-- ysc -->
+</mapper>

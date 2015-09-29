@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierAppraiseMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.supplier.model.SupplierAppraise">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sj_score" property="sjScore" jdbcType="FLOAT" />
+		<result column="sg_score" property="sgScore" jdbcType="FLOAT" />
+		<result column="wm_score" property="wmScore" jdbcType="FLOAT" />
+		<result column="yq_score" property="yqScore" jdbcType="FLOAT" />
+		<result column="fw_score" property="fwScore" jdbcType="FLOAT" />
+		<result column="explain" property="explain" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="sd_score" property="sdScore" jdbcType="FLOAT" />
+		<result column="money" property="money" jdbcType="FLOAT" />
+		<result column="zy_score" property="zyScore" jdbcType="FLOAT" />
+		<result column="gt_score" property="gtScore" jdbcType="FLOAT" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="sy_score" property="syScore" jdbcType="FLOAT" />
+	</resultMap>
+</mapper>

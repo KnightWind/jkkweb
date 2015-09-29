@@ -1,0 +1,7 @@
+.merchantJoin{width: 1000px;margin: 74px auto;}
+.merchantJoin div{background-color: #fff;float: left;width: 380px;height: 368px;padding-left: 66px;padding-right: 40px;margin: 0 10px 10px 0;}
+.merchantJoin div:nth-child(2n){margin-right: 0;}
+.merchantJoin div h3{font-size: 36px;font-weight: normal;margin-bottom: 23px;margin-top: 80px;}
+.merchantJoin div span{font-size: 18px;}
+.merchantJoin div p{color: #03a9f4;font-size: 28px;margin-top: 10px;background: url(../../images/pc/duigou_icon.png) no-repeat 0 center;padding-left: 45px;}
+.merchantJoin div p.number{margin-top: 20px;}

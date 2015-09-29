@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.order.mapper.OrderIdMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.order.view.VOrderId">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="nickname" property="nickName" jdbcType="VARCHAR" />
+		<result column="shipCity" property="shipCity" jdbcType="INTEGER" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+		<result column="contactUser" property="contactUser" jdbcType="VARCHAR" />
+		<result column="contactMobile" property="contactMobile"
+			jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="paySumPrice" property="paySumPrice" jdbcType="DECIMAL" />
+		<result column="itemSumPrice" property="itemSumPrice" jdbcType="DECIMAL" />
+		<result column="shipTime" property="shipTime" jdbcType="TIMESTAMP" />
+		<result column="vstatus" property="vstatus" jdbcType="INTEGER" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="area" property="area" jdbcType="VARCHAR" />
+		<result column="regionName" property="regionName" jdbcType="VARCHAR" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="mainId" property="mainId" jdbcType="INTEGER" />
+		<result column="receiptTitleType" property="receiptTitleType"
+			jdbcType="INTEGER" />
+		<result column="receipType" property="receipType" jdbcType="INTEGER" />
+		<result column="discount" property="discount" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<sql id="condition">
+		<if test="status !=null and status >0">
+			and b.status=${status}
+		</if>
+		<if test="spName!=null and spName!=''">
+			AND d.sp_name LIKE '%${spName}%'
+		</if>
+		<if test="city!=null and city!=''">
+			AND b.city_domain='${city}'
+		</if>
+		<if test="id!=null and id>0">
+			AND a.id=${id}
+		</if>
+		<if test="contactUser!=null and contactUser!=''">
+			AND b.contact_user LIKE '%${contactUser}%'
+		</if>
+		<if test="contactMobile!=null and contactMobile!=''">
+			AND b.contact_mobile=${contactMobile}
+		</if>
+		<if test="nickname!=null and nickname!=''">
+			AND c.nickname LIKE '%${nickname}%'
+		</if>
+		<if test="createBegin!=null and createBegin!=''">
+			AND b.create_time > '${createBegin}'
+		</if>
+		<if test="createEnd!=null and createEnd!=''">
+			AND b.create_time &lt;'${createEnd}'
+		</if>
+		<if test="shipBegin!=null and shipBegin!=''">
+			AND b.ship_time > '${shipBegin}'
+		</if>
+		<if test="shipEnd!=null and shipEnd!=''">
+			AND b.ship_time &lt;'${shipEnd}'
+		</if>
+	</sql>
+
+	<select id="findPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT
+		a.id AS id,
+		c.nickname AS nickname,
+		b.ship_city AS shipCity,
+		d.sp_name AS spName,
+		b.contact_user AS contactUser,
+		b.contact_mobile AS
+		contactMobile,
+		b.address AS address,
+		b.pay_sum_price AS paySumPrice,
+		b.item_sum_price AS itemSumPrice,
+		b.create_time AS createTime,
+		b.ship_time AS shipTime,
+		b.status AS vstatus,
+		e.city AS city,
+		b.discount
+		AS discount,
+		b.main_id AS mainId
+		FROM
+		order_id a,
+		order_ship b,
+		member c,
+		supplier d,
+		area_domain
+		e
+		WHERE a.id =
+		b.main_id
+		AND a.uid = c.id
+		AND d.id =
+		b.sp_id
+		AND
+		b.city_domain =
+		e.city_domain
+		<include refid="condition" />
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		SELECT COUNT(1)
+		FROM
+		order_id a,
+		order_ship b,
+		member c,
+		supplier d,
+		area_domain e
+		WHERE a.id = b.main_id
+		AND a.uid = c.id
+		AND d.id = b.sp_id
+		AND b.city_domain = e.city_domain
+		<include refid="condition" />
+	</select>
+
+
+	<select id="findOneById" resultMap="BaseResultMap">
+		SELECT
+		a.id AS id,
+		c.nickname AS nickname,
+		b.ship_city AS shipCity,
+		d.sp_name AS spName,
+		b.contact_user AS contactUser,
+		b.contact_mobile AS contactMobile,
+		b.address AS address,
+		b.pay_sum_price AS paySumPrice,
+		b.item_sum_price AS itemSumPrice,
+		b.create_time AS createTime,
+		b.ship_time AS shipTime,
+		b.status AS vstatus,
+		e.city AS city,
+		e.province AS province,
+		e.area AS `area`,
+		f.regionname AS regionName,
+		b.receipt_type AS receipType,
+		b.receipt_title_type AS receiptTitleType,
+		b.main_id AS mainId,
+		b.discount AS discount
+		FROM
+		order_id a,
+		order_ship b,
+		member c,
+		supplier d,
+		area_domain e,
+		region f
+		WHERE a.id = b.main_id
+		AND a.uid = c.id
+		AND d.id = b.sp_id
+		AND b.city_domain = e.city_domain
+		AND f.regionid = b.ship_district
+		AND a.id=#{id}
+	</select>
+	
+	
+</mapper>

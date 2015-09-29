@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.JlComplainMapper">
+	<resultMap id="JlComplain_map" type="com.jkkp.modules.supplier.model.JlComplain">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="admin_id" property="adminId" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="level" property="level" jdbcType="INTEGER" />	
+		<result column="status" property="status" jdbcType="INTEGER" />		
+		<result column="mid" property="mid" jdbcType="INTEGER" />
+		<result column="bid" property="bid" jdbcType="INTEGER" />
+		<result column="tid" property="tid" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="source" property="source" jdbcType="INTEGER" />
+	    <result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+      
+	</resultMap>
+	<resultMap type="com.jkkp.modules.supplier.view.VJlComplain" id="JlComplain_vmap" extends="JlComplain_map">
+		<result column="mnickName" property="mnickName" jdbcType="VARCHAR" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+		<result column="anickName" property="anickName" jdbcType="VARCHAR" />
+		<result column="mmobile" property="mmobile" jdbcType="VARCHAR" />
+		<result column="smobile" property="smobile" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap type="com.jkkp.modules.supplier.view.VJlComplain" id="JlComplain_detail" extends="JlComplain_vmap">
+		<association property="engineerings" column="gcd_id" select="com.jkkp.modules.basedata.mapper.EngineeringsMapper.getBeanById"/>
+	</resultMap>
+	<select id="selectAllAboutJLComplain" parameterType="java.util.Map" resultMap="JlComplain_vmap">
+	  SELECT 
+		  a.*,
+		  b.`nickname` AS mnickName,
+		  c.`sp_name` AS spName,
+		  d.`nickname` AS anickName,
+		  b.`mobile` AS mmobile,
+	      c.`contact_mobile` AS smobile
+	 FROM
+		  jl_complain a 
+		  LEFT JOIN member b 
+		    ON a.`mid` = b.`id` 
+		  LEFT JOIN supplier c 
+		    ON c.`id` = a.`sp_id`  	
+		    LEFT JOIN admin d
+		     ON d.`id`=a.`admin_id`
+		     WHERE c.`type`=5
+	     <include refid="condition"/>
+	     ORDER BY a.`update_time` DESC
+	      limit #{rowStart}, #{limit}
+	</select>
+	
+	<select id="selectAllAboutJLCCount" parameterType="java.util.Map" resultType="long">
+		SELECT 
+		 COUNT(1)
+		FROM
+		  jl_complain a 
+		  LEFT JOIN member b 
+		    ON a.`mid` = b.`id` 
+		  LEFT JOIN supplier c 
+		    ON c.`id` = a.`sp_id`  	
+		    LEFT JOIN admin d
+		     ON d.`id`=a.`admin_id`
+		     WHERE c.`type`=5
+	     <include refid="condition"/>
+	</select>
+	
+	<sql id="condition">
+	    <if test="jlid!=null and jlid!=''">
+	         AND a.`sp_id`=${jlid}
+	    </if>
+		<if test="mnickName!=null and mnickName!=''">
+		     AND b.`nickname` LIKE '%${mnickName}%'
+		</if>
+	    <if test="snickName!=null and snickName!=''">
+	         AND c.`sp_name` LIKE '%${snickName}%'
+	    </if>
+	    <if test="status!=null and status!=''">
+	         AND a.`status`=${status}
+	    </if>
+	    <if test="level!=null and level!=''">
+	        AND a.`level`=${level}
+	    </if>	
+	    <if test="createBegin!=null and createBegin!=''">
+	        AND a.`create_time`>'${createBegin}'
+	    </if>
+	    <if test="createEnd!=null and createEnd!=''">
+	       AND a.`create_time`&lt;'${createEnd}'
+	    </if>
+	    <if test="updateBegin!=null and updateBegin!=''">
+	       AND a.`update_time`>'${updateBegin}'
+	    </if>
+	    <if test="updateEnd!=null and updateEnd!=''">
+	      AND a.`update_time`&lt;'${updateEnd}'
+	    </if>
+	    <if test="type!=null and type!=''">
+	      AND a.`type`=${type}
+	    </if>
+	</sql>
+	
+	<!--关闭操作  -->
+	<update id="close">
+	  UPDATE jl_complain SET STATUS=1 WHERE id=#{id}
+	</update>
+	
+	<!-- 投诉单详细信息  -->
+	<select id="complainDetail" resultMap="JlComplain_vmap">
+	  SELECT 
+	  a.*,
+	  b.`nickname` AS mnickName,
+	  c.`sp_name` AS spName,
+	  d.`nickname` AS anickName,
+	  b.`mobile` AS mmobile,
+      c.`contact_mobile` AS smobile
+	FROM
+	  jl_complain a 
+	  LEFT JOIN member b 
+	    ON a.`mid` = b.`id` 
+	  LEFT JOIN supplier c 
+	    ON c.`id` = a.`sp_id` 
+	    LEFT JOIN admin d
+	     ON d.`id`=a.`admin_id`
+	     where a.`id`=#{id}
+	</select>
+	
+	<!-- ysc -->
+	<sql id="tbl">jl_complain</sql>
+	<sql id="temp_tbl">
+		select  aa.* from  <include refid="tbl"/> aa
+	</sql>
+	<select id="getList" resultMap="JlComplain_vmap" parameterType="string" >
+		select t.* from (<include refid="temp_tbl"/>) t where 1=1 ${value}
+	</select>
+	<select id="getListByGcdId" resultMap="JlComplain_vmap" parameterType="int" >
+		select t.* from (<include refid="temp_tbl"/>) t where gcd_id=#{id}
+	</select>
+	<select id="getPageList" resultMap="JlComplain_vmap" parameterType="com.jkkp.utils.Pager" >
+		select	t.* 
+		from (<include refid="temp_tbl"/>) t 
+		where 1=1 ${value}
+		limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string" >
+		select count(*) from (<include refid="temp_tbl"/>) t  where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="JlComplain_detail" parameterType="int" >
+		select t.* from (<include refid="temp_tbl"/>) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from <include refid="tbl"/> t where 1=1 ${value}
+	</delete>
+	<!-- ysc -->
+</mapper>

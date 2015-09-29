@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.product.mapper.ItemFreeRecommandMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.product.view.VItemFreeRecommand" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="label" property="label" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="VARCHAR" />
+   <result column="price" property="price" jdbcType="DECIMAL" />
+  </resultMap>
+   <select id="findBy" resultMap="BaseResultMap">
+  	SELECT i.* FROM item_free_recommand i,item t,area_domain a WHERE i.item_id=t.id and a.city_domain=#{city}
+  </select>
+   <select id="index" resultMap="BaseResultMap">
+  	SELECT i.*,t.title as title,t.price as price,t.pid as pid from item_free_recommand i,item t where i.label='index' and i.item_id=t.id and i.city_domain=#{name} 
+  </select>
+   <select id="yugao" resultMap="BaseResultMap">
+  	SELECT i.*,t.title as title,t.price as price,t.pid as pid from item_free_recommand i,item t where i.label='yugao' and i.item_id=t.id and i.city_domain=#{name} 
+  </select>
+     <select id="list" resultMap="BaseResultMap">
+  	SELECT i.*,t.title as title,t.price as price,t.pid as pid,t.is_free from item_free_recommand i,item t where i.label='list' and i.item_id=t.id  and t.is_free=1 and i.city_domain=#{name} GROUP BY i.item_id
+  </select>
+   <delete id="dele">
+  	delete from item_free_recommand  where label='yugao' and city_domain=#{name}
+  </delete>
+</mapper>

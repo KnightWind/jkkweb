@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.member.mapper.TopicMapper">
+	<resultMap id="topic_map" type="com.jkkp.modules.member.view.VMemberTopic">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="subject" property="subject" jdbcType="VARCHAR" />
+		<result column="budget" property="budget" jdbcType="INTEGER" />
+		<result column="space" property="space" jdbcType="INTEGER" />
+		<result column="style" property="style" jdbcType="TINYINT" />
+		<result column="house_type" property="houseType" jdbcType="TINYINT" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="close_time" property="closeTime" jdbcType="TIMESTAMP" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="forman" property="forman" jdbcType="VARCHAR" />
+		<result column="pub_time" property="pubTime" jdbcType="TIMESTAMP" />
+		<result column="comment_count" property="commentCount"
+			jdbcType="INTEGER" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+		<result column="browse_count" property="browseCount" jdbcType="INTEGER" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="aidorgcdid" property="aidorgcdid" jdbcType="INTEGER" />
+		<result column="stage_id" property="stageId" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap type="com.jkkp.modules.member.view.VMemberTopic"
+		id="topic_vmap" extends="topic_map">
+		<!-- 拓展属性 -->
+		<result column="nickname" property="nickName" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="houseTypeVal" property="houseTypeVal" jdbcType="VARCHAR" />
+		<result column="styleName" property="styleName" jdbcType="VARCHAR" />
+		<result column="houseTypeName" property="houseTypeName"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="BaseResultInterMap" type="com.jkkp.appapi.modules.mapper.VITopic">
+		<id column="topicId" property="topicId" jdbcType="INTEGER" />
+		<result column="topicSubject" property="topicSubject" jdbcType="VARCHAR" />
+		<result column="topicBudget" property="topicBudget" jdbcType="INTEGER" />
+		<result column="topicSpace" property="topicSpace" jdbcType="INTEGER" />
+		<result column="topicStyle" property="topicStyle" jdbcType="TINYINT" />
+		<result column="topicHouseType" property="topicHouseType"
+			jdbcType="TINYINT" />
+		<result column="topicUid" property="topicUid" jdbcType="INTEGER" />
+		<result column="topicCreateTime" property="topicCreateTime"
+			jdbcType="TIMESTAMP" />
+		<result column="topicCityDomain" property="topicCityDomain"
+			jdbcType="VARCHAR" />
+		<result column="topicStatus" property="topicStatus" jdbcType="TINYINT" />
+		<result column="topicCheckTime" property="topicCheckTime"
+			jdbcType="TIMESTAMP" />
+		<result column="topicUpdateTime" property="topicUpdateTime"
+			jdbcType="TIMESTAMP" />
+		<result column="topicCloseTime" property="topicCloseTime"
+			jdbcType="TIMESTAMP" />
+		<result column="topicCommunity" property="topicCommunity"
+			jdbcType="VARCHAR" />
+		<result column="topicForman" property="topicForman" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<sql id="orderDesc">
+		<if test="key!=null and key!='' ">
+			<if test='key=="1"'>
+				order by comment_count
+			</if>
+			<if test='key=="2"'>
+				order by pub_time
+			</if>
+			<if test="order !=null and order!='' ">
+				<if test='order=="1"'>
+					ASC
+				</if>
+				<if test='order=="2"'>
+					DESC
+				</if>
+			</if>
+
+		</if>
+	</sql>
+	<select id="findList" parameterType="java.util.Map" resultMap="BaseResultInterMap">
+		select
+		t.id as topicId,
+		t.subject as topicSubject,
+		t.budget as
+		topicBudget,
+		t.space as topicSpace,
+		t.style as topicStyle,
+		t.house_type
+		as topicHouseType,
+		t.uid as topicUid,
+		t.create_time as topicCreateTime,
+		t.city_domain as topicCityDomain,
+		t.status as topicStatus,
+		t.check_time
+		as topicCheckTime,
+		t.update_time as topicUpdateTime,
+		t.close_time as
+		topicCloseTime,
+		t.community as topicCommunity,
+		t.forman as topicForman
+		from topic t where 1=1
+		<include refid="condition"></include>
+		<include refid="orderDesc"></include>
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+
+
+
+	<!-- web后台 -->
+	<select id="selectAllMemberTopic" parameterType="java.util.Map"
+		resultMap="topic_vmap">
+		SELECT
+		a.*,
+		b.`nickname`,
+		c.`city`,
+		dc1.cate_name AS styleName,
+		dc2.cate_name AS houseTypeName
+		FROM
+		topic a
+		LEFT JOIN member b
+		ON a.`uid` = b.`id`
+		LEFT JOIN area_domain c
+		ON a.`city_domain` = c.`city_domain`
+		LEFT JOIN design_cate dc1
+		ON dc1.id = a.style
+		LEFT JOIN design_cate dc2
+		ON dc2.id = a.house_type
+		where 1=1
+		<include refid="condition" />
+		ORDER BY a.`create_time` DESC
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="selectAllMemberTopicCount" parameterType="java.util.Map"
+		resultType="long">
+		SELECT
+		count(1)
+		FROM
+		topic a
+		LEFT JOIN member b
+		ON a.`uid` = b.`id`
+		LEFT JOIN area_domain c
+		ON a.`city_domain` = c.`city_domain`
+		LEFT JOIN design_cate dc1
+		ON dc1.id = a.style
+		LEFT JOIN design_cate dc2
+		ON dc2.id = a.house_type
+		where 1=1
+		<include refid="condition" />
+	</select>
+
+	<select id="detail" resultMap="topic_vmap">
+		SELECT
+		a.*,
+		b.`nickname`,
+		c.`city`,
+		dc1.cate_name AS styleName,
+		dc2.cate_name AS houseTypeName
+		FROM
+		topic a
+		LEFT JOIN member b
+		ON a.`uid` = b.`id`
+		LEFT JOIN area_domain c
+		ON a.`city_domain` = c.`city_domain`
+		LEFT JOIN design_cate dc1
+		ON dc1.id = a.style
+		LEFT JOIN design_cate dc2
+		ON dc2.id = a.house_type
+		WHERE a.`id`=#{id}
+	</select>
+
+	<!-- 审核：不通过 -->
+	<update id="noPass">
+		UPDATE topic SET check_time =NOW(),STATUS=-1 WHERE id=#{id}
+	</update>
+	<!-- 审核：通过 -->
+	<update id="pass">
+		UPDATE topic SET check_time =NOW(),STATUS=1 WHERE id=#{id}
+	</update>
+
+	<sql id="condition">
+		<!-- 接口 -->
+		<if test="topicUid!=null and topicUid!='' ">
+			and uid=#{topicUid}
+		</if>
+		<if test="topicId!=null and topicId!='' ">
+			and id=#{topicId}
+		</if>
+
+		<!-- WEB -->
+		<if test="status!=null and status!=''">
+			AND a.`status`=${status}
+		</if>
+		<if test="city!=null and city!=''">
+			AND a.`city_domain`='${city}'
+		</if>
+		<if test="nickName!=null and nickName!=''">
+			AND b.`nickname` LIKE '%${nickName}%'
+		</if>
+		<if test="createBegin!=null and createBegin!=''">
+			AND a.`create_time`>'${createBegin}'
+		</if>
+		<if test="createEnd!=null and createEnd!=''">
+			AND a.`create_time`&lt;'${createEnd}'
+		</if>
+		<if test="checkBegin!=null and checkBegin!=''">
+			AND a.`check_time`>'${checkBegin}'
+		</if>
+		<if test="checkEnd!=null and checkEnd!=''">
+			AND a.`check_time`&lt;'${checkEnd}'
+		</if>
+		<if test="closeBegin!=null and closeBegin!=''">
+			AND a.`close_time`>'${closeBegin}'
+		</if>
+		<if test="closeEnd!=null and closeEnd!=''">
+			AND a.`close_time`&lt;'${closeEnd}'
+		</if>
+	</sql>
+	<resultMap id="BaseResultInter" type="com.jkkp.appapi.modules.mapper.VITopicSV">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="yushuan" property="yushuan" jdbcType="VARCHAR" />
+		<result column="mianji" property="mianji" jdbcType="VARCHAR" />
+		<result column="pinglu" property="pinglu" jdbcType="VARCHAR" />
+		<result column="ll" property="ll" jdbcType="VARCHAR" />
+		<result column="quming" property="quming" jdbcType="VARCHAR" />
+		<result column="feng" property="feng" jdbcType="VARCHAR" />
+		<result column="hu" property="hu" jdbcType="VARCHAR" />
+		<result column="img" property="img" jdbcType="VARCHAR" />
+		<result column="mid" property="mid" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="sj" property="sj" jdbcType="VARCHAR" />
+		<result column="rjuid" property="rjuid" jdbcType="VARCHAR" />
+		<result column="gcdid" property="gcdid" jdbcType="VARCHAR" />
+		<result column="spid" property="spid" jdbcType="VARCHAR" />
+		<result column="aid" property="aid" jdbcType="VARCHAR" />
+		<result column="designid" property="designid" jdbcType="VARCHAR" />
+		<result column="jlid" property="jlid" jdbcType="VARCHAR" />	
+	</resultMap>
+	<select id="queryTopicList" parameterType="java.util.Map"
+		resultMap="BaseResultInter">
+SELECT j.id as id,j.uid as rjuid,j.gcd_id as gcdid,j.budget as yushuan,j.space as mianji,j.comment_count as pinglu,j.browse_count as ll,community as quming,date_format(j.create_time,'%Y-%m-%d %H:%i:%s') as sj,
+dc1.cate_name as feng,
+dc2.cate_name as hu,
+j.sp_id as spid,
+j.design_id as designid,
+j.jl_id as jlid,
+j.aid as aid,
+(SELECT CONCAT(t3.para_value,a.filepath) from attachment a,sysconfig t3 WHERE a.id=(SELECT d.pid from design d where d.id=j.design_id) and t3.para_name='PHOTO_PREFIX_URL') as img
+from   cases j
+left join
+			design_cate dc1
+		on 
+			dc1.id =j.style
+		left join
+			design_cate dc2
+		on
+			dc2.id = j.house_type
+where  1=1
+<if test="uid!=null and uid!=''">
+  and  j.uid=${uid}
+</if>
+ORDER BY browse_count,comment_count
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+	<select id="queryAd" resultMap="BaseResultInter">
+		SELECT content as mid from ad where place='topic'
+	</select>
+	<select id="queryTopic" parameterType="java.util.Map" resultMap="BaseResultInter">
+		select
+		j.id as id,budget as yushuan,space as mianji,comment_count as
+		pinglu,browse_count as ll,community as quming,
+		dc1.cate_name as feng,
+		dc2.cate_name as hu,
+		m.id as mid,
+		m.type as type,
+		(SELECT filepath from attachment a where mainid=j.id and filetype=9) as img
+		from
+		member_collect m,jtopic j
+		left join
+		design_cate dc1
+		on
+		dc1.id = j.style
+		left join
+		design_cate dc2
+		on
+		dc2.id = j.house_type
+		where 1=1
+		<if test="uid!=null and uid!=''">
+			and j.id in (m.topic_id) and m.uid=${uid} and m.type=1
+		</if>
+		union
+		select
+		j.id as id,budget as yushuan,space as mianji,comment_count as
+		pinglu,browse_count as ll,community as quming,
+		dc1.cate_name as feng,
+		dc2.cate_name as hu,
+		m.id as mid,
+		m.type as type,
+		(SELECT filepath from attachment a where mainid=j.id and filetype=9) as img
+		from
+		member_collect m,jtopic j
+		left join
+		design_cate dc1
+		on
+		dc1.id = j.style
+		left join
+		design_cate dc2
+		on
+		dc2.id = j.house_type
+		where 1=1
+		<if test="uid!=null and uid!=''">
+			and j.id in (m.topic_id) and m.uid=${uid} and m.type=2
+		</if>
+		union
+		select
+		j.id as id,budget as yushuan,space as mianji,comment_count as
+		pinglu,browse_count as ll,community as quming,
+		dc1.cate_name as feng,
+		dc2.cate_name as hu,
+		m.id as mid,
+		m.type as type,
+		(SELECT filepath from attachment a where mainid=j.id and filetype=10) as img
+		from
+		member_collect m,sgtopic j
+		left join
+		design_cate dc1
+		on
+		dc1.id = j.style
+		left join
+		design_cate dc2
+		on
+		dc2.id = j.house_type
+		where 1=1
+		<if test="uid!=null and uid!=''">
+			and j.id in (m.topic_id) and m.uid=${uid} and m.type=3
+		</if>
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+	<resultMap id="BaseResult" type="com.jkkp.appapi.modules.mapper.VISMember">
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="img" property="img" jdbcType="VARCHAR" />
+		<result column="lname" property="lname" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="getById" resultMap="BaseResult">
+		SELECT nickname as name,mobile as mobile,
+		d.city as city,
+		(SELECT a.filepath from attachment a where a.mainid=m.id and a.filetype=13)
+		as img,
+		(SELECT GROUP_CONCAT(lname) from label l,member_label e where l.id=e.lid and
+		e.uid=m.id and l.type=8) as lname
+		from member m,area_domain d where m.id=#{uid} and
+		d.city_domain=m.city_domain
+	</select>
+	
+	<resultMap id="BaseTopicResult" type="com.jkkp.appapi.modules.mapper.VITopicList">
+		<result column="caseId" property="caseId" jdbcType="VARCHAR" />
+		<result column="uid" property="uid" jdbcType="VARCHAR" />
+		<result column="engineerId" property="engineerId" jdbcType="VARCHAR" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="space" property="space" jdbcType="VARCHAR" />
+		<result column="budget" property="budget" jdbcType="VARCHAR" />
+		<result column="hostType" property="hostType" jdbcType="VARCHAR" />
+		<result column="style" property="style" jdbcType="VARCHAR" />
+		<result column="create_time" property="create_time" jdbcType="VARCHAR" />
+		<result column="comment_count" property="comment_count" jdbcType="VARCHAR" />
+		<result column="browse_count" property="browse_count" jdbcType="VARCHAR" />
+		<result column="stag_name" property="stag_name" jdbcType="VARCHAR" />
+		<result column="user" property="user" jdbcType="VARCHAR" />
+		<result column="stag_name" property="stag_name" jdbcType="VARCHAR" />
+		<result column="user" property="user" jdbcType="VARCHAR" />
+		<result column="method" property="method" jdbcType="VARCHAR" />
+		<result column="photo" property="method" jdbcType="VARCHAR" />
+	</resultMap>
+		<select id="queryCasesTopicList" parameterType="java.util.Map" resultMap="BaseTopicResult">
+		SELECT tc.id as caseId,tc.uid,tc.gcd_id as
+		engineerId,tc.community,tc.space,tc.budget,dc.cate_name as
+		hostType,ds.cate_name as style,tc.create_time,
+		tc.comment_count,tc.browse_count,te.stag_name,appt.user,appt.method,img.photo
+		from cases tc LEFT JOIN (select j.uid from topic_stage g,topic j where
+		j.stage_id=g.id ) tt on tc.uid=tt.uid
+		LEFT JOIN design_cate dc on dc.id=tc.house_type LEFT JOIN design_cate ds on
+		ds.id=tc.style LEFT JOIN (select tes.id as
+		engId,tes.zx_stage,tea.id,tea.stag_name
+		from engineerings tes,engineering_stage tea where tes.zx_stage=tea.id) te 
+
+		on tc.gcd_id=te.engId LEFT JOIN appointment appt on appt.id=tc.aid
+		    LEFT JOIN  
+		(SELECT td.aid,CONCAT(ts.para_value,ta.filepath) as photo from design td , design_image ti 
+		, attachment ta , sysconfig ts 
+		where  td.id=ti.design_id and ti.pid=ta.id and ti.is_desk_top=ta.id
+		and ti.type=1 and ts.para_name='PHOTO_PREFIX_URL' ) img on tc.aid=img.aid
+		WHERE tc.case_source=1
+		ORDER BY tc.comment_count,tc.browse_count
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+
+
+	<sql id="tbl">topic</sql><!-- ysc -->
+	<sql id="temp_tbl">
+		select
+		dc1.cate_name as styleVal,
+		dc2.cate_name as houseTypeVal,
+		aa.* from
+		<include refid="tbl" />
+		aa
+		left join design_cate dc1 on dc1.id = aa.style
+		left join design_cate
+		dc2 on dc2.id = aa.house_type
+	</sql>
+	<select id="getList" resultMap="topic_vmap" parameterType="string">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="topic_vmap" parameterType="com.jkkp.utils.Pager">
+		select t.*
+		from (
+		<include refid="temp_tbl" />
+		) t
+		where 1=1 ${value}
+		limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (
+		<include refid="temp_tbl" />
+		) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="topic_vmap" parameterType="int">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from
+		<include refid="tbl" />
+		t where 1=1 ${value}
+	</delete><!-- ysc -->
+	<resultMap id="BaseResultAllTopic" type="com.jkkp.appapi.modules.mapper.VIAllTopicSV">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="sj" property="sj" jdbcType="VARCHAR" />
+		<result column="bt" property="bt" jdbcType="VARCHAR" />
+		<result column="jd" property="jd" jdbcType="VARCHAR" />
+		<result column="zt" property="zt" jdbcType="VARCHAR" />
+		<result column="shoucan" property="shoucan" jdbcType="VARCHAR" />
+		<result column="lname" property="lname" jdbcType="VARCHAR" />
+		<result column="dianzha" property="dianzha" jdbcType="VARCHAR" />
+		<result column="img" property="img" jdbcType="VARCHAR" />
+		<result column="nr" property="nr" jdbcType="VARCHAR" />
+	</resultMap>
+<select id="getAllTopic" parameterType="java.util.Map" resultMap="BaseResultAllTopic">
+SELECT j.id as id,date_format(j.create_time,'%Y-%m-%d %H:%i:%s') as sj,
+j.subject as bt, 
+g.name as jd,
+j.content as nr,
+g.id as  zt,
+(SELECT GROUP_CONCAT(l.lname) from label l,topic_label b where b.lid=l.id and b.tid=j.id and b.type=1) as  lname,
+(SELECT COUNT(*) from case_collect  where case_id=${cid}) as shoucan,
+(SELECT COUNT(*) from topic_saygood s where s.tpid=j.id and s.tblname='topic') as dianzha,
+(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=j.id and filetype=2 and t3.para_name='PHOTO_PREFIX_URL') as img
+from  topic_stage g,topic j
+where j.uid=${uid} and j.stage_id=g.id ORDER BY g.id
+<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+</if>
+</select>
+
+<select id="getAllJtopic" parameterType="java.util.Map" resultMap="BaseResultAllTopic">
+SELECT j.id as id,date_format(j.create_time,'%Y-%m-%d %H:%i:%s') as sj,
+j.content as nr,
+j.title as bt, 
+g.name as jd,
+g.id as  zt,
+(SELECT GROUP_CONCAT(l.lname) from label l,topic_label b where b.lid=l.id and b.tid=j.id and b.type=2) as  lname,
+(SELECT COUNT(*) from case_collect  where case_id=${cid}) as shoucan,
+(SELECT COUNT(*) from topic_saygood s where s.tpid=j.id and s.tblname='jtopic') as dianzha,
+(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=j.id and filetype=9 and t3.para_name='PHOTO_PREFIX_URL') as img
+from  topic_stage g,jtopic j
+where j.sp_id=${spid} and j.stage_id=g.id  ORDER BY g.id
+<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+</if>
+</select>
+<resultMap id="BaseResultCommon" type="com.jkkp.appapi.modules.mapper.VCaseShare">
+		<result column="commonimg" property="commonimg" jdbcType="VARCHAR" />
+		<result column="commonname" property="commonname" jdbcType="VARCHAR" />
+	</resultMap>
+<select id="getCommonnJtopic" resultMap="BaseResultCommon">
+ SELECT sp_name as commonname,
+(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=#{spid} and filetype=4 and t3.para_name='PHOTO_PREFIX_URL') as commonimg
+ from supplier WHERE id=#{spid}
+</select>
+
+<resultMap id="BaseResultAllTopicList" type="com.jkkp.appapi.modules.mapper.VITopicMjkSV">
+		<result column="jiage" property="jiage" jdbcType="VARCHAR" />
+		<result column="mianji" property="mianji" jdbcType="VARCHAR" />
+		<result column="uimg" property="uimg" jdbcType="VARCHAR" />
+		<result column="feng" property="feng" jdbcType="VARCHAR" />
+		<result column="hu" property="hu" jdbcType="VARCHAR" />
+		<result column="quming" property="quming" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+	</resultMap>
+<select id="getAllTopicDetails" resultMap="BaseResultAllTopicList">
+SELECT  budget as jiage,space as mianji,  dc1.cate_name as feng,
+dc2.cate_name as hu,
+(SELECT  community  from  appointment where id=#{aid}) as quming,
+(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=#{uid} and filetype=13 and t3.para_name='PHOTO_PREFIX_URL') as uimg,
+(SELECT nickname from member where  id=#{uid}) as name
+from design d
+left join
+			design_cate dc1
+		on 
+			dc1.id =d.fengge
+		left join
+			design_cate dc2
+		on
+			dc2.id = d.huxing
+ where aid=#{aid} and bidding=1;
+</select>
+
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.sale_theme.mapper.ActivityCardMapper">
+
+	<resultMap id="BaseMap" type="com.jkkp.modules.sale_theme.model.ActivityCard">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="activity_id" property="activityId" jdbcType="INTEGER" />
+		<result column="gift_id" property="giftId" jdbcType="INTEGER" />
+		<result column="admin_id" property="adminId" jdbcType="INTEGER" />
+		<!-- <result column="supplier_id" property="supplierId" jdbcType="INTEGER" /> -->
+		<result column="price" property="price" jdbcType="DOUBLE" />
+		<result column="descr" property="descr" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<resultMap extends="BaseMap" type="com.jkkp.modules.sale_theme.view.VActivityCard" id="VBaseMap">
+		<result column="activityName" property="activityName" jdbcType="VARCHAR" />
+		<result column="adminName" property="adminName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="condtion">
+		<if test="title != null and title != ''">
+			a.`title` like '${title}'
+		</if>
+		<if test="card != null and card != ''">
+			ac.`name` like '${card}'
+		</if>
+		<if test="startTime != null and startTime != ''">
+			ac.`update_time` >= ${startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			ac.`update_time` &gt;= ${endTime}
+		</if>
+	</sql>
+
+	<select id="selectActivityCardById" resultMap="VBaseMap">
+		SELECT 
+			ac.*,a.`title` AS activityName
+		FROM
+			activity_card ac
+		LEFT JOIN 
+			activity_theme a
+		ON
+			ac.`activity_id` = a.`id`
+		where 
+			ac.id = #{id}
+	</select>
+	
+	<select id="selectActivityCard" resultMap="VBaseMap" parameterType="java.util.Map">
+		SELECT 
+			ac.*,a.`title` AS activityName
+		FROM
+			activity_card ac
+		LEFT JOIN 
+			activity_theme a
+		ON
+			ac.`activity_id` = a.`id`
+		where 
+			1 = 1
+		<include refid="condtion" />
+		ORDER BY
+			ac.`update_time` DESC
+			limit #{rowStart}, #{limit}
+	</select>
+	
+	<select id="selectActivityCardCount" resultType="long" parameterType="java.util.Map">
+		SELECT 
+			count(1)
+		FROM
+			activity_card ac
+		LEFT JOIN 
+			activity_theme a
+		ON
+			ac.`activity_id` = a.`id`
+		where 
+			1 = 1
+		<include refid="condtion" />
+	</select>
+
+</mapper>

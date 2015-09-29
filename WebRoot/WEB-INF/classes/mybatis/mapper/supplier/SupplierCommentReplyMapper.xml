@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierCommentReplyMapper">
+	<resultMap id="SupplierCommentReply_map" type="com.jkkp.modules.supplier.model.SupplierCommentReply">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="cid" property="cid" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="type_id" property="type_id" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap type="com.jkkp.modules.supplier.view.VSupplierCommentReply" id="SupplierCommentReply_vmap" extends="SupplierCommentReply_map">
+		
+	</resultMap>
+	<!-- ysc【2015-07-12】=============================== -->
+	<sql id="tbl">supplier_comment_reply</sql>
+	<sql id="temp_tbl">
+		select	
+		aa.* from <include refid="tbl" /> aa
+	</sql>
+	<select id="getList" resultMap="SupplierCommentReply_vmap" parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="SupplierCommentReply_vmap" parameterType="com.jkkp.utils.Pager">
+		select t.*	from (	<include refid="temp_tbl" />) t	where 1=1 ${value}	limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="SupplierCommentReply_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from	<include refid="tbl" />	t where 1=1 ${value}
+	</delete>
+	<!-- ysc【2015-07-12】============================== -->
+</mapper>

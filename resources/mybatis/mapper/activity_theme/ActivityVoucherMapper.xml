@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.sale_theme.mapper.ActivityVoucherMapper">
+
+	<resultMap id="BaseMap" type="com.jkkp.modules.sale_theme.model.ActivityVoucher">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="activity_id" property="activityId" jdbcType="INTEGER" />
+		<result column="admin_id" property="adminId" jdbcType="INTEGER" />
+		<result column="descr" property="descr" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DOUBLE" />
+		<result column="num" property="num" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="active_time" property="activeTime" jdbcType="TIMESTAMP" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<resultMap id="ActivityVoucherMap"	type="com.jkkp.modules.sale_theme.view.VActivityVoucher" extends="BaseMap">
+		<result column="activityName" property="activityName" jdbcType="VARCHAR" />
+		<result column="filepath" property="filepath" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	
+	<!-- 建材后台现金券 -->
+	<resultMap type="com.jkkp.modules.sale_theme.view.VActivityVoucher" id="jianCaiMap"  extends="BaseMap">
+	    <result column="is_use" property="isUse" jdbcType="INTEGER" />
+	    <result column="relId" property="relId" jdbcType="INTEGER" />
+	    <result column="phone" property="phone" jdbcType="VARCHAR" />
+	    <result column="filepath" property="filepath" jdbcType="VARCHAR" />
+	    <result column="userTime" property="userTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<select id="selectActivityVoucher" resultMap="ActivityVoucherMap"  parameterType="java.util.Map">
+		SELECT av.*,att.`title` as activityName,a.`filepath` FROM activity_voucher av
+		LEFT JOIN activity_theme att ON att.`id` = av.`activity_id`
+		LEFT JOIN attachment a ON a.`mainid` = av.`id` AND a.`filetype` = 30
+		ORDER BY av.`create_time` DESC
+		limit #{rowStart}, #{limit}
+	</select>
+	
+	<select id="selectActivityVoucherCount" resultType="long" parameterType="java.util.Map">
+		SELECT count(1) FROM activity_voucher av
+		LEFT JOIN activity_theme att ON att.`id` = av.`activity_id`
+		LEFT JOIN attachment a ON a.`mainid` = av.`id` AND a.`filetype` = 30
+	</select>
+	
+	
+	<select id="getActivityVoucherById" resultMap="ActivityVoucherMap">
+		SELECT av.*,ath.`title` as activityName,
+		CONCAT(sf.para_value, att.`filepath`)as filepath 
+		FROM activity_voucher av
+		LEFT JOIN activity_theme ath ON ath.`id` = av.`activity_id`
+		LEFT JOIN attachment att ON att.`mainid` = av.`id` AND att.`filetype` = 30
+		LEFT JOIN sysconfig sf on sf.para_name='PHOTO_PREFIX_URL'
+		WHERE av.id = #{id}
+	</select>
+	
+	
+	
+	<select id="qryall" parameterType="java.util.Map" resultMap="ActivityVoucherMap">
+		SELECT av.*, at.filepath as filepath 
+		FROM activity_voucher av 
+		LEFT JOIN attachment at ON av.id = at.mainid and at.filetype = 30 
+		WHERE 1 = 1
+		<if test="activityId != null">
+			and av.activity_id = #{activityId}
+		</if>
+		ORDER BY av.`id` DESC
+		<if test="pageNo != null and pageSize != null">
+			limit ${(pageNo - 1) * pageSize}, #{pageSize}
+		</if>
+	</select>
+
+   <!-- 建材商后台 -->
+   <select id="selectSupplierVoucher" parameterType="java.util.Map" resultMap="jianCaiMap" >
+   SELECT 
+	  a.*,
+	  b.`phone`,
+	  b.`is_use`,
+	  c.`filepath`,
+      b.`id` AS relId,
+      b.`update_time`  AS userTime
+	FROM
+	  activity_voucher a 
+	  INNER JOIN activity_voucher_num b 
+	    ON a.`id` = b.`voucher_id` 
+	  LEFT JOIN attachment c 
+	    ON c.`mainid` = a.`id` 
+	WHERE c.`filetype` = 30 
+	<include refid="condition"/>
+	ORDER BY b.id DESC
+	limit #{rowStart}, #{limit}
+   </select>
+   
+   <select id="selectSupplierVoucherCount" parameterType="java.util.Map" resultType="long" >
+    SELECT 
+	  COUNT(1)
+	FROM
+	  activity_voucher a 
+	  INNER JOIN activity_voucher_num b 
+	    ON a.`id` = b.`voucher_id` 
+	<include refid="condition"/>
+   </select>
+   
+   <sql id="condition">
+     <if test="phone!=null and phone!=''">
+       AND b.`phone`='${phone}'
+     </if>
+     <if test="spId!=null and spId!=''">
+     	AND a.`sp_id`=${spId}
+     </if>
+   </sql>
+   
+   
+   <update id="useActivityVoucher">
+    UPDATE activity_voucher_num SET is_use=1,update_time=NOW() WHERE id=${id}
+   </update>
+</mapper>

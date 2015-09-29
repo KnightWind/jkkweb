@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.JtopicReplyMapper">
+	<resultMap id="VSupplierMap" type="com.jkkp.modules.supplier.view.VJtopicReply">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="pid" property="pid" jdbcType="INTEGER" />
+		<result column="storey" property="storey" jdbcType="INTEGER" />
+		<result column="subItemCount" property="subItemCount" jdbcType="INTEGER" />
+		<result column="hcomment" property="hcomment" jdbcType="INTEGER" />
+		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<!-- 查询主评论的子评论 -->
+	<select id="findReplyByPid" resultMap="VSupplierMap"
+		parameterType="java.util.Map">
+		select
+		jr.*,
+		(select count(*) from jtopic_reply jr1 where
+		jr1.pid = ${pid} and jr1.storey
+		= 2) as subItemCount
+		from
+		jtopic_reply jr
+		where
+		jr.pid = ${pid}
+		and
+		jr.storey = 2
+		order by
+		jr.create_time
+	</select>
+
+	<select id="findPage" resultMap="VSupplierMap" parameterType="java.util.Map">
+		select
+		jr.*,
+		(select count(*) from jtopic_reply jr1 where jr1.pid =
+		${id} and jr1.storey =
+		2) as subItemCount
+		from
+		jtopic_reply jr
+		where
+		jr.pid = ${id}
+		and
+		jr.storey = 1
+		order by
+		jr.create_time desc
+		limit
+		${rowStart}, ${limit}
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		select
+		count(1)
+		from
+		jtopic_reply jr
+		where
+		jr.pid = ${id}
+		and
+		jr.storey = 1
+		order by
+		jr.create_time desc
+	</select>
+
+	<!-- web -->
+	<!-- 查询针对日记的评论 -->
+	<select id="selectAllParentComment" resultMap="VSupplierMap">
+		SELECT
+		*
+		FROM
+		jtopic_reply a
+		WHERE a.`storey` = 1
+		AND a.`pid` = #{pid}
+		ORDER BY
+		a.`create_time` DESC
+	</select>
+
+	<!-- 查询评论的子评论 -->
+	<select id="selectAllChildComment" resultMap="VSupplierMap">
+		SELECT
+		*
+		FROM
+		jtopic_reply a
+		WHERE a.`storey` = 2
+		AND a.`pid` = #{pid}
+		ORDER BY
+		a.`create_time` DESC
+	</select>
+
+	<!-- 日记评论审核 不通过 -->
+	<update id="noPass">
+		UPDATE jtopic_reply SET check_time =NOW(),STATUS=-1 WHERE id=${id}
+	</update>
+
+	<update id="pass">
+		UPDATE jtopic_reply SET check_time =NOW(),STATUS=1 WHERE id=${id}
+	</update>
+
+
+	<!-- /web -->
+</mapper>

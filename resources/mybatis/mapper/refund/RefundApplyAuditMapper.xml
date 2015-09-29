@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.refund.mapper.RefundApplyAuditMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.refund.model.RefundApplyAudit">
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="refund_type" property="refundType" jdbcType="INTEGER" />
+    <result column="business_id" property="businessId" jdbcType="INTEGER" />
+    <result column="appoint_id" property="appointId" jdbcType="INTEGER" />
+    <result column="apply_date" property="applyDate" jdbcType="DATE" />
+    <result column="apply_reason" property="applyReason" jdbcType="VARCHAR" />
+    <result column="apply_amount" property="applyAmount" jdbcType="DOUBLE" />
+    <result column="apply_user_id" property="applyUserId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="audit_remark" property="auditRemark" jdbcType="VARCHAR" />
+    <result column="audit_date" property="auditDate" jdbcType="DATE" />
+    <result column="audit_user_id" property="auditUserId" jdbcType="INTEGER" />
+    <result column="audit_user_name" property="auditUserName" jdbcType="VARCHAR" />
+    <result column="refund_record_id" property="refundRecordId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, refund_type, business_id, appoint_id, apply_date, apply_reason, apply_amount, apply_user_id, 
+    status, audit_remark, audit_date, audit_user_id, audit_user_name, refund_record_id
+  </sql>
+  
+ 
+  <resultMap type="com.jkkp.modules.refund.view.VRefundApplyAudit" id="webResultMap" extends="BaseResultMap">
+     <result column="nickname" property="nickName" jdbcType="VARCHAR" />
+     <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  
+  <!-- web 获取退款申请单列表 -->
+	<select id="selectRefundApplyList" resultMap="webResultMap" parameterType="java.util.Map">
+	 	SELECT 
+		  a.*,
+		  b.`nickname`,
+		  b.`mobile` 
+		FROM
+		  refund_apply_audit a
+		  LEFT JOIN member b
+		   ON a.`apply_user_id`=b.`id`
+		 WHERE 1 = 1
+		<include refid="condition"/>		
+		 ORDER BY `id` DESC 
+		limit ${rowStart}, ${limit}
+	</select>
+	
+	<select id="selectRefundApplyCount"  parameterType="java.util.Map" resultType="long">
+	     SELECT 
+		  COUNT(*) 
+		FROM
+		  refund_apply_audit a
+		  LEFT JOIN member b 
+		    ON a.`apply_user_id` = b.`id` 
+		WHERE 1 = 1 
+		<include refid="condition"/>		
+	</select>
+  
+     <select id="detailInfo" resultMap="webResultMap" parameterType="Integer">
+        SELECT 
+		  a.*,
+		  b.`nickname`,
+		  b.`mobile` 
+		FROM
+		  refund_apply_audit a 
+		LEFT JOIN member b 
+		    ON a.`audit_user_id` = b.`id` 
+		WHERE a.id=${id}
+     </select>
+  
+	  <sql id="condition">
+			<if test="status!=null and status!=''">
+			   AND a.STATUS=${status}
+		    </if>
+		    <if test="nickName!=null and nickName!=''">
+		       AND b.`nickname` LIKE '%${nickName}%'
+		    </if>
+		    <if test="mobile!=null and mobile!=''">
+		       AND b.`mobile`='${mobile}'
+		    </if>
+	  </sql>
+	 
+	<insert id="insertRefundAudit" parameterType="com.jkkp.modules.refund.model.RefundApplyAudit">
+		insert into refund_apply_audit(id,refund_type,business_id,appoint_id,apply_date,apply_reason,apply_amount,apply_user_id,status,audit_remark,audit_date,audit_user_id,audit_user_name,refund_record_id)
+		value(#{id},#{refundType},#{businessId},#{appointId},NOW(),#{applyReason},#{applyAmount},#{applyUserId},#{status},#{auditRemark},NOW(),#{auditUserId},#{auditUserName},#{refundRecordId})	
+	</insert>
+  
+</mapper>

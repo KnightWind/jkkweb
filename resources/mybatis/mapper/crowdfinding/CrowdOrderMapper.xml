@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.crowdfunding.mapper.CrowdOrderMapper" >
+
+  <resultMap type="com.jkkp.modules.crowdfunding.model.CrowdOrder" id="WebOrderMap">
+  	<id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_code" property="orderCode" jdbcType="VARCHAR" />
+    <result column="member_id" property="memberId" jdbcType="INTEGER" />
+    <result column="order_price" property="orderPrice" jdbcType="DECIMAL" />
+    <result column="money_state" property="moneyState" jdbcType="INTEGER" />
+    <result column="express_state" property="expressState" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="express_id" property="expressId" jdbcType="INTEGER" />
+    <result column="supplier_id" property="supplierId" jdbcType="INTEGER" />
+    <result column="retainage" property="retainage" jdbcType="DECIMAL" />
+    <result column="deposit" property="deposit" jdbcType="DECIMAL" />
+    <result column="payment_model" property="paymentModel" jdbcType="INTEGER" />
+    <result column="serial_code" property="serialCode" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap type="com.jkkp.modules.crowdfunding.view.VCrowdOrder" id="VWebOrderMap" extends="WebOrderMap">
+  	<result column="userName" property="userName" jdbcType="VARCHAR" />
+  	<result column="address" property="address" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- web -->
+  	
+  	<sql id="condtion">
+  		<if test="spId != null and spId != ''">
+  			and zo.supplier_id = ${spId}
+  		</if>
+  		<if test="name != null and name != ''">
+  			and m.nickname like '%${name}%'
+  		</if>
+  		<if test="itemId != null and itemId != ''">
+  			AND zio.`item_id` = ${itemId}
+  		</if>
+  	</sql>
+  
+  	<select id="findPage" parameterType="java.util.Map" resultMap="VWebOrderMap">
+     	select zo.*,m.nickname userName,ze.address
+		from zc_order zo 
+		LEFT JOIN zc_express ze on ze.id = zo.express_id
+		LEFT JOIN member m on m.id = zo.member_id
+		LEFT JOIN zc_item_order zio on zio.order_code = zo.order_code
+		where 1 = 1
+		<include refid="condtion"/>
+		GROUP BY zo.id
+		LIMIT ${rowStart}, ${limit}
+     </select>
+     
+     <select id="countPage" parameterType="java.util.Map" resultType="long">
+     	select count(1)
+		from zc_order zo 
+		LEFT JOIN zc_express ze on ze.id = zo.express_id
+		LEFT JOIN member m on m.id = zo.member_id
+		LEFT JOIN zc_item_order zio on zio.order_code = zo.order_code
+		where 1 = 1
+		<include refid="condtion"/>
+     </select>
+     
+   <!-- web -->
+   
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.EngineeringStageInstMapper">
+	<resultMap id="EngineeringStageInst_map" type="com.jkkp.modules.basedata.model.EngineeringStageInst">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+		<result column="stag_name" property="stagName" jdbcType="VARCHAR" />
+		<result column="finish_flag" property="finishFlag" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="jl_id" property="jlId" jdbcType="INTEGER" />
+		<result column="report_pass" property="reportPass" jdbcType="INTEGER" />
+		<result column="pass_time" property="passTime" jdbcType="TIMESTAMP" />
+		<result column="number" property="number" jdbcType="INTEGER" />
+	    <result column="last_number" property="lastNumber" jdbcType="INTEGER" />
+		<result column="pid" property="pid" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap type="com.jkkp.modules.basedata.view.VEngineeringStageInst" id="EngineeringStageInst_vmap" extends="EngineeringStageInst_map">
+		<association property="engineerings" column="gcd_id" select="com.jkkp.modules.basedata.mapper.EngineeringsMapper.getBeanById"/>
+	</resultMap>
+	
+	<resultMap type="com.jkkp.modules.basedata.view.VEngineeringStageInstWeb" id="EngineeringStageInst_web" extends="EngineeringStageInst_map" >
+	    <result column="community" property="community" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="tbl">engineering_stage_inst</sql>
+	<sql id="temp_tbl">
+		select	aa.* from <include refid="tbl" />	aa
+	</sql>
+	<select id="getList" resultMap="EngineeringStageInst_vmap" parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="EngineeringStageInst_vmap" parameterType="com.jkkp.utils.Pager">
+		select t.*	from (	<include refid="temp_tbl" />) t	where 1=1 ${value}	limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="EngineeringStageInst_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from	<include refid="tbl" />	t where 1=1 ${value}
+	</delete>
+	
+	<!-- web -->
+	<select id="selectAllEngineeringStageInsts" resultMap="EngineeringStageInst_web" parameterType="java.util.Map">
+		SELECT 
+		  b.*,
+		  a.`community` 
+		FROM
+		  engineerings a 
+		  INNER JOIN 
+		  engineering_stage_inst b
+		  ON a.`id`=b.`gcd_id`
+		  WHERE 1=1
+		  <include refid="condition"/>
+		  ORDER BY b.`create_time` DESC 
+		  limit #{rowStart}, #{limit}
+	</select>
+	
+	<select id="selectAllEngineeringStageInstCount" parameterType="java.util.Map"
+		resultType="long" >
+		SELECT 
+		 COUNT(1)
+		FROM
+		  engineerings a 
+		  INNER JOIN 
+		  engineering_stage_inst b
+		  ON a.`id`=b.`gcd_id`
+		WHERE 1=1
+		<include refid="condition"/>
+	</select>
+	
+	<sql id="condition">
+	   <if test="createUser!=null and createUser!=''">
+	      AND b.`create_user` LIKE '%${createUser}%'
+	   </if>
+	   <if test="community!=null and community!=''">
+	      AND a.`community` LIKE '%${community}%'
+	   </if>
+	   <if test="passTimeStart!=null and passTimeStart!=''">
+	      AND b.`pass_time` > '${passTimeStart}'
+	   </if>
+	   <if test="passTimeEnd!=null and passTimeEnd!=''">
+	      AND b.`pass_time` &lt; '${passTimeEnd}'
+	   </if>
+	   <if test="createTimeStart!=null and createTimeStart!=''">
+	      AND b.`create_time` > '${createTimeStart}'
+	   </if>
+	   <if test="createTimeEnd!=null and createTimeEnd!=''">
+	      AND b.`create_time` &lt; '${createTimeEnd}'
+	   </if>
+	</sql>
+	
+	<!-- ////web/////// -->
+</mapper>

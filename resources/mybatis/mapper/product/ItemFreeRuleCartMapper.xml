@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.product.mapper.ItemFreeRuleCartMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jkkp.modules.product.view.VItemFreeRuleCart">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="rule_id" property="ruleId" jdbcType="INTEGER" />
+		<result column="cart_id" property="cartId" jdbcType="INTEGER" />
+		<result column="num" property="num" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR"/>
+	</resultMap>
+
+    <sql id="condition">
+          <if test="ruleId>0">
+              AND a.rule_id=${ruleId}
+          </if>
+    </sql>
+
+	<select id="selectAllFreeRuleCart" resultMap="BaseResultMap">
+		SELECT
+			a.*,
+			b.name
+		FROM
+			item_free_rule_cart a,
+			item_category b
+		WHERE 
+		    a.cart_id = b.id
+		<include refid="condition"></include>
+	</select>
+</mapper>

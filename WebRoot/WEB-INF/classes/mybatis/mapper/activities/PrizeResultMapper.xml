@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.activities.mapper.PrizeResultMapper">
+	
+	<resultMap id="BaseMap" type="com.jkkp.modules.activities.view.VPrizeResult">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="active_id" property="activeId" jdbcType="INTEGER" />
+		<result column="awards_id" property="awardsId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="nickname" property="nickname" jdbcType="VARCHAR" />
+		<result column="is_unclaimed" property="isUnclaimed" jdbcType="INTEGER" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="activeName" property="activeName" jdbcType="VARCHAR" />
+		<result column="prizeName" property="prizeName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="condtion">
+		<if test="phone != null and phone != ''">
+			AND pr.`phone` like '%${phone}%'
+		</if>
+		<if test="prizeName != null and prizeName != ''">
+			AND ad.`prize_name` like '%${prizeName}%'
+		</if>
+		<if test="unclaimed != null and unclaimed != ''">
+			AND pr.`is_unclaimed` = ${unclaimed}
+		</if>
+		<if test="start != null and start != ''">
+			AND a.`start_time` = '${start}'
+		</if>
+		<if test="end != null and end != ''">
+			AND a.`end_time` = '${end}'
+		</if>
+	</sql>
+	
+	
+	<select id="findPage" parameterType="java.util.Map" resultMap="BaseMap">
+		SELECT pr.*,a.`name` AS activeName,ad.`prize_name` AS prizeName FROM prize_result pr 
+		LEFT JOIN awards ad ON ad.id = pr.`awards_id`
+		LEFT JOIN activities a ON a.`id` = pr.`active_id`
+		WHERE 1 = 1
+		<include refid="condtion" />
+		ORDER BY a.`id` DESC
+		limit #{rowStart}, #{limit}
+
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		SELECT COUNT(1) FROM prize_result pr 
+		LEFT JOIN awards ad ON ad.id = pr.`awards_id`
+		LEFT JOIN activities a ON a.`id` = pr.`active_id`
+		WHERE 1 = 1
+		<include refid="condtion" />
+		ORDER BY a.`id` DESC
+
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.crowdfunding.mapper.ActivtyOrderMapper" >
+  <resultMap id="actOrderResult" type="com.jkkp.modules.crowdfunding.model.ActiivityOrder" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="memeber_id" property="memberId" jdbcType="INTEGER" />
+    <result column="order_code" property="orderCode" jdbcType="VARCHAR" />
+    <result column="order_price" property="orderPrice" jdbcType="FLOAT" />
+    <result column="money_state" property="moneyState" jdbcType="INTEGER" />
+    <result column="express_state" property="expressState" jdbcType="INTEGER" />
+    <result column="use_state" property="useState" jdbcType="INTEGER" />
+    <result column="express_id" property="expressId" jdbcType="INTEGER" />
+    <result column="supplier_id" property="supplierId" jdbcType="INTEGER" />
+    <result column="retainage" property="retainage" jdbcType="FLOAT" />
+    <result column="deposit" property="deposit" jdbcType="FLOAT" />
+    <result column="serial_code" property="serialCode" jdbcType="VARCHAR" />
+    <result column="deposit_id" property="depositId" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <resultMap id="actMyOrderResult" type="com.jkkp.modules.crowdfunding.model.ActiivityOrder" >
+    <result column="item_id" property="actItemOrder.itemId" jdbcType="INTEGER" />
+    <result column="sp_id" property="activityItem.spId" jdbcType="INTEGER" />
+    <result column="sp_name" property="supplier.spName" jdbcType="VARCHAR" />
+    <result column="title" property="activityItem.title" jdbcType="VARCHAR" />
+    <result column="deposit" property="activityItem.deposit" jdbcType="INTEGER" />
+    <result column="now_price" property="activityItem.activityPrice" jdbcType="INTEGER" />
+  </resultMap>
+  
+
+  <resultMap type="com.jkkp.modules.crowdfunding.view.VItemOrder" id="webItemOrder">
+     <result column="id" property="id" jdbcType="INTEGER" />
+     <result column="orderCode" property="orderCode" jdbcType="VARCHAR" />
+     <result column="orderPrice" property="orderPrice" jdbcType="FLOAT" />
+     <result column="deposit" property="deposit" jdbcType="INTEGER" />
+     <result column="retainage" property="retainage" jdbcType="INTEGER" />
+     <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+     <result column="moneyState" property="moneyState" jdbcType="INTEGER" />
+     <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+     <result column="title" property="title" jdbcType="VARCHAR" />
+     <result column="refundId" property="refundId" jdbcType="INTEGER" />
+     <result column="expressState" property="expressState" jdbcType="INTEGER" />
+     <result column="spName" property="spName" jdbcType="VARCHAR" />
+     <result column="codeType" property="codeType" jdbcType="INTEGER" />
+     <result column="itemType" property="itemType" jdbcType="INTEGER" />
+     <result column="condePrice" property="condePrice" jdbcType="FLOAT" />
+     
+     <!-- 结算拓展 -->
+     <result column="jsTime" property="jsTime" jdbcType="TIMESTAMP" />
+     <result column="jsId" property="jsId" jdbcType="INTEGER" />
+     
+     <!-- 物流 -->
+     <result column="expressType" property="expressType" jdbcType="INTEGER" />
+     
+     <!-- 付款表   推荐人  推荐人手机号码 -->
+     <result column="recommendName" property="recommendName" jdbcType="VARCHAR" />
+     <result column="recommendMobile" property="recommendMobile" jdbcType="VARCHAR" />
+  </resultMap>
+
+  
+
+    <!-- 建材商后台 -->
+    <!-- 店面发货 -->
+    <update id="updateZcOrderExpressToOne">
+        UPDATE zc_order SET express_type=1,express_state=1 WHERE id=${id}
+    </update>
+    
+    <!-- 物流发货 -->
+    <update id="updateZcOrderExpressToTwo">
+        UPDATE zc_order SET express_type=2,express_state=1 WHERE id=${id}
+    </update>
+    
+    <select id="selectJSTotal" resultType="java.lang.Double">
+	SELECT 
+	 SUM(a.`order_price`) AS total 
+	FROM
+	  zc_order a 
+	WHERE  a.`express_state` = 2 
+	  AND a.`supplier_id` =#{spId}
+    </select>
+    
+    <select id="selectAllSupplierZCOrder" resultMap="webItemOrder" parameterType="java.util.Map">
+    SELECT 
+	  a.id AS id,
+	  a.`order_code` AS orderCode,
+	  a.`order_price` AS orderPrice,
+	  a.`deposit` AS deposit,
+	  a.`retainage` AS retainage,
+	  a.`create_date` AS createDate,
+	  a.`money_state` AS moneyState,
+	  a.`express_state` AS expressState,
+	  a.`express_type` AS expressType,
+	  b.`item_type` AS itemType,
+	  d.`mobile`,
+	  c.`title`,
+	  h.`type` AS codeType,
+	  h.`fee` AS condePrice,
+	  e.`id` AS refundId,
+	  f.`sp_name` AS spName,
+	  g.create_time AS jsTime,
+	  g.id AS jsId ,
+	  i.recommend_name AS recommendName,
+	  i.recommend_mobile AS  recommendMobile
+	FROM
+	  zc_order a 
+	  INNER JOIN zc_item_order b 
+	    ON a.`order_code` = b.`order_code` 
+	  INNER JOIN member d 
+	    ON a.`member_id` = d.`id` 
+	  INNER JOIN supplier f 
+	    ON a.`supplier_id` = f.`id` 
+	  LEFT JOIN item c 
+	    ON c.`id` = b.`item_id` 
+	  LEFT JOIN qr_code h 
+	    ON h.`qr_code` = b.`item_id` 
+	  LEFT JOIN zc_refund_order e 
+	    ON a.id = e.order_id 
+	  LEFT JOIN zc_js g 
+	    ON g.order_id = a.id 
+	  LEFT JOIN 
+	    (SELECT 
+	      * 
+	    FROM
+	      payment_record pr 
+	    WHERE pr.type IN (5, 6, 7) 
+	      AND pr.`status` IN ('1', 'TRADE_SUCCESS', 'SUCCESS')) i 
+	    ON i.`business_id` = a.`id` 
+	WHERE 1 = 1 
+		  <include refid="condition"/>
+		  ORDER BY a.`create_date` DESC 
+		  limit #{rowStart},#{limit}
+    </select>
+  
+     <select id="selectAllSupplierZCOrderCount" parameterType="java.util.Map" resultType="Long">
+       SELECT 
+		  COUNT(1)
+	   FROM
+		  zc_order a 
+		  INNER JOIN zc_item_order b 
+		    ON a.`order_code` = b.`order_code` 
+		  INNER JOIN member d 
+		    ON a.`member_id` = d.`id` 
+		  INNER JOIN supplier f 
+		    ON a.`supplier_id` = f.`id` 
+		  LEFT JOIN item c 
+		    ON c.`id` = b.`item_id` 
+		  LEFT JOIN qr_code h 
+		    ON h.`qr_code` = b.`item_id` 
+		  LEFT JOIN zc_refund_order e 
+		    ON a.id = e.order_id 
+		  LEFT JOIN zc_js g 
+		    ON g.order_id = a.id 
+		  LEFT JOIN 
+		    (SELECT 
+		      * 
+		    FROM
+		      payment_record pr 
+		    WHERE pr.type IN (5, 6, 7) 
+		      AND pr.`status` IN ('1', 'TRADE_SUCCESS', 'SUCCESS')) i 
+		    ON i.`business_id` = a.`id` 
+		WHERE 1 = 1
+		  <include refid="condition"/>
+     </select>
+  
+     <sql id="condition">
+         <if test="spId!=null and spId!=''">
+          AND  a.`supplier_id`=#{spId}
+         </if>
+         <if test="phone!=null and phone!=''">
+             AND d.`mobile`='${phone}'
+         </if>
+     </sql>
+     <!--///////////////web///////////////// -->
+  
+
+     <!-- 确定订单 -->
+     <select id="confirmOrder" parameterType="java.util.Map" resultType="java.util.Map">	
+		 select t.id item_id,t.sp_id,t.title,s.sp_name,t.price,t.cate as categoryId,
+		 <![CDATA[ 
+			 CASE
+			      WHEN ((SELECT count(*) from zc_item_member m where c.item_id=m.item_id)<=c.privilege) THEN c.top_price
+			      WHEN ((SELECT count(*) from zc_item_member m where c.item_id=m.item_id) <=c.num_people) THEN (ROUND(c.top_price -((c.top_price-c.low_price)/(c.num_people-c.privilege)*((SELECT count(*) from zc_item_member m where c.item_id=m.item_id )-c.privilege)),2)) 
+				  WHEN ((SELECT count(*) from zc_item_member m where c.item_id=m.item_id)>c.num_people) THEN c.low_price
+			 END AS now_price
+		 ]]>
+		from zc_item c
+		LEFT JOIN  item t on c.item_id=t.id
+		LEFT JOIN supplier s on t.sp_id=s.id
+		where t.id=${itemId}
+	  </select>
+	  
+     <select id="maxOrderCode" resultType="String">	
+         SELECT MAX(z.order_code) from zc_order z  
+	  </select>	
+     
+     <insert id="insertActiivityOrder" parameterType="com.jkkp.modules.crowdfunding.model.ActiivityOrder">
+		INSERT INTO zc_order(id,order_code,member_id,order_price,money_state,express_state,create_date,express_id,supplier_id,serial_code,remark,deposit,retainage)
+		VALUES(#{id},#{orderCode},#{memberId},#{orderPrice},#{moneyState},#{expressState},now(),#{expressId},#{supplierId},#{serialCode},#{remark},#{deposit},#{retainage})
+	</insert>
+	
+     <insert id="insertActItemOrder" parameterType="com.jkkp.modules.crowdfunding.model.ActItemOrder">
+		insert into zc_item_order(id,item_id,sale_price,end_price,create_date,order_code,item_num,item_type) 
+		values (#{id}, #{itemId}, #{salePrice},#{endPrice},now(),#{orderCode},#{itemNum},#{itemType})
+	</insert>
+	
+     <insert id="insertActItemMember" parameterType="com.jkkp.modules.crowdfunding.model.ItemMember">
+		insert into zc_item_member(id,item_id,member_id,create_time)value(#{id},#{itemId},#{memberId},now())	
+	</insert>
+	
+     <select id="getMyActiivityOrderList" parameterType="java.util.Map" resultType="java.util.Map">	
+            SELECT 
+					m.id,c.id orderId,t.id itemId,c.member_id memberId,t.title,c.money_state moneyState,c.express_state expressState,t.price,z.item_type itemType,a.refund_type,a.status,q.type,q.fee,
+					c.order_code orderCode,s.sp_name spName,z.end_price endPrice,z.item_num num,c.deposit,c.retainage,c.order_price orderPrice,m.refund_proportion refundProportion,m.is_refund isRefund
+			from zc_order c 
+			LEFT JOIN zc_item_order z ON c.order_code=z.order_code 
+			LEFT JOIN item t ON z.item_id=t.id 
+			LEFT JOIN supplier s ON t.sp_id=s.id 
+			LEFT JOIN zc_item m ON z.item_id=m.item_id
+      		LEFT JOIN refund_apply_audit a ON c.id=a.business_id
+      		LEFT JOIN qr_code q ON q.qr_code=z.item_id
+      		where 1=1
+ 			<if test="moneyState!=null and moneyState!=''">
+			   and c.money_state=#{moneyState}
+			</if>
+			<if test="expressState!=null and expressState!=''">
+			   and c.express_state=#{expressState}
+			</if>
+			<if test="memberId!=null and memberId!=''">
+			   and c.member_id=#{memberId}
+			</if>
+			<if test="mState!=null and mState!=''">
+			   and c.money_state in(0,1)
+			</if>
+			ORDER BY c.create_date DESC
+	  </select>
+	  
+      <select id="getMyActiivityList" parameterType="java.util.Map" resultType="java.util.Map">	
+      	     SELECT DISTINCT c.id,t.title,c.item_id,a.end_time endTime, c.top_price topPrice,a.start_time,t.price,
+			 	 <![CDATA[ 
+			 	CASE 
+			 	      WHEN ((SELECT count(*) from zc_item_member m where c.item_id=m.item_id)<=c.privilege) THEN c.top_price
+				      WHEN ((SELECT count(*) from zc_item_member m where c.item_id=m.item_id) <=c.num_people) THEN (ROUND(c.top_price -((c.top_price-c.low_price)/(c.num_people-c.privilege)*((SELECT count(*) from zc_item_member m where c.item_id=m.item_id )-c.privilege)),2)) 
+					  WHEN ((SELECT count(*) from zc_item_member m where c.item_id=m.item_id)>c.num_people) THEN c.low_price
+				END AS nowPrice
+			      ]]>
+			  from zc_item_member m,item t,zc_item c,zc_activity a 
+			  where t.id=m.item_id  and m.item_id=c.item_id and a.id=c.activity_id
+     	      <if test="memberId!=null and memberId!=''"> 
+                 and m.member_id=#{memberId}
+              </if>
+              ORDER BY c.create_date DESC
+	  </select>
+	  
+     <update id="updateOrderStatus" parameterType="com.jkkp.modules.crowdfunding.model.ActiivityOrder">
+	       UPDATE zc_order
+	       <trim prefix="SET" suffixOverrides=",">
+		       <if test="moneyState!=null and moneyState!=''">
+				    money_state=#{moneyState},
+				</if>
+				<if test="expressState!=null and expressState!=''">
+				    express_state=#{expressState},
+				</if>
+				<if test="expressState==0">
+				    express_state=0,
+				</if>
+				<if test="useState!=null and useState!=''">
+				    use_state=#{useState},
+				</if>
+				<if test="retainage!=null and retainage!=''">
+				    retainage=#{retainage},
+				</if>
+				<if test="orderPrice!=null and orderPrice!=''">
+				    order_price=#{orderPrice},
+				</if>
+				<if test="createDate!=null and createDate!=''">
+				    create_date=#{createDate},
+				</if>
+				
+			</trim>
+			where 1=1
+			<if test="id!=null and id!=''">
+			   and id=#{id}
+			</if>
+			<if test="orderCode!=null and orderCode!=''">
+			   and order_code=#{orderCode}
+			</if>
+	 </update>
+	 
+       <insert id="insertQrCode" parameterType="com.jkkp.modules.crowdfunding.model.QrCode">
+		insert into qr_code(id,sp_id,fee,create_time,qr_code)value(#{id},#{spId},#{fee},now(),qrCode)	
+	</insert>
+	
+    <select id="getPayInfoByQrCode"  parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			 q.qr_code, q.sp_id spId,s.sp_name spName,q.fee final_fee,q.type 
+		from qr_code q
+    	LEFT JOIN supplier s on q.sp_id=s.id
+    	where 1=1
+		<if test="qrCode!=null and qrCode!=''">
+		   and q.qr_code=#{qrCode}
+		</if>
+	</select>
+	
+    <select id="getAcitvityOrderByParam"  parameterType="java.util.Map" resultMap="actOrderResult">
+		SELECT * from zc_order z where 1=1
+		<if test="ustate!=null and ustate!=''">
+			 and  z.use_state=#{ustate}
+		</if>
+		<if test="id!=null and id!=''">
+			 and  z.id=#{id}
+		</if>
+		<if test="orderCode!=null and orderCode!=''">
+			 and  z.order_code=#{orderCode}
+		</if>
+		<if test="memberId!=null and memberId!=''">
+			 and  z.member_id=#{memberId}
+		</if>
+	</select>
+	
+    <select id="getOrderInfo"  parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT * from zc_order z,zc_item_order t where z.order_code=t.order_code
+		<if test="id!=null and id!=''">
+		 	and z.id=#{id}
+	 	 </if>
+	</select>
+	
+       <select id="getActivityOrder" parameterType="java.util.Map" resultType="java.util.Map">	
+         select DISTINCT d.item_id,z.order_code,c.activity_id,d.item_num,c.low_price lowPrice,
+				<![CDATA[ 
+				CASE 
+				    WHEN ((SELECT count(*) from zc_item_member m where c.item_id=m.item_id)<=c.privilege) THEN c.top_price
+			        WHEN ((SELECT count(*) from zc_item_member m where c.item_id=m.item_id) <=c.num_people) THEN (ROUND(c.top_price -((c.top_price-c.low_price)/(c.num_people-c.privilege)*((SELECT count(*) from zc_item_member m where c.item_id=m.item_id )-c.privilege)),2)) 
+				    WHEN ((SELECT count(*) from zc_item_member m where c.item_id=m.item_id)>c.num_people) THEN c.low_price
+			    END AS activityPrice
+			    ]]>
+		 from zc_item c,zc_order z,zc_item_order d where d.order_code=z.order_code and d.item_id=c.item_id 
+		 <if test="activityId!=null and activityId!=''">
+			 and m.activityId=#{activityId} 
+		 </if>
+		 <if test="orderCode!=null and orderCode!=''">
+			 and d.order_code=#{orderCode}
+		 </if>
+	  </select>
+	  	
+         <select id="getBillListById" parameterType="java.util.Map" resultType="java.util.Map">	
+               SELECT 
+				CASE when p.type=5 THEN '定金'
+				     when p.type=6 THEN '尾款'
+						 WHEN p.type=7 THEN '定金和尾款'
+				END as type,p.amount,p.create_date,
+				CASE when p.`status`='TRADE_SUCCESS' THEN '交易成功' ELSE '交易失败' 
+				     END as billstatus
+				from payment_record p,zc_order d,zc_item_order t where p.business_id=d.id and d.order_code=t.order_code 
+		 <if test="memberId!=null and memberId!=''">
+			 and d.order_code=#{memberId}
+		 </if>
+	  </select>
+	  
+      <select id="getBillDetailsById" parameterType="java.util.Map" resultType="java.util.Map">	
+	       SELECT s.sp_name spName,p.record_id recordId,
+				CASE WHEN z.pay_type=1 THEN '普通支付'
+						 WHEN z.pay_type=1 THEN '扫码支付'	 
+				END as payType,
+				CASE WHEN p.type=5 THEN '支付众筹定金'
+						 WHEN p.type=6 THEN '支付众筹尾款'
+						 WHEN p.type=7 THEN '支付众筹定金和尾款'
+						 WHEN p.type=8 THEN '扫码众筹定金'
+						 WHEN p.type=9 THEN '支付众筹尾款'
+				END as type,
+				p.create_date createDate,p.serial_code serialCode,z.order_price price
+			from payment_record p,zc_order z ,zc_item_order t,supplier s 
+			WHERE p.business_id=z.id
+			and z.order_code=t.order_code 
+			and s.id=z.supplier_id
+		 <if test="recordId!=null and recordId!=''">
+			 and p.record_id=#{recordId}
+		 </if>
+	  </select>
+         
+    <insert id="insertActivityRefundOrder" parameterType="com.jkkp.modules.crowdfunding.model.ActivityRefundOrder">
+		insert into zc_refund_order(id,order_id,member_id,create_time,remark)value(#{id},#{orderId},#{memberId},now(),#{remark})	
+	</insert>
+	
+   <select id="getDeposit"  parameterType="java.util.Map" resultType="java.util.Map">
+	SELECT * FROM zc_item_order z,qr_code q,zc_order d
+       where z.order_code=d.order_code and q.qr_code=z.item_id
+       <if test="memberId!=null and memberId!=''">
+	     and d.member_id=#{memberId}
+	   </if>
+	    and d.use_state=0
+	    and d.money_state=1
+	    and q.type=1
+	</select>
+	
+     <select id="getCrowdOrderDeail" parameterType="map" resultType="map">	
+       	SELECT  e.title,d.item_id itemId,
+       	        CASE WHEN d.item_type=1 THEN s.id 
+             		 WHEN d.item_type=2 THEN q.sp_id 
+        		END AS spId,
+				CASE WHEN d.item_type=1 THEN s.sp_name 
+             		 WHEN d.item_type=2 THEN (SELECT sp_name from supplier r where r.id=spId)
+        		END AS spName,
+       			d.end_price endPrice,d.item_num itemNum,d.item_type itemType,z.deposit,z.retainage,z.member_id memberId,a.status,a.refund_type,q.fee,q.type,
+			 	t.top_price salePrice,z.order_code orderCode,z.money_state moneyState,z.express_state expressState,r.expressCode,r.expressName,e.price,t.is_refund isRefund,t.refund_proportion refundProportion,e.cate, 
+       		 	<![CDATA[ 
+       		 	  CASE 
+       		 	      WHEN d.item_type=2 THEN COALESCE(z.deposit, 1)
+       		 	      WHEN ((SELECT count(*) from zc_item_member m where t.item_id=m.item_id)<=t.privilege) THEN t.top_price
+       		 	      WHEN ((SELECT count(*) from zc_item_member m where t.item_id=m.item_id) <=t.num_people)THEN (ROUND(t.top_price -((t.top_price-t.low_price)/(t.num_people-t.privilege)*((SELECT count(*) from zc_item_member m where t.item_id=m.item_id )-t.privilege)),2))
+					  WHEN ((SELECT count(*) from zc_item_member m where t.item_id=m.item_id)>t.num_people) THEN t.low_price
+			      END AS activityPrice,
+		   		]]>
+		   		(SELECT COUNT(*) from zc_item_member m where m.item_id=t.item_id) numPeople
+		from zc_order z
+		LEFT JOIN zc_item_order d on z.order_code=d.order_code
+		LEFT JOIN zc_item t on d.item_id=t.item_id
+		LEFT JOIN item e on d.item_id=e.id
+		LEFT JOIN supplier s on e.sp_id=s.id
+		LEFT JOIN zc_express r on z.express_id=r.id
+		LEFT JOIN refund_apply_audit a ON z.id=a.business_id
+		LEFT JOIN qr_code q ON q.qr_code=d.item_id
+		where 1=1
+	 <if test="orderId!=null and orderId!=''">
+		 and z.id=#{orderId}
+	 </if>
+  </select>
+  
+   <select id="getAcitivityJoinMember" parameterType="java.util.Map" resultType="java.util.Map">	
+         SELECT 
+         		DISTINCT m.item_id,m.member_id 
+         from zc_order z,zc_item_order d ,zc_item_member m 
+  		 where z.order_code=d.order_code AND z.member_id=m.member_id and d.item_id=m.item_id 
+         <if test="id!=null and id!=''">
+		 	and z.id=#{id}
+	 	 </if>
+ </select>
+	
+</mapper>

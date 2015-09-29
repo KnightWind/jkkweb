@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierLabelMapper">
+	<resultMap id="SupplierLabel_map" type="com.jkkp.modules.supplier.model.SupplierLabel">
+		<id column="id" 		property="id" jdbcType="INTEGER" />
+		<result column="sp_id" 	property="spId" jdbcType="INTEGER" />
+		<result column="lid" 	property="lid" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap id="SupplierLabel_vmap" type="com.jkkp.modules.supplier.view.VSupplierLabel" extends="SupplierLabel_map">
+		
+	</resultMap>
+	
+	<sql id="tbl">supplier_label</sql><!-- ysc -->
+	<sql id="temp_tbl">
+		select
+		ll.lname,
+		aa.* from <include refid="tbl" /> aa
+		left join label ll on ll.id=aa.lid
+	</sql>
+	<select id="getList" resultMap="SupplierLabel_vmap" parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getListBySpId" resultMap="SupplierLabel_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where sp_id=#{sp_id}
+	</select>
+	<select id="getPageList" resultMap="SupplierLabel_vmap" parameterType="com.jkkp.utils.Pager">
+		select t.*	from (	<include refid="temp_tbl" />) t	where 1=1 ${value}	limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="SupplierLabel_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from	<include refid="tbl" />	t where 1=1 ${value}
+	</delete><!-- ysc -->
+</mapper>

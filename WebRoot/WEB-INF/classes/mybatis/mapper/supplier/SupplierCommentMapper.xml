@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierCommentMapper">
+	<resultMap id="SupplierComment_map" type="com.jkkp.modules.supplier.model.SupplierComment">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="close_time" property="closeTime" jdbcType="TIMESTAMP" />
+		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="level" property="level" jdbcType="FLOAT" />
+		<result column="uname" property="uname" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="SupplierComment_vmap" type="com.jkkp.modules.supplier.view.VSupplierComment"  extends="SupplierComment_map">
+		
+	</resultMap>
+	
+	<sql id="conntion">
+		<if test="uname!=null and uname!=''">
+			and sc.uname like '%${uname}%'
+		</if>
+		<if test="createBegin!=null and createBegin!=''">
+			and sc.create_time >='${createBegin}'
+		</if>
+		<if test="createEnd!=null and createEnd!=''">
+			and sc.create_time &lt;='${createEnd}'
+		</if>
+		<if test="state == 0">
+			and sc.status = 0
+		</if>
+		<if test="state != null and state != ''">
+			<if test="state != -1">
+				and sc.status = ${state}
+			</if>
+		</if>
+	</sql>
+	
+	
+	<!-- web后台 查看指定sp_id管理商家评论列表 =========================================== -->
+	<select id="findPage" resultMap="SupplierComment_vmap" parameterType="java.util.Map" >
+		
+		select
+			sc.*
+		from
+			supplier_comment sc
+		where
+			sc.sp_id = ${sId}
+			<include refid="conntion"></include>
+		order by sc.create_time desc
+		 limit ${rowStart}, ${limit}
+	
+	</select>
+	
+	<select id="countPage" resultType="long" parameterType="java.util.Map" >
+	
+		select
+			count(1)
+		from
+			supplier_comment sc
+		where
+			sc.sp_id = ${sId}
+			<include refid="conntion"></include>
+		order by sc.create_time desc
+	
+	</select>
+	<!-- ===========================================-->
+	
+	<!-- ysc=========================================== -->
+	<sql id="tbl">supplier_comment</sql>
+	<sql id="temp_tbl">
+		select	
+		aa.* from <include refid="tbl" /> aa
+	</sql>
+	<select id="getList" resultMap="SupplierComment_vmap" parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="SupplierComment_vmap" parameterType="com.jkkp.utils.Pager">
+		select t.*	from (	<include refid="temp_tbl" />) t	where 1=1 ${value}	limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="SupplierComment_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from	<include refid="tbl" />	t where 1=1 ${value}
+	</delete>
+	<!-- ysc=========================================== -->
+</mapper>

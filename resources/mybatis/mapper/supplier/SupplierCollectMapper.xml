@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierCollectMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.supplier.model.SupplierCollect">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="TINYINT" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	<resultMap type="com.jkkp.appapi.modules.mapper.VSupplierBnjn" id="VISupplierMapp">
+		<result column="sname" property="sname" jdbcType="VARCHAR" />
+		<result column="available" property="available" jdbcType="VARCHAR" />
+		<result column="pingfen" property="pingfen" jdbcType="VARCHAR" />
+		<result column="yingdan" property="yingdan" jdbcType="VARCHAR" />
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="baoflag" property="baoflag" jdbcType="VARCHAR" />
+		<result column="jinflag" property="jinflag" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="querySupCollByUid"  parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+	SELECT
+	sc.*
+	FROM
+	supplier_collect sc
+	LEFT JOIN supplier s ON sc.sp_id = s.id 
+	WHERE  s.type=1 and 1=1
+	<if test="memberId!=null and memberId!=''">
+		and sc.uid=${memberId}
+	</if>
+	</select>
+	<select id="queryShouCan" parameterType="java.util.Map" resultMap="VISupplierMapp">
+		SELECT sp_name as sname,available as available ,estimate_average  as pingfen ,(SELECT  COUNT(*) from engineerings where sp_id=s.id) as  yingdan, id as id from supplier s  where id in (SELECT sp_id from supplier_collect s where uid=${uid} and sp_id in (SELECT id FROM supplier where type=5))
+		
+		
+		<!-- 排除同一个监理预约单已选的监理 -->
+		<if test="jlAppointmentId!=null and jlAppointmentId!=''">
+			 and 
+     	     not exists(select * from jlappointment_push push where push.aid =#{jlAppointmentId} and push.sp_id=s.id)
+		</if>
+		<!-- 排除同一个工程单已选的监理 -->
+		<if test="gcdId!=null and gcdId!=''">
+		 and
+		 not exists(select * from (select push.sp_id from jlappointment ja left join jlappointment_push push on ja.id=push.aid and ja.gcd_id=#{gcdId}) xx where xx.sp_id=s.id )
+		</if>
+		
+		
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+	<select id="querySupCollByUidSpid"  parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+	select * from supplier_collect  t where 1=1
+	<if test="Uid!=null and Uid!=''">
+		and t.uid=${Uid}
+	</if>
+	<if test="Spid!=null and Spid!=''">
+		and t.sp_id=${Spid}
+	</if>
+	</select>
+		<select id="querySupplierListDetial" parameterType="java.util.Map" resultMap="VISupplierMapp">
+		SELECT
+		supplier_collect.sp_id as id,
+		supplier.sp_name as sname,
+		supplier.address as address,
+		supplier.estimate_average as pingfen,
+		supplier.jkb_flag as baoflag,
+        (SELECT l.level_money from supplier_level l,supplier s where s.level_id=l.id and s.id=supplier.id) as jinflag,
+		(select count(1) from engineerings  where engineerings.sp_id  = supplier.id ) as yingdan
+		FROM
+		supplier
+		INNER JOIN supplier_collect ON supplier_collect.sp_id = supplier.id
+		WHERE 1=1  
+		<if test="uid!=null and uid!=''">
+		and supplier_collect.uid=${uid}
+		</if>
+		<if test="type!=null and type!=''">
+		and supplier.type=${type}
+		</if>
+		GROUP BY supplier_collect.sp_id
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>	
+	</select>
+	
+	
+	
+	
+	<sql id="tbl">supplier_collect</sql>
+	<sql id="temp_tbl">
+		select	aa.* from <include refid="tbl" />	aa
+	</sql>
+</mapper>

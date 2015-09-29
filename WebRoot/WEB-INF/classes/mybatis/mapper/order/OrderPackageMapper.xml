@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.order.mapper.OrderPackageMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.order.view.VOrderPackage">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="order_id" property="orderId" jdbcType="INTEGER" />
+		<result column="package_id" property="packageId" jdbcType="INTEGER" />
+		<result column="package_price" property="packagePrice"
+			jdbcType="DECIMAL" />
+		<result column="yanmi_price" property="yanmiPrice" jdbcType="DECIMAL" />
+		<result column="yanmi" property="yanmi" jdbcType="INTEGER" />
+		<result column="is_return" property="isReturn" jdbcType="TINYINT" />
+
+		<result column="oid" property="oid" jdbcType="INTEGER" />
+		<result column="packageName" property="packageName" jdbcType="VARCHAR" />
+		<result column="packagePrice" property="packagePrice" jdbcType="DECIMAL" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="itemPrice" property="itemPrice" jdbcType="DECIMAL" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="selectAllUserOrderPackage" resultMap="BaseResultMap">
+		SELECT
+		b.`id` as oid,
+		c.`package_name` AS packageName,
+		a.`package_price` AS packagePrice,
+		d.`status` AS status,
+		d.`create_time` AS createTime
+		FROM
+		order_package a,
+		order_id b,
+		package c,
+		order_ship d
+		WHERE b.`id` = a.`order_id`
+		AND c.`id` = a.`package_id`
+		AND b.`id` = d.`main_id`
+		AND b.`uid` = #{id}
+	</select>
+
+	<select id="selectAllUserOrderPackageItem" resultMap="BaseResultMap">
+		SELECT
+			b.`id` AS oid,
+			c.`package_name` AS packageName,
+			e.`title` AS title,
+			a.`item_price` AS itemPrice,
+			d.`status` AS status,
+			d.`create_time` AS createTime
+		FROM
+			order_package_item a,
+			order_id b,
+			package c,
+			order_ship d ,
+			item e
+		WHERE 
+		    b.`id` = a.`order_id`
+			AND c.`id` = a.`package_id`
+			AND b.`id` = d.`main_id`
+			AND e.`id`=a.`item_id`
+			AND b.`uid`=#{id}
+	</select>
+</mapper>

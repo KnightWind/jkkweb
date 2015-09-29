@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierPayMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.supplier.model.SupplierPay">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="num" property="num" jdbcType="INTEGER" />
+		<result column="left_num" property="leftNum" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="first_pay_time" property="firstPayTime"
+			jdbcType="TIMESTAMP" />
+		<result column="last_pay_time" property="lastPayTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<resultMap type="com.jkkp.modules.supplier.view.VSupplierPay"
+		id="VSupplierPayMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="num" property="num" jdbcType="INTEGER" />
+		<result column="left_num" property="leftNum" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="first_pay_time" property="firstPayTime"
+			jdbcType="TIMESTAMP" />
+		<result column="last_pay_time" property="lastPayTime" jdbcType="TIMESTAMP" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+		<result column="contactUser" property="contactUser" jdbcType="VARCHAR" />
+		<result column="contactMobile" property="contactMobile"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="condition">
+		<if test="supplierName!=null and supplierName!=''">
+			and b.sp_name like '%${supplierName}%'
+		</if>
+		<if test="contactUser!=null and contactUser!=''">
+			and b.contact_user like '%${contactUser}%'
+		</if>
+		<if test="city!=null and city!=''">
+			AND c.city_domain='${city}'
+		</if>
+        <if test="begin!=null and begin !=''">
+          AND a.last_pay_time >'${begin}'
+        </if>
+        <if test="end!=null and end !=''">
+          AND a.last_pay_time &lt;'${end}'
+        </if>
+	</sql>
+
+	<select id="findPage" parameterType="java.util.Map" resultMap="VSupplierPayMap">
+		SELECT
+		a.*,
+		b.sp_name AS spName,
+		b.contact_user AS contactUser,
+		b.contact_mobile AS contactMobile,
+		b.bank_city AS bankCity,
+		b.bank_province AS bankProvince,
+		c.city
+		FROM
+		supplier_pay a,
+		supplier b,
+		area_domain c
+		WHERE a.sp_id = b.id AND
+		c.city_domain=b.city_domain		
+		<include refid="condition" />
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		select count(1) FROM supplier_pay a,supplier b where a.sp_id=b.id
+		<include refid="condition" />
+	</select>
+</mapper>

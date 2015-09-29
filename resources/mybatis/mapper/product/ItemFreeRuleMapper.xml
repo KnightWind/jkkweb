@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.product.mapper.ItemFreeRuleMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.product.model.ItemFreeRule" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="qualification" property="qualification" jdbcType="TINYINT" />
+    <result column="sp_num" property="spNum" jdbcType="INTEGER" />
+    <result column="item_num" property="itemNum" jdbcType="INTEGER" />
+    <result column="cate_id" property="cateId" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+</mapper>

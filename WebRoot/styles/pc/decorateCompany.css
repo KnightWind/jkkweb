@@ -1,0 +1,32 @@
+.decorateCompany{width:1000px;margin: 0 auto;}
+.companyList{width: 620px;float: left;margin-bottom: 50px;}
+.company{ width:562px; border:1px solid #e2e2e2;padding:28px;margin-bottom: 8px;}
+.company i{display: block;padding: 19px;border:1px solid #e2e2e2;width: 91px;float: left;margin-right: 16px;}
+.company i img{width:94px; height:94px; display:block;}
+.company p{float: left; width:410px;}
+.company p a.companyName{font-size: 22px;font-weight: normal;display: block;margin-bottom: 17px;}
+.company p span{margin-bottom: 21px;display: block;}
+.company p span strong{font-weight: normal;display: inline-block;margin-right: 10px;}
+.company p span b{font-weight: normal;display: inline-block;width: 18px;height: 18px;text-align: center;line-height: 18px;color: #fff;margin-right: 5px;}
+.company p span b.kin{background-color:#ddbe72;border:1px solid #e3c98b;}
+.company p span b.safe{background-color:#8db5cf;border:1px solid #a1c2d7;}
+.company p strong.locall{display: block;color: #999;font-size: 13px;font-weight: normal;margin-bottom: 21px;background: url(../images/locall_small.png) no-repeat 0 center;padding-left: 15px;}
+.company p strong.call{display: block;font-size: 14px;background: url(../../images/pc/call_small.png) no-repeat 0 center;height: 20px;line-height: 20px;padding-left: 25px;font-weight: normal;}
+
+.decorateCompany .publishNeed{float: right;}
+.decorateCompany .publishNeedForm{width: 292px;border:1px solid #c0c0c0;padding: 24px 28px;background-color: #fff;}
+.decorateCompany .publishNeedForm input{width: 280px;height: 40px;padding-left: 11px;display: block;margin-bottom: 16px;}
+.decorateCompany .publishNeedForm select.half{margin-bottom: 16px;height: 40px;width:135px;}
+.decorateCompany .publishNeedForm select.first{margin-right: 18px;}
+.decorateCompany .publishNeedForm select.all{width: 295px;height: 40px;}
+.decorateCompany .publishNeedForm select{padding-left: 8px;}
+.decorateCompany .downloadContent{width: 1000px;margin: 0 auto;padding-bottom: 55px;}
+.decorateCompany .downloadContent h2{font-size: 36px;font-weight: normal;text-align: center;padding: 40px 0;}
+.decorateCompany .downloadContent p{float: left;width: 237px;border:1px solid #999;height: 250px;margin-right: 80px;text-align: center;}
+.decorateCompany .downloadContent p:last-child{margin: 0;}
+.decorateCompany .downloadContent p img{text-align: center;display: block;}
+.decorateCompany .downloadContent p span{font-size: 24px;}
+.decorateCompany .downloadContent  .anzhuo img{margin: 42px auto;}
+.decorateCompany .downloadContent  .pingguo img{margin: 38px auto 44px;}
+.decorateCompany .downloadContent  .erweima img{margin: 28px auto;}
+.decorateCompany .publishNeedForm a{display: block; height: 60px;width: 295px;background-color: #f25618;color: #fff;line-height: 60px;text-align: center;margin-top: 17px;font-size: 18px;}

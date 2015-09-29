@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.design.mapper.PackageMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.design.model.Package" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="package_name" property="packageName" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="logo" property="logo" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="yanmi" property="yanmi" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="stock" property="stock" jdbcType="INTEGER" />
+    <result column="sale_num" property="saleNum" jdbcType="INTEGER" />
+    <result column="sp_id" property="spId" jdbcType="INTEGER" />
+    <result column="follow_num" property="followNum" jdbcType="INTEGER" />
+    <result column="detail" property="detail" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  
+ <!--  <resultMap id="viewResult" type="com.jkkp.modules.product.view.VItemSpecial" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="discount" property="discount" jdbcType="DECIMAL" />
+    <result column="start_date" property="startDate" jdbcType="DATE" />
+    <result column="end_date" property="endDate" jdbcType="DATE" />
+    <result column="limit_num" property="limitNum" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+    <result column="sale_num" property="saleNum" jdbcType="INTEGER" />
+    <result column="product_id" property="productId" jdbcType="INTEGER" />
+    <result column="product_name" property="productName" jdbcType="VARCHAR" />
+    <result column="stock" property="stock" jdbcType="INTEGER" />
+    <result column="product_price" property="productPrice" jdbcType="DECIMAL" />
+  </resultMap> -->
+  
+  <sql id="condition">
+  	<if test="area_domain!=null and area_domain !=''">
+		and city_domain = '${area_domain}'
+  	</if>
+  	<if test="id!=null and id !=''">
+		and id = ${id}
+  	</if>
+  	<if test="package_name!=null and package_name !=''">
+		and package_name like '%${package_name}%' 
+  	</if>
+  	<if test="priceStart!=null and priceStart !=''">
+		and price &gt;= ${priceStart}
+  	</if>
+  	<if test="priceEnd!=null and priceEnd !=''">
+		and price &lt;= ${priceEnd}
+  	</if>
+  	<if test="type!=null and type !=''">
+  		and type = ${type}
+  	</if>
+  	<if test="status!=null and status !=''">
+  		and status = ${status}
+  	</if>
+  </sql>
+  
+  <select id="findPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select * from package where 1=1
+  		<include refid="condition" />
+  		limit ${rowStart}, ${limit}
+  </select>
+  
+  <select id="countPage" parameterType="java.util.Map" resultType="long">
+  	select count(1) from 
+  		package where 1=1
+  		<include refid="condition" />
+  </select>
+</mapper>

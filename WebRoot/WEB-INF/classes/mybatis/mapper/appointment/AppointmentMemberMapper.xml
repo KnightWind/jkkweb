@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.appointment.mapper.AppointmentMemberMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.appointment.model.AppointmentMember" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="aid" property="aid" jdbcType="INTEGER" />
+    <result column="mid" property="mid" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+   <resultMap id="BaseResultMapV1" type="com.jkkp.appapi.modules.mapper.VIAppointmentMember" >
+    <id column="appointmentId" property="appointmentId" jdbcType="VARCHAR" />
+    <result column="appointmentStatus" property="appointmentStatus" jdbcType="VARCHAR" />
+    <result column="appointmentCreateTime" property="appointmentCreateTime" jdbcType="VARCHAR" />
+    <result column="appointmentCommunity" property="appointmentCommunity" jdbcType="VARCHAR" />
+    <result column="suppName" property="suppName" jdbcType="VARCHAR" />
+
+    <result column="engid" property="engid" jdbcType="INTEGER" />
+    <result column="jlappid" property="jlappid" jdbcType="INTEGER" />
+    <result column="jlappstatus" property="jlappstatus" jdbcType="INTEGER" />
+    <result column="jlid" property="jlid" jdbcType="INTEGER" />
+    <result column="jlname" property="jlname" jdbcType="VARCHAR" />
+    <result column="engstage" property="engstage" jdbcType="INTEGER" />
+    <result column="distype" property="distype" jdbcType="INTEGER" />
+  </resultMap>
+
+	<select id="qryMemberDetailByMid" parameterType="java.util.Map"
+		resultMap="BaseResultMapV1">
+		SELECT * FROM
+		( 
+		 select t1.id as appointmentId,t1.create_time as appointmentCreateTime,t1.status as appointmentStatus,t1.type as apporview
+		           ,t1.community as appointmentCommunity, tt.sp_name as suppName,"" as engid,"" as jlappid,"" as jlappstatus,"" as jlid,
+		           "" as jlname,"" as engstage,t1.type as distype
+		   from appointment_member t,appointment t1 LEFT JOIN (select ts.sp_name,ta.aid from supplier ts,appointment_push ta where ts.id=ta.sp_id and ta.status=50 ) tt
+		     on tt.aid=t1.id
+		  where t.aid=t1.id and NOT EXISTS (SELECT 1 FROM engineerings es WHERE es.aid=t.aid) 
+  		<if test="memberId!=null and memberId!=''">
+			and t.mid=${memberId}
+		</if>
+		)temp1
+		UNION
+		(
+		
+		  select t1.id as appointmentId,t1.create_time as appointmentCreateTime,t1.status as appointmentStatus,t1.type as apporview
+		           ,t1.community as appointmentCommunity, tt.sp_name as suppName,eng.engid as engid,eng.jlappid as jlappid,
+		           eng.jlappstatus as jlappstatus,eng.jlid as jlid,eng.jlname as jlname,eng.engstage as engstage
+		           ,4 as distype
+		   from appointment_member t 
+		     LEFT JOIN(
+		     SELECT
+		     engineerings.id as engid,engineerings.jl_id as jlid,supplier.sp_name as jlname,jlappointment.`status` as jlappstatus,jlappointment.id as jlappid,engineerings.aid as aid,engineerings.zx_stage as engstage
+		     FROM
+		     engineerings
+		     LEFT JOIN  supplier ON supplier.id = engineerings.jl_id
+		     LEFT JOIN jlappointment ON jlappointment.gcd_id=engineerings.id
+		     WHERE 1=1 
+		     )eng ON t.aid=eng.aid,
+		     appointment t1 LEFT JOIN (select ts.sp_name,ta.aid from supplier ts,appointment_push ta where ts.id=ta.sp_id and ta.status=50 ) tt
+		     on tt.aid=t1.id
+		  where t.aid=t1.id  and t.aid IN (SELECT engineerings.aid FROM engineerings WHERE 1= 1) 
+  		<if test="memberId!=null and memberId!=''">
+			and t.mid=${memberId}
+		</if>
+		)
+		ORDER BY appointmentId DESC 
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+
+	</select>
+	
+	
+	<select id="qryMidByAid" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select *
+		from 
+		appointment_member where 1=1
+		<if test="aid!=null and aid!=''">
+			and appointment_member.aid=${aid}
+		</if>
+	</select>
+	
+</mapper>

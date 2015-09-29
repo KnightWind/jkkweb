@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jkkp.modules.system.mapper.AdminMenuMapper">
+	<resultMap type="com.jkkp.modules.system.model.AdminMenu" id="AdminMenu">
+		<result column="ID" property="id" />
+		<result column="PID" property="pid" />
+		<result column="NAME" property="name" />
+		<result column="LINK" property="link" />
+		<result column="ORDERBY" property="orderby" />
+		<result column="ICON" property="icon" />
+		<result column="MENU_TYPE" property="menuType" />
+	</resultMap>
+	
+		<resultMap type="java.util.Map" id="AdminMenuInter">
+		<result column="menuId" property="menuId" />
+		<result column="menuPid" property="menuPid" />
+		<result column="menuName" property="menuName" />
+		<result column="menuLink" property="menuLink" />
+		<result column="menuOrderBy" property="menuOrderBy" />
+		<result column="menuIcon" property="menuIcon" />
+	</resultMap>
+
+	<select id="qryMenuByUser" parameterType="java.util.Map"
+		resultMap="AdminMenuInter">
+	select  mt.id as menuId,
+	 mt.pid as menuPid,
+	 mt.name as menuName,
+	 mt.link as menuLink,
+	 mt.orderby as menuOrderBy,
+	 mt.icon as menuIcon  from admin_menu mt where EXISTS(
+  SELECT t.id,t.pid from admin_menu t where EXISTS
+	(SELECT 1 from
+	role_menu t1
+	where (t.id=t1.menuid ) and EXISTS
+	(select 1 from admin t2
+	where
+	t1.roleid=t2.rid 
+		<if test="username!=null and username !=''">
+			and t2.username='${username}'
+		</if>
+		)  )and  t.id=mt.id or t.pid=mt.id ) order by mt.pid,mt.id
+		
+		
+	</select>
+	
+	<select id="findMaxOrderby" resultType="int">
+		select ifnull((select max(orderby) from admin_menu where pid = #{parentId}), 0)
+	</select>
+	
+	<select id="findByAdmin" parameterType="java.util.Map" resultMap="AdminMenu">
+  		select t3.* from admin t1, role_menu t2, admin_menu t3 where t1.rid = t2.roleid
+  			and t2.menuid = t3.id and t1.username = '${username}' and t3.pid = ${parentId} 
+  			order by t3.orderby
+  	</select>
+  	
+  	<select id="findBannerByAdmin" resultMap="AdminMenu">
+  		select * from admin_menu t where pid = 0 and exists (
+  			select 1 from admin t1, role_menu t2, admin_menu t3 where t1.rid = t2.roleid
+  			and t2.menuid = t3.id and t1.username = '${username}' and t3.pid = t.id 
+  		) order by orderby
+  	</select>
+  	
+  	<select id="findByPid" resultMap="AdminMenu">
+		select * from admin_menu t where pid = #{parentId} order by orderby
+	</select>
+</mapper>

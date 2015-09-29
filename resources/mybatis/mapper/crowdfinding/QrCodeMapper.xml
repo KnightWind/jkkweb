@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.crowdfunding.mapper.QrCodeMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.crowdfunding.model.QrCode">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="fee" property="fee" jdbcType="DOUBLE" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="qr_code" property="qrCode" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="activity_name" property="activityName" jdbcType="VARCHAR" />
+		<result column="product_info" property="productInfo" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap type="com.jkkp.modules.crowdfunding.view.VQrCode" id="webResultMap" extends="BaseResultMap">
+	     <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="selectAllQrCode" resultMap="webResultMap" parameterType="java.util.Map">
+	SELECT 
+	  a.*,
+	  d.`mobile`
+	FROM
+	  qr_code a 
+	  INNER JOIN zc_item_order b 
+	  ON a.`qr_code`=b.`item_id`
+	  INNER JOIN zc_order c
+	  ON c.`order_code`=b.`order_code`
+	  INNER JOIN member d
+	  ON d.`id`=c.`member_id`
+	WHERE 1 = 1 
+	AND b.`item_type`=2
+	AND c.`money_state`!=0
+	<include refid="condition"/>
+	ORDER BY a.`create_date` DESC 
+	limit #{rowStart},#{limit}
+	</select>
+	
+	<select id="selectAllQrCodeCount" parameterType="java.util.Map" resultType="Long">
+		 SELECT 
+		  COUNT(1)
+		FROM
+		  qr_code a 
+		  INNER JOIN zc_item_order b 
+		  ON a.`qr_code`=b.`item_id`
+		  INNER JOIN zc_order c
+		  ON c.`order_code`=b.`order_code`
+		  INNER JOIN member d
+		  ON d.`id`=c.`member_id`
+		WHERE 1 = 1 
+		AND b.`item_type`=2
+	    AND c.`money_state`!=0
+	  <include refid="condition"/>
+	</select>
+	
+	<sql id="condition">
+		<if test="spId!=null and spId!=''">
+		   AND a.`sp_id`=${spId}
+		</if>
+	</sql>
+	
+	<update id="updateProductInfo">
+	    UPDATE qr_code a SET a.`product_info`='${productInfo}' WHERE a.`id`=${id}
+	</update>
+	
+	<update id="updateAddress">
+	    UPDATE qr_code a SET a.`address`='${address}' WHERE a.`id`=${id}
+	</update>
+	
+	<update id="updateRemark">
+	   UPDATE qr_code a SET a.`remark`='${remark}' WHERE a.`id`=${id}
+	</update>
+	
+	
+</mapper>

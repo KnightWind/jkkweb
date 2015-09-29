@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.crowdfunding.mapper.ItemCategoryInfoMapper" >
+  <resultMap id="CrowdFundingResult" type="com.jkkp.modules.crowdfunding.model.ItemCategoryInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="seq" property="seq" jdbcType="INTEGER" />
+    <result column="place" property="place" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="admin_id" property="adminId" jdbcType="INTEGER" />
+    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+    
+  </resultMap>
+  
+   <resultMap id="bannerResult" type="com.jkkp.modules.crowdfunding.model.ActivityBanner" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="seq" property="seq" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createDate" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- web后台 -->
+  <resultMap type="com.jkkp.modules.crowdfunding.view.VItemCategoryInfo" id="webItemCategoryInfo" extends="CrowdFundingResult">
+      <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  
+    <select id="getBannerByNum" parameterType="int" resultMap="bannerResult">
+  	select * from zc_itemcategory_info order by create_time DESC
+  	<if test="_parameter!=null and _parameter!=''">
+			LIMIT 0,${_parameter}
+	</if>
+  </select>
+  
+  <select id="selectAllItemCategoryItems" resultMap="webItemCategoryInfo">
+   SELECT 
+	  a.*,
+	  b.`name` 
+   FROM
+	  zc_itemcategory_info a 
+	  INNER JOIN item_category b 
+	    ON a.`category_id` = b.`id`
+   ORDER BY a.`seq`
+  </select>
+  
+  <delete id="deleteOneZCItemCategory">
+     DELETE FROM zc_itemcategory_info  WHERE id=${id}
+  </delete>
+  
+</mapper>

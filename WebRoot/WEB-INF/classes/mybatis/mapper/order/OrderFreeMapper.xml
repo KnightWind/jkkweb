@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.order.mapper.OrderFreeMapper">
+	<resultMap type="com.jkkp.modules.order.view.VOrderFree" id="VOrderFreeMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="item_id" property="itemId" jdbcType="INTEGER" />
+		<result column="sp_address" property="spAddress" jdbcType="VARCHAR" />
+		<result column="sp_mobile" property="spMobile" jdbcType="VARCHAR" />
+		<result column="get_time" property="getTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="nickname" property="nickName" jdbcType="VARCHAR" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="selectUserOrderFree" resultMap="VOrderFreeMap">
+		SELECT
+		a.*,b.`title` AS title
+		FROM
+		order_free a,
+		item b
+		WHERE a.`item_id` = b.`id`
+		AND a.`uid` = #{id}
+	</select>
+
+	<sql id="condition">
+		<if test="id!=null and id!=''">
+			AND a.id=${id}
+		</if>
+		<if test="status!=null and status!=''">
+			AND a.status=${status}
+		</if>
+		<if test="nickName!=null and nickName!=''">
+			AND b.nickname LIKE '%${nickName}%'
+		</if>
+		<if test="createTimeBegin!=null and createTimeBegin!=''">
+			AND a.create_time >'${createTimeBegin}'
+		</if>
+		<if test="createTimeEnd!=null and createTimeEnd!=''">
+			AND a.create_time &lt;'${createTimeEnd}'
+		</if>
+		
+	</sql>
+
+	<select id="findPage" resultMap="VOrderFreeMap">
+		SELECT
+		a.*,
+		b.nickname AS nickName,
+		c.title AS title,
+		d.sp_name AS spName
+		FROM
+		order_free a,
+		member b,
+		item c,
+		supplier d
+		WHERE a.uid = b.id
+		AND c.id
+		= a.item_id
+		AND c.sp_id = d.id
+		<include refid="condition"></include>
+		order by a.create_time desc
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		SELECT count(1)
+		FROM
+		order_free a,
+		member b,
+		item c,
+		supplier d
+		WHERE a.uid
+		= b.id
+		AND c.id = a.item_id
+		AND c.sp_id = d.id
+		<include refid="condition"></include>
+	</select>
+
+
+	<select id="findOrderFreeBySpId" resultMap="VOrderFreeMap">
+		SELECT
+		a.*,
+		b.nickname AS nickName,
+		c.title AS title,
+		d.sp_name AS spName
+		FROM
+		order_free a,
+		member b,
+		item c,
+		supplier d
+		WHERE a.uid = b.id
+		AND c.id
+		= a.item_id
+		AND c.sp_id = d.id
+		<include refid="condition"></include>
+		<if test="sId!=null and sId!=''">
+			AND c.sp_id=${sId}
+		</if>
+		order by a.create_time desc
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="findOrderFreeBySpIdCount" parameterType="java.util.Map" resultType="long">
+		SELECT count(1)
+		FROM
+		order_free a,
+		member b,
+		item c,
+		supplier d
+		WHERE a.uid
+		= b.id
+		AND c.id = a.item_id
+		AND c.sp_id = d.id
+		<include refid="condition"></include>
+		<if test="sId!=null and sId!=''">
+			AND c.sp_id=${sId}
+		</if>
+	</select>
+
+</mapper>

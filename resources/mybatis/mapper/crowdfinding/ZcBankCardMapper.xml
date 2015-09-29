@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.crowdfunding.mapper.ZcBankCardMapper">
+
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.crowdfunding.model.ZcBankCard">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="card_no" property="cardNo" jdbcType="VARCHAR" />
+		<result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+		<result column="region_id" property="regionId" jdbcType="INTEGER" />
+		<result column="pay_pwd" property="payPwd" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<resultMap type="com.jkkp.modules.crowdfunding.view.VZcBankCard" id="VBaseResultMap" extends="BaseResultMap">
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+		<result column="regionname" property="regionname" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 建材后台删除银行卡重新绑定 -->
+	<delete id="deleteSupplierBankCard" parameterType="Integer">
+	 DELETE FROM zc_bank_card WHERE sp_id=${spId}
+	</delete>
+	
+	<!-- web 后台 商家绑定银行卡列表 -->
+	<sql id="condtion">
+		<if test="spName != null and spName != ''">
+			AND s.`sp_name` LIKE '%${spName}%'
+		</if>
+		<if test="cardNo != null and cardNo != ''">
+			AND zb.`card_no` LIKE '%${cardNo}%'
+		</if>
+		<if test="bankName != null and bankName != ''">
+			AND zb.`bank_name` LIKE '%${bankName}%'
+		</if>
+	</sql>
+	<select id="findPage" parameterType="java.util.Map" resultMap="VBaseResultMap">
+		SELECT zb.*,s.sp_name spName,re.`regionname`
+		FROM zc_bank_card zb
+		LEFT JOIN supplier s ON s.`id` = zb.sp_id
+		LEFT JOIN region re ON zb.`region_id` = re.`regionid`
+		where  1 = 1
+		<include refid="condtion"/>
+		ORDER BY zb.id DESC
+		LIMIT ${rowStart}, ${limit}
+	</select>
+	
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		SELECT count(1)
+		FROM zc_bank_card zb
+		LEFT JOIN supplier s ON s.`id` = zb.sp_id
+		LEFT JOIN region re ON zb.`region_id` = re.`regionid`
+		where  1 = 1
+		<include refid="condtion"/>
+	</select>
+	<!-- web 后台 商家绑定银行卡列表 -->
+	
+</mapper>

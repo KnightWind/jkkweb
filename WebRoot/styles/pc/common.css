@@ -1,0 +1,105 @@
+@charset "utf-8";
+/*reset*/
+html,body,h1,h2,h3,h4,h5,h6,div,dl,dt,dd,ul,ol,li,p,blockquote,pre,hr,figure,table,caption,th,td,form,fieldset,legend,input,button,textarea,menu{margin:0;padding:0;}
+header,footer,section,article,aside,nav,hgroup,address,figure,figcaption,menu,details{display:block;}
+table{border-collapse:collapse;border-spacing:0;}
+caption,th{text-align:left;font-weight:normal;}
+html,body,fieldset,img,iframe,abbr{border:0;}
+i,cite,em,var,address,dfn{font-style:normal;}
+[hidefocus],summary{outline:0;}
+li{list-style:none;}
+h1,h2,h3,h4,h5,h6,small{font-size:100%;}
+sup,sub{font-size:83%;}
+pre,code,kbd,samp{font-family:inherit;}
+q:before,q:after{content:none;}
+textarea{overflow:auto;resize:none;}
+label,summary{cursor:default;}
+a,button{cursor:pointer;}
+h1,h2,h3,h4,h5,h6,em,strong,b{font-weight:bold;}
+del,ins,u,s,a,a:hover{text-decoration:none;}
+body,textarea,input,button,select,keygen,legend{font:12px/1.14 arial,\5b8b\4f53;color:#333;outline:0;}
+body{background:#fff;}
+a,a:hover{color:#333;}
+body{font-family: "微软雅黑";background-color: #fff;}
+.clearfix{content: '';display: block;clear:both;overflow: hidden;}
+.clear{clear:both;}
+.fl{float: left;}
+.fr{float: right;}
+/*头部样式开始*/
+.header{ height:90px; background-color: #fff;border-bottom: 1px solid #e2e2e2;}
+.mb20{margin-bottom: 20px;}
+.headerContent{width: 1000px;margin: 0 auto;padding:18px 0;/*height: 84px;line-height: 84px;*/}
+.headerContent ul.nav{margin-top: 6px; width:520px; height:48px;}
+.headerContent ul.nav li{ float: left; height: 47px; padding:0 22px; line-height: 47px;}
+.headerContent ul.nav li a{color: #000;display: inline-block;height: 40px;line-height: 40px;font-size: 18px;}
+.headerContent ul.nav li a:hover{color: #03a9f4;}
+.headerContent ul.nav li.cur a{color: #03a9f4;}
+.headerContent img{display: block;margin-right: 27px;}
+.headerContent div.phoneNum{height: 47px;line-height: 47px;background: url(../../images/pc/call.png) no-repeat 0 center;color: #03a9f4;font-weight: 700;font-size: 18px;padding-left: 40px;}
+.headerContent div.place{cursor: pointer;border:1px solid #e9e9e9;font-weight: normal;font-size: 16px;height: 28px;line-height: 28px;background: url(../../images/pc/small_arrow_down.png) no-repeat 90px center;padding:0 0 0 15px;width: 100px;border-radius: 3px;-webkit-border-radius: 3px;color: #444;margin: 11px 20px 0 0;position: relative;z-index: 222;display:none;}
+.headerContent div.place ul{position: absolute;background-color: #eee;width: 100px;left: 0;padding-left: 15px;z-index: 887;}
+.selectCity{display: none;}
+.selectCity li{width: 100px;line-height: 25px;cursor: pointer;}
+.headerContent li.mr47{margin-right: 47px;}
+.headerContent p{  height: 47px;line-height: 47px;background: url(../../images/pc/call.png) no-repeat 0 center;color: #03a9f4;font-weight: 700;font-size: 18px;padding-left: 40px;width:130px;}
+/*头部样式结束*/
+
+/*底部样式开始*/
+.footer{background-color: #333;color: #fff;padding:23px 0 10px 0; height:192px;}
+.footerContent{width: 1000px;margin: 0 auto;position: relative;}
+.footerContent p:first-child{text-align: left;}
+.footerContent p a{padding:0 10px;color: #fff;font-size: 16px;border-right: 1px solid #fff;}
+.footerContent p a:last-child{border-right: none;}
+.footerContent p strong{color: #ff7e20;}
+.footerContent p span{font-size: 26px;}
+.footerContent b{display: block;font-weight: normal;line-height: 24px; font-size:14px;}
+.footerContent span{font-size: 26px;margin-bottom: 20px;font-weight:normal;color: #fff;background: url(../../images/pc/red_call.png) no-repeat 0 center;padding-left: 40px;}
+.footerContent p.clearfix{padding-bottom: 28px;}
+.footerContent .callNumber{float: right;}
+.footerContent img{position: absolute;top: 45px;right:0;margin-bottom: 10px;}
+.mr10{margin-right: 10px;}
+.footerContent .center{width: 1000px;margin: 0 auto;}
+/*底部样式结束*/
+/*悬浮框开始*/
+.suspend{position: fixed;right: 10%;top: 70%;font-size: 9px;}
+.suspend p{border-radius: 3px;-weight-border-radius: 3px;-moz-border-radius: 3px;margin-bottom: 10px;}
+.suspend p a{display: block;width: 88px;text-align: center;padding: 15px 1px;}
+.suspend p span{display: block;line-height: 20px;}
+.blue{background-color: #03a9f4;color: #fff;margin-top: 10px;}
+.blue a{color: #fff;}
+.black{background-color: #fff;color: #fff;}
+.black a{color: #666;}
+.backTop{display: none;}
+/*悬浮框结束*/
+/*---------------------------------------------------公用分页------------------------------------------------------*/
+.ui-paging, .ui-paging input { color:#404040; margin: 0; padding: 0; zoom: 1; font-size: 12px; vertical-align: middle; height:30px; }
+.ui-paging:after { clear: both; content: " "; display: block; font-size: 0; height: 0; visibility: hidden; }
+.ui-paging a,
+.ui-paging span.ui-paging-prev,
+.ui-paging span.ui-paging-next { text-decoration:none; color:#404040; margin:0 3px; display: inline-block; *display: inline; *zoom: 1; vertical-align: middle; height:22px; line-height:22px; }
+.ui-paging-prev,
+.ui-paging-next,
+.ui-paging-goto { background-color: #F9F9F9; background: -webkit-gradient(linear, left top, left bottom, from(#FEFEFE), to(#F4F4F4)); background: -moz-linear-gradient(top, #FEFEFE, #F4F4F4); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FEFEFE', endColorstr='#F4F4F4'); background:-o-linear-gradient(top, #FEFEFE, #F4F4F4); background: linear-gradient(top, #FEFEFE, #F4F4F4); background:-ms-linear-gradient(top, #FEFEFE, #F4F4F4); padding:0 8px; border: 1px solid #ccc; border-radius: 3px; box-shadow: 0 0 0 1px #fff inset; }
+.ui-paging-prev:hover,
+.ui-paging-next:hover,
+.ui-paging-goto:hover { border-color: #999; color: #666; }
+.ui-paging-prev:hover i.new,
+.ui-paging-next:hover i.new { color: #666; }
+.ui-paging .ui-paging-prev { margin: 0 3px 0 0; }
+.ui-paging i.new { font-size: 10px; color: #787878; }
+.ui-paging a.ui-paging-item { background-color:#f3f3f3; font-weight:bold; padding:0 8px; border:none; }
+.ui-paging a.ui-paging-current, .ui-paging a.ui-paging-item:hover { color:#fff; background:#ff9c00; }
+a.ui-paging-prev:hover,
+a.ui-paging-next:hover { text-decoration:none; color:#666; }
+.ui-paging-info { line-height:24px; margin-right:5px; height:24px; }
+.ui-paging-ellipsis { margin:0 5px; line-height: 16px; font-weight:bold; }
+.ui-paging-which input { height: 20px; line-height: 20px; padding: 0 6px; width:22px; border:1px solid; border-color:#aaa #d1d1d1 #d1d1d1 #aaa; }
+.ui-paging-which input:hover { border-color:#999; color:#404040; }
+.ui-paging-bold { font-weight:bold; padding:0 8px; }
+.ui-paging span.ui-paging-prev,
+.ui-paging span.ui-paging-next{ color:#fff; box-shadow:none; background: #d4d4d4; border-color: #d4d4d4; filter: none; }
+.ui-paging{ text-align: center; padding:10px 0; /*border: 1px solid #dadadc;*/ border-top:none; }
+.ui-paging-no{ display:none;}
+
+.justTip{ padding: 20px; color: #fff; line-height: 20px; border-radius: 5px; text-align: left; display:none; font-size: 14px; background: #515558;  position: absolute; z-index: 10008; display: inline-block; }
+.justTip i{ font-size: 16px; color: #fff; margin-right: 5px;}

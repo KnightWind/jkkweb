@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.sale_theme.mapper.ActivityCardDealsMapper">
+
+	<resultMap id="ActivityCardDeals"
+		type="com.jkkp.modules.sale_theme.model.ActivityCardDeals">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="card_id" property="cardId" jdbcType="INTEGER" />
+		<result column="phone" property="phone" jdbcType="CHAR" />
+		<result column="decorate_req" property="decorateReq" jdbcType="VARCHAR" />
+		<result column="payment_type" property="paymenType" jdbcType="INTEGER" />
+		<result column="shared" property="shared" jdbcType="BOOLEAN" />
+		<result column="gift_id" property="giftId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="pay_status" property="payStatus" jdbcType="INTEGER" />
+		<result column="today_chance" property="todayChance" jdbcType="INTEGER" />
+		<result column="lottery_time" property="lotteryTime" jdbcType="TIMESTAMP" />
+		<result column="fee" property="fee" jdbcType="FLOAT" />
+		<result column="serial_code" property="serialCode" jdbcType="CHAR" />
+		<result column="openid" property="openid" jdbcType="CHAR" />
+	</resultMap>
+
+	<resultMap type="com.jkkp.modules.sale_theme.view.VActivityCardDeals"
+		id="VActivityCardDeals" extends="ActivityCardDeals">
+		<result column="cardName" property="cardName" jdbcType="VARCHAR" />
+		<result column="giftName" property="giftName" jdbcType="VARCHAR" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap type="com.jkkp.modules.sale_theme.view.Statistics" id="StatisticsMap">
+		<result column="money" property="money" jdbcType="FLOAT" />
+		<result column="cnt" property="cnt" jdbcType="INTEGER" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap type="com.jkkp.modules.crowdfunding.view.VPreced" id="VPrecedMap">
+		<result column="money" property="money" jdbcType="FLOAT" />
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="spId" property="spId" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="condtion">
+		<if test="phone != null and phone != ''">
+			AND acd.phone = ${phone}
+		</if>
+	</sql>
+
+	<select id="selectCountWX" resultType="long">
+		select count(1) from activity_card_deals a
+		where a.pay_status = ${status} and a.phone = '${phone}' and a.card_id = ${cardId}
+	</select>
+
+    <!-- web后台 -->
+    
+    <select id="randomLottery" parameterType="java.util.Map" resultType="java.lang.String">
+    	SELECT t.phone FROM activity_join_sign t 
+    	<if test="gouka > 0 or xianxia > 0">
+    		LEFT JOIN activity_card_deals acd ON acd.`phone` = t.`phone`
+    	</if>
+    	where 1 = 1
+    	<if test="baoming > 0">
+    		AND t.sign_time is
+    		<if test="qiandao > 0">
+    			not
+    		</if>
+    		null
+    	</if>
+    	<if test="gouka > 0 and xianxia == null">
+	    	AND acd.`payment_type` &lt;> 4
+    	</if>
+    	<if test="gouka == null and xianxia > 0">
+	    	AND acd.`payment_type` = 4
+    	</if>
+    	<if test="gouka > 0 or xianxia > 0">
+    		AND acd.`pay_status` = 1
+    	</if>
+    	order by rand() limit 1
+    </select>
+    
+    <select id="getPrecedList" resultMap="VPrecedMap">
+    	SELECT @rownum:=@rownum+1 as id,tb.* from (
+			select SUM(ac.price) as money,ajs.sp_id as spId
+			from activity_card_deals acd,activity_join_sign ajs,activity_card ac
+			WHERE acd.phone = ajs.phone AND ac.id = acd.card_id AND ajs.`sp_id` &lt;> 0
+			GROUP BY ajs.sp_id
+			ORDER BY money desc
+		) tb,(select @rownum:=0) t
+    </select>
+    
+    <select id="caclSaleInfo" resultMap="StatisticsMap" parameterType="java.util.Map">
+    	SELECT SUM(ac.`price`) money,COUNT(acd.`id`) cnt,s.`sp_name` as spName
+		FROM activity_card_deals acd 
+		LEFT JOIN activity_card ac ON acd.`card_id` = ac.`id`
+		LEFT JOIN activity_join_sign ajs ON ajs.`phone` = acd.`phone`
+		LEFT JOIN supplier s ON s.`id` = ajs.`sp_id`
+		where ajs.sp_id &lt;> 0
+		GROUP BY ajs.`sp_id`
+		order by money desc
+		limit 0, 5
+    </select>
+    
+    <select id="findPage" parameterType="java.util.Map" resultMap="VActivityCardDeals">
+    	SELECT ajs.`community`,ajs.`name` username,acd.*
+		FROM activity_card_deals acd 
+		LEFT JOIN activity_join_sign ajs ON ajs.`phone` = acd.`phone`
+		<if test="spId != null and spId != ''">
+			where ajs.sp_id = '${spId}'
+		</if>
+		order by acd.id desc
+		limit #{rowStart}, #{limit}
+    </select>
+    
+    <select id="countPage" parameterType="java.util.Map" resultType="long" >
+    	SELECT count(1)
+		FROM activity_card_deals acd 
+		LEFT JOIN activity_join_sign ajs ON ajs.`phone` = acd.`phone`
+		<if test="spId != null and spId != ''">
+			where ajs.sp_id = '${spId}'
+		</if>
+    </select>
+    
+    <select id="selectAllActivityCardDeals" resultMap="VActivityCardDeals" parameterType="java.util.Map">
+     SELECT 
+	  a.*,
+	  b.`name` AS cardName 
+	FROM
+	  activity_card_deals a 
+	  INNER JOIN activity_card b 
+	    ON a.`card_id` = b.`id` 
+	    where 1=1
+	    <include refid="condtion" />
+	   order by a.id desc
+	 limit #{rowStart}, #{limit}
+    </select>
+    
+    <select id="selectAllActivityCardDealsCount" resultType="long" parameterType="java.util.Map">
+     SELECT 
+	   COUNT(1)
+	FROM
+	  activity_card_deals a 
+	  INNER JOIN activity_card b 
+	    ON a.`card_id` = b.`id` 
+	    where 1=1
+	    <include refid="condtion" />
+    </select>
+   
+     
+
+	<select id="findActivityCardDealsById" resultMap="VActivityCardDeals">
+		SELECT acd.*,ac.`name` cardName,ag.`name` giftName
+		FROM activity_card_deals acd
+		LEFT JOIN activity_card ac ON ac.`id` =
+		acd.`card_id`
+		LEFT JOIN activity_gift ag ON ag.`id` = acd.`gift_id`
+		WHERE acd.id = #{businessId}
+	</select>
+
+	<select id="selectActivityCardDealsById">
+		SELECT acd.*,ac.`name` cardName,ag.`name` giftName
+		FROM activity_card_deals acd
+		LEFT JOIN activity_card ac ON ac.`id` =
+		acd.`card_id`
+		LEFT JOIN activity_gift ag ON ag.`id` = acd.`gift_id`
+		WHERE acd.id = #{id}
+	</select>
+
+	<select id="selectActivityCardDeals">
+		SELECT acd.*,ac.`name` cardName,ag.`name` giftName FROM
+		activity_card_deals acd
+		LEFT JOIN activity_card ac ON ac.`id` =
+		acd.`card_id`
+		LEFT JOIN activity_gift ag ON ag.`id` = acd.`gift_id`
+		WHERE 1=1
+		<include refid="condtion" />
+		ORDER BY acd.`create_time` DESC
+		LIMIT #{rowStart}, #{limit}
+	</select>
+
+	<select id="selectActivityCardDealsCount">
+		SELECT count(1) FROM activity_card_deals acd
+		LEFT JOIN activity_card ac
+		ON ac.`id` = acd.`card_id`
+		LEFT JOIN activity_gift ag ON ag.`id` =
+		acd.`gift_id`
+		WHERE 1=1
+		<include refid="condtion" />
+	</select>
+
+</mapper>

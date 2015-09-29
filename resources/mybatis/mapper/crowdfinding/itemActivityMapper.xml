@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.crowdfunding.mapper.ActivityItemMapper" >
+  <resultMap id="activityItemResult" type="com.jkkp.modules.crowdfunding.model.ActivityItem" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="sp_id" property="spId" jdbcType="VARCHAR" />
+    <result column="activity_id" property="activityId" jdbcType="TIMESTAMP" />
+    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+    <result column="model" property="model" jdbcType="VARCHAR" />
+    <result column="top_price" property="topPrice" jdbcType="FLOAT" />
+    <result column="low_price" property="lowPrice" jdbcType="FLOAT" />
+    <result column="counts" property="counts" jdbcType="INTEGER" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="now_price" property="activityPrice" jdbcType="FLOAT" />
+    <result column="compare" property="compare" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <!-- 后台管理 -->
+  <resultMap id="adminZCItemMap"  type="com.jkkp.modules.crowdfunding.view.VZCItem" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="top_price" property="topPrice" jdbcType="FLOAT" />
+      <result column="low_price" property="lowPrice" jdbcType="FLOAT" />
+      <result column="num_people" property="numPeople" jdbcType="INTEGER" />
+      <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+      <result column="title" property="title" jdbcType="VARCHAR" />
+      <result column="zc_flag" property="zcFlag" jdbcType="BIT" />
+      <result column="itemId" property="itemId" jdbcType="INTEGER" />
+  </resultMap>
+  
+   <resultMap id="zcItemResult" type="com.jkkp.modules.product.model.Item" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="detail" property="detail" jdbcType="VARCHAR" />
+    <result column="sp_id" property="spId" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <resultMap id="actItemInfoResult" type="com.jkkp.modules.crowdfunding.model.ActivityItem" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="sp_id" property="spId" jdbcType="INTEGER" />
+    <result column="sp_name" property="supplierName" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="deposit" property="deposit" jdbcType="INTEGER" />
+    <result column="now_price" property="activityPrice" jdbcType="INTEGER" />
+    <result column="counts" property="counts" jdbcType="INTEGER" />
+    <result column="price" property="topPrice" jdbcType="FLOAT" />
+    <result column="categoryId" property="categoryId" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+  <resultMap id="supplierResult" type="com.jkkp.modules.supplier.model.Supplier" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="sp_name" property="spName" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="INTEGER" />
+    <result column="pointx" property="pointx" jdbcType="VARCHAR" />
+    <result column="pointy" property="pointy" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="ItemListResult" type="com.jkkp.modules.crowdfunding.model.ResultItemList" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="spId" property="spId" jdbcType="INTEGER" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="filepath" property="img" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="itemId" property="itemId" jdbcType="VARCHAR" />
+    <result column="activityId" property="activityId" jdbcType="INTEGER" />
+    <result column="categoryId" property="categoryId" jdbcType="INTEGER" />
+    <result column="model" property="model" jdbcType="VARCHAR" />
+    <result column="topPrice" property="topPrice" jdbcType="FLOAT" />
+    <result column="lowPrice" property="lowPrice" jdbcType="FLOAT" />
+    <result column="counts" property="counts" jdbcType="INTEGER" />
+    <result column="activityPrice" property="activityPrice" jdbcType="FLOAT" />
+  </resultMap>
+  
+    <!-- 众筹活动商品列表 -->
+    <select id="findCrowdItemList" parameterType="java.util.Map" resultMap="ItemListResult">	
+         SELECT
+        		z.id,
+				t.title,
+				t.id itemId,
+				t.sp_id spId,
+				d.id activityId,
+				t.cate categoryId,
+				t.model,
+				t.price topPrice,
+				z.low_price lowPrice,
+				(SELECT count(*) from zc_item_member m where t.id=m.item_id ) counts,
+		        <![CDATA[ 
+		        CASE 
+		             WHEN ((SELECT count(*) from zc_item_member m where z.item_id=m.item_id)<=z.privilege) THEN z.top_price
+					 WHEN ((SELECT count(*) from zc_item_member m where z.item_id=m.item_id) <=z.num_people) THEN (ROUND(z.top_price -((z.top_price-z.low_price)/(z.num_people-z.privilege)*((SELECT count(*) from zc_item_member m where z.item_id=m.item_id )-z.privilege)),2))  
+					 WHEN ((SELECT count(*) from zc_item_member m where z.item_id=m.item_id)>z.num_people) THEN z.low_price
+				END AS activityPrice,
+				]]>
+		        d.start_time ,
+				d.end_time
+			 from zc_item z
+			 JOIN item t on z.item_id=t.id
+			 JOIN item_category c on t.cate=c.id
+			 JOIN zc_activity d on d.id=z.activity_id
+		     JOIN supplier s on s.id=t.sp_id
+			 where z.`status`=1 and t.`status`=0
+		 <if test="categoryId!=null and categoryId!=''">
+		    and t.cate=${categoryId}
+		 </if>
+		 <if test="regionidList!=null and regionidList!=''">
+		  and s.region_id in
+	      <foreach collection="regionidList" item="regionidList" index="index"
+            open="(" close=")" separator=",">
+            #{regionidList}
+          </foreach>
+	    </if>
+		 ORDER BY counts DESC
+		 <if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+	
+    <!-- 众筹活动商品详情 -->
+    <select id="getCrowdItemDetail" parameterType="java.util.Map" resultMap="activityItemResult">	
+           SELECT 
+				z.id,t.title,t.id AS item_id,t.sp_id,s.sp_name supplierName,z.activity_id,t.cate AS category_id,t.model,t.price top_price,z.low_price,
+				(SELECT COUNT(*) FROM zc_item_member m WHERE t.id=m.item_id ) AS counts,d.start_time,d.end_time,t.detail,
+				(SELECT COUNT(*) from zc_activity q where  q.id=d.id and q.end_time > NOW()) as compare,
+                 <![CDATA[ 
+                 CASE 
+                     WHEN ((SELECT count(*) from zc_item_member m where z.item_id=m.item_id)<=z.privilege) THEN z.top_price
+					 WHEN ((SELECT count(*) from zc_item_member m where z.item_id=m.item_id) <=z.num_people) THEN (ROUND(z.top_price -((z.top_price-z.low_price)/(z.num_people-z.privilege)*((SELECT count(*) from zc_item_member m where z.item_id=m.item_id )-z.privilege)),2))   
+					 WHEN ((SELECT count(*) from zc_item_member m where z.item_id=m.item_id)>z.num_people) THEN z.low_price
+			 	 END AS now_price
+			     ]]>
+			FROM zc_item z 
+			LEFT JOIN item t ON z.item_id=t.id
+			LEFT JOIN item_category c ON t.cate=c.id
+			LEFT JOIN zc_activity d ON z.activity_id=d.id
+			JOIN supplier s ON s.id=t.sp_id	
+		 	where z.item_id=${itemId}
+	</select>
+	
+     <!-- 根据产品id获取产品相关图片集合 -->
+     <select id="getImagesByItemId" parameterType="int" resultType="String">	
+           SELECT filepath from attachment a,item t where a.mainid=t.id and a.filetype=31 and t.id = ${_parameter}
+	</select>
+	
+     <!-- 获取产品详情 -->
+     <select id="getItemInfo" parameterType="int" resultMap="zcItemResult">	
+           SELECT id,detail,title,sp_id from item t where t.id = ${_parameter}
+	</select>
+	
+     <!-- 生成新的订单 -->
+     <select id="newCrowdOrder" parameterType="java.util.Map" resultMap="actItemInfoResult">	
+         select c.id,t.id as item_id,t.sp_id,t.title,s.sp_name,a.deposit,t.price, t.cate categoryId,
+		         <![CDATA[ 
+		         CASE 
+		             WHEN ((SELECT count(*) from zc_item_member m where c.item_id=m.item_id)<=c.privilege) THEN c.top_price
+		             WHEN ((SELECT count(*) from zc_item_member m where c.item_id=m.item_id)<=c.num_people) THEN (ROUND(c.top_price -((c.top_price-c.low_price)/(c.num_people-c.privilege)*((SELECT count(*) from zc_item_member m where c.item_id=m.item_id )-c.privilege)),2))  
+					 WHEN ((SELECT count(*) from zc_item_member m where c.item_id=m.item_id)>c.num_people) THEN c.low_price
+				 END AS now_price,
+				  ]]>
+				 (SELECT count(*) from zc_item_member m where c.item_id=m.item_id)counts
+		 from zc_item c
+     	 LEFT JOIN zc_activity a on c.activity_id=a.id
+		 LEFT JOIN  item t on c.item_id=t.id
+		 LEFT JOIN supplier s on t.sp_id=s.id
+		 where t.id=${itemId}
+	  </select>
+	
+     <select id="getSupplierById" parameterType="int" resultMap="supplierResult">	
+           select id,sp_name,address,pointx,pointy from supplier where id= #{spId}
+	</select>
+     
+     <!-- 众凑商品 -->
+     <select id="selectAllZCItemInfo" resultMap="adminZCItemMap" parameterType="java.util.Map">
+       SELECT 
+		  a.*,
+		  b.`title` ,
+		  b.`zc_flag`,
+		  b.`id` as itemId
+	   FROM
+		  zc_item a 
+		  INNER JOIN item b 
+		    ON a.`item_id` = b.`id`
+		  WHERE a.`status`=1
+		    ORDER BY a.`create_date` DESC
+	   limit #{rowStart}, #{limit}
+     </select>
+     
+     <select id="selectAllZCItemInfoCount" resultType="long" parameterType="java.util.Map">
+       SELECT 
+		 COUNT(1)
+	   FROM
+		  zc_item a 
+		  INNER JOIN item b 
+		    ON a.`item_id` = b.`id`
+	    WHERE a.`status`=1
+     </select>
+     
+     <!-- 众凑首页商品 -->
+    <select id="selectAllHomeZCItem" resultMap="adminZCItemMap" >
+    SELECT 
+	  a.*,
+	  b.`title` 
+	FROM
+	  zc_item a 
+    INNER JOIN item b 
+	    ON a.`item_id` = b.`id`
+	    WHERE b.`zc_flag`=1
+	    ORDER BY a.`create_date` DESC
+    </select>
+    
+     
+     <!-- 更新item表是否为众凑首页显示 -->
+     <update id="updateOneItemFlag">
+        UPDATE item SET zc_flag=1 WHERE id=${id}
+     </update>
+     
+     <update id="updateOneItemFlagFalse">
+        UPDATE item SET zc_flag=0 WHERE id=${id}
+     </update>
+     
+     <select id="selectItemId" resultType="Long">
+        SELECT a.`item_id` FROM zc_item a WHERE a.`id`=${id}
+     </select>
+     
+</mapper>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.EngineeringStageMapper">
+	<resultMap id="EngineeringStage_map" type="com.jkkp.modules.basedata.model.EngineeringStage">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="stag_name" property="stagName" jdbcType="VARCHAR" />
+		<result column="stag_desc" property="stagDesc" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="pid" property="pid" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="ordr_by" property="ordrBy" jdbcType="INTEGER" />
+		<result column="abbreviation" property="abbreviation" jdbcType="VARCHAR" />
+
+
+	</resultMap>
+	<resultMap id="EngineeringStage_vmap" type="com.jkkp.modules.basedata.view.VEngineeringStage" extends="EngineeringStage_map">
+		<!-- 拓展属性 -->
+		<result column="firstStage" property="firstStage" jdbcType="VARCHAR" />
+		<result column="secondStage" property="secondStage" jdbcType="VARCHAR" />
+
+		<result column="pstagName" property="pstagName" jdbcType="VARCHAR" />
+		<result column="pcreateTime" property="pcreateTime" jdbcType="TIMESTAMP" />
+		<collection property="checkRequests" column="id" select="com.jkkp.modules.basedata.mapper.CheckRequestMapper.getListByStageId"/>
+	</resultMap>
+	<!-- web -->
+	
+	<!-- 查找一级节点 -->
+	<select id="selectAllParentStage" resultMap="EngineeringStage_vmap">
+	 SELECT * FROM engineering_stage WHERE pid =0 AND ordr_by !=0
+	</select>
+	
+	<!-- 一二三级节点 -->
+	<select id="selectAllEngineeringStage" parameterType="java.util.Map"
+		resultMap="EngineeringStage_vmap">
+		SELECT
+		c.`stag_name` AS firstStage,
+		b.`stag_name` AS secondStage,
+		a.*
+		FROM
+		engineering_stage a
+		INNER JOIN engineering_stage b
+		ON a.`pid` =
+		b.`id`
+		INNER JOIN engineering_stage c
+		ON c.`id` = b.`pid`
+		<include refid="condition" />
+		ORDER BY c.`ordr_by`
+		limit #{rowStart},#{limit}
+	</select>
+
+	<select id="selectAllEngineeringStageCount" parameterType="java.util.Map"
+		resultType="long">
+		SELECT
+		COUNT(1)
+		FROM
+		engineering_stage a
+		INNER JOIN engineering_stage b
+		ON
+		a.`pid` = b.`id`
+		INNER JOIN engineering_stage c
+		ON c.`id` = b.`pid`
+		<include refid="condition" />
+	</select>
+	<!-- 一二级节点 -->
+	<select id="selectAllOTEngineeringStage" parameterType="java.util.Map"
+		resultMap="EngineeringStage_vmap">
+		SELECT
+		a.`stag_name` AS parentStage,
+		b.*
+		FROM
+		engineering_stage a
+		INNER
+		JOIN engineering_stage b
+		ON a.`id` = b.`pid`
+		WHERE a.`pid`=0
+		<include refid="condition" />
+		ORDER BY b.`ordr_by`
+		limit #{rowStart},#{limit}
+	</select>
+
+	<select id="selectAllOTEngineeringStageCount" parameterType="java.util.Map"
+		resultType="long">
+		SELECT
+		COUNT(1)
+		FROM
+		engineering_stage a
+		INNER JOIN engineering_stage b
+		ON
+		a.`id` = b.`pid`
+		WHERE a.`pid`=0
+		<include refid="condition" />
+	</select>
+
+	<select id="selectAllParentStages" parameterType="java.util.Map"
+		resultMap="EngineeringStage_vmap">
+		SELECT
+		a.*
+		FROM
+		engineering_stage a
+		WHERE a.`pid`=0
+		<include refid="condition" />
+		ORDER BY a.`ordr_by`
+		limit #{rowStart},#{limit}
+	</select>
+
+	<select id="selectAllParentStagesCount" parameterType="java.util.Map"
+		resultType="long">
+		SELECT
+		COUNT(1)
+		FROM
+		engineering_stage a
+		WHERE a.`pid`=0
+		<include refid="condition" />
+	</select>
+
+	<sql id="condition">
+
+	</sql>
+	<!-- /web -->
+
+
+	<!-- 数据库已改 <select id="selectAllEng" parameterType="java.util.Map" resultMap="EngineeringStageResult" 
+		> SELECT aa.stag_name AS pstagName, aa.create_time AS pcreateTime, b.* FROM 
+		(SELECT * FROM engineering_stage a WHERE a.pid = 0 ) aa INNER JOIN engineering_stage 
+		b ON aa.`id` = b.pid <include refid="condition"/> limit #{rowStart}, #{limit} 
+		</select> <select id="selectEngCount" parameterType="java.util.Map" resultType="long" 
+		> SELECT COUNT(1) FROM (SELECT * FROM engineering_stage a WHERE a.pid = 0 
+		) aa INNER JOIN engineering_stage b ON aa.`id` = b.pid <include refid="condition"/> 
+		</select> <select id="selectAllPareatEng" parameterType="java.util.Map" resultMap="EngineeringStageResult" 
+		> SELECT * FROM engineering_stage a WHERE a.pid = 0 <include refid="condition"/> 
+		limit #{rowStart}, #{limit} </select> <select id="selectPareatEngCount" parameterType="java.util.Map" 
+		resultType="long" > SELECT count(1) FROM engineering_stage a WHERE a.pid 
+		= 0 <include refid="condition"/> </select> -->
+	<!-- 节点隐藏 -->
+	<update id="hide">
+		UPDATE
+		engineering_stage
+		SET
+		STATUS =0
+		WHERE id =#{id}
+	</update>
+
+	<!-- 节点显示 -->
+	<update id="show">
+		UPDATE
+		engineering_stage
+		SET
+		STATUS =1
+		WHERE id =#{id}
+	</update>
+	
+	
+	<!-- ↓↓ysc============================== -->
+	<sql id="tbl">engineering_stage</sql>
+	<sql id="temp_tbl">
+		select
+		aa.* from <include refid="tbl" /> aa
+	</sql>
+	<select id="getList" resultMap="EngineeringStage_vmap" parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="EngineeringStage_vmap" parameterType="com.jkkp.utils.Pager">
+		select t.* from (<include refid="temp_tbl" />) t
+		where 1=1 ${value} limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="EngineeringStage_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from <include refid="tbl" /> t where 1=1 ${value}
+	</delete>
+	<!-- ↑↑ysc============================== -->
+	<select id="findStageList" resultMap="EngineeringStage_vmap">
+		<![CDATA[
+		select * from engineering_stage where pid = #{pid} and id <> #{excludeId} order by ordr_by
+		]]>
+	</select>
+</mapper>

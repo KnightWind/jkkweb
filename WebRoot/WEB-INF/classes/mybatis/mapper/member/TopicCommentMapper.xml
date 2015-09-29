@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.member.mapper.TopicCommentMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.member.view.VTopicComment" >
+         <id column="id" property="id" jdbcType="INTEGER" />
+		<result column="subject" property="subject" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="pid" property="pid" jdbcType="INTEGER" />
+		<result column="storey" property="storey" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="hcomment" property="hcomment" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- web -->
+  <!-- 查询针对日记的评论 -->
+  <select id="selectAllParentComment" resultMap="BaseResultMap">
+	 SELECT 
+	  * 
+	FROM
+	  topic_comment a 
+	WHERE a.`storey` = 1 
+	  AND a.`pid` = #{pid}
+	  ORDER BY a.`create_time` DESC
+  </select>
+  
+  <!-- 查询评论的子评论 -->
+  <select id="selectAllChildComment" resultMap="BaseResultMap">
+	 SELECT 
+	  * 
+	FROM
+	  topic_comment a 
+	WHERE a.`storey` = 2
+	  AND a.`pid` = #{pid} 
+	  ORDER BY a.`create_time` DESC
+  </select>
+  
+  <!-- 日记评论审核     不通过 -->
+  <update id="noPass">
+   	UPDATE topic_comment SET check_time =NOW(),STATUS=-1 WHERE id=${id}
+  </update>
+  
+   <update id="pass">
+   	UPDATE topic_comment SET check_time =NOW(),STATUS=1 WHERE id=${id}
+  </update>
+  
+  <!-- /web -->
+  
+  <resultMap id="BaseTopicResult" type="com.jkkp.appapi.modules.mapper.VITopicCommentSV">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="rjsj" property="rjsj" jdbcType="VARCHAR" />
+		<result column="rjnr" property="rjnr" jdbcType="VARCHAR" />
+		<result column="rjbt" property="rjbt" jdbcType="VARCHAR" />
+		<result column="jd" property="jd" jdbcType="VARCHAR" />
+		<result column="wo" property="wo" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="img" property="img" jdbcType="VARCHAR" />
+	</resultMap>
+<select id="getTopicById" resultMap="BaseTopicResult">
+SELECT j.id as id,date_format(j.create_time,'%Y-%m-%d %H:%i:%s') as rjsj,
+j.content as rjnr,
+j.subject as rjbt,
+g.name as jd,
+(SELECT count(*) from topic p where p.uid=#{uid} and p.id=#{tid}) as wo ,
+(SELECT nickname from member where id=j.uid) as name,
+(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=j.uid and filetype=13 and t3.para_name='PHOTO_PREFIX_URL') as img
+from  topic_stage g,topic j
+where j.id=#{tid} and j.stage_id=g.id
+</select>
+  
+   <resultMap id="BaseTopicResultQuery" type="com.jkkp.appapi.modules.mapper.VITopicCommentDetailsSV">
+		<result column="plid" property="plid" jdbcType="VARCHAR" />
+		<result column="plsj" property="plsj" jdbcType="VARCHAR" />
+		<result column="plnr" property="plnr" jdbcType="VARCHAR" />
+		<result column="plbt" property="plbt" jdbcType="VARCHAR" />
+		<result column="plimg" property="plimg" jdbcType="VARCHAR" />
+	</resultMap>
+<select id="queryCaseTopicComment" parameterType="java.util.Map" resultMap="BaseTopicResultQuery">
+SELECT * from (SELECT content as plnr,id as plid ,date_format(create_time,'%Y-%m-%d %H:%i:%s') as plsj,concat(create_user,ifnull(title,'')) as plbt,CASE type 
+WHEN 1 THEN (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=t.user_id and filetype=4 and t3.para_name='PHOTO_PREFIX_URL')
+WHEN 2 THEN (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=t.user_id and filetype=4 and t3.para_name='PHOTO_PREFIX_URL')
+WHEN 3 THEN (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=t.user_id and filetype=4 and t3.para_name='PHOTO_PREFIX_URL')
+WHEN 4 THEN (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=t.user_id and filetype=3 and t3.para_name='PHOTO_PREFIX_URL')
+WHEN 5 THEN (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=t.user_id and filetype=16 and t3.para_name='PHOTO_PREFIX_URL')
+WHEN 6 THEN (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=t.user_id and filetype=13 and t3.para_name='PHOTO_PREFIX_URL')
+END as plimg  from topic_comment t WHERE  storey=2 and EXISTS
+(SELECT  id from topic_comment tt where tt.pid=${tid} and tt.storey=1  and tt.id=t.pid)
+union
+SELECT content as plnr,id as plid ,date_format(create_time,'%Y-%m-%d %H:%i:%s') as plsj, create_user as plbt,
+CASE type 
+WHEN 1 THEN (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=c.user_id and filetype=4 and t3.para_name='PHOTO_PREFIX_URL')
+WHEN 2 THEN (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=c.user_id and filetype=4 and t3.para_name='PHOTO_PREFIX_URL')
+WHEN 3 THEN (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=c.user_id and filetype=4 and t3.para_name='PHOTO_PREFIX_URL')
+WHEN 4 THEN (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=c.user_id and filetype=3 and t3.para_name='PHOTO_PREFIX_URL')
+WHEN 5 THEN (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=c.user_id and filetype=16 and t3.para_name='PHOTO_PREFIX_URL')
+WHEN 6 THEN (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=c.user_id and filetype=13 and t3.para_name='PHOTO_PREFIX_URL')
+END as plimg
+from topic_comment c where pid=${tid} and storey=1) as ff 
+ORDER BY ff.plsj 
+<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+</if>
+</select>
+</mapper>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.StartEngineeringsPictureMapper">
+	<resultMap id="VSupplierMap" type="com.jkkp.modules.supplier.model.StartEngineeringsPicture">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="attachment_id" property="attachmentId" jdbcType="INTEGER" />
+		<result column="start_engineerings_id" property="startEngineeringsId" jdbcType="INTEGER" />
+	</resultMap>
+</mapper>

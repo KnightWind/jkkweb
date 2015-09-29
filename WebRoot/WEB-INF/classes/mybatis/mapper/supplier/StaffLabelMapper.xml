@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.StaffLabelMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.supplier.model.StaffLabel">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sid" property="sid" jdbcType="INTEGER" />
+		<result column="lid" property="lid" jdbcType="INTEGER" />
+	</resultMap>
+</mapper>

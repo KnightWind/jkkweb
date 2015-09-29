@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.member.mapper.MgatheringMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.member.model.Mgathering" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="gname" property="gname" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="FLOAT" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="method" property="method" jdbcType="INTEGER" />
+    <result column="skTime" property="skTime" jdbcType="TIMESTAMP" />
+    <result column="skUser" property="skUser" jdbcType="VARCHAR" />
+    <result column="skUName" property="skUName" jdbcType="VARCHAR" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

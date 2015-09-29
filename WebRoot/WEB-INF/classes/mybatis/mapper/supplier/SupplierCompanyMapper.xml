@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierCompanyMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.supplier.model.SupplierCompany" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="logo" property="logo" jdbcType="VARCHAR" />
+    <result column="intro" property="intro" jdbcType="VARCHAR" />
+    <result column="scale" property="scale" jdbcType="INTEGER" />
+    <result column="capital" property="capital" jdbcType="INTEGER" />
+    <result column="establish" property="establish" jdbcType="DATE" />
+    <result column="inspection" property="inspection" jdbcType="DATE" />
+    <result column="duration_start" property="durationStart" jdbcType="DATE" />
+    <result column="duration_end" property="durationEnd" jdbcType="DATE" />
+    <result column="certificate1" property="certificate1" jdbcType="VARCHAR" />
+    <result column="certificate2" property="certificate2" jdbcType="VARCHAR" />
+    <result column="certificate3" property="certificate3" jdbcType="VARCHAR" />
+    <result column="certificate4" property="certificate4" jdbcType="VARCHAR" />
+    <result column="certificate5" property="certificate5" jdbcType="VARCHAR" />
+    <result column="certificate6" property="certificate6" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="sp_id" property="spId" jdbcType="INTEGER" />
+    <result column="template_id" property="templateId" jdbcType="INTEGER" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="design_num" property="designNum" jdbcType="INTEGER" />
+  </resultMap>
+  <select id="fin" resultMap="BaseResultMap">
+		SELECT * from supplier_company where sp_id=#{id}
+	</select>
+</mapper>

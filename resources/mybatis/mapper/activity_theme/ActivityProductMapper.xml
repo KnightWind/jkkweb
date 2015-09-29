@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.sale_theme.mapper.ActivityProductMapper">
+
+	<resultMap id="baseResultMap" type="com.jkkp.modules.sale_theme.model.ActivityProduct">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="activity_id" property="activityId" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="item_id" property="itemId" jdbcType="INTEGER" />
+		<result column="price" property="price" jdbcType="DOUBLE" />
+		<result column="orders" property="orders" jdbcType="INTEGER" />
+	</resultMap>
+
+    <resultMap type="com.jkkp.modules.sale_theme.view.VActivityProduct" id="wxActivityProduct" extends="baseResultMap">
+       <result column="itemTile" property="itemTile" jdbcType="VARCHAR" />
+       <result column="detail" property="detail" jdbcType="VARCHAR" />
+       <result column="iprice" property="iprice" jdbcType="DOUBLE" />
+       <result column="filepath" property="filepath" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <select id="selectMaxOrder" resultType="long">
+    	select max(ap.orders) from activity_product ap
+    </select>
+    
+    <select id="findProductInfoById" resultMap="wxActivityProduct">
+    	SELECT ap.*,i.detail,i.price iprice,att.filepath FROM activity_product ap
+		inner JOIN item i on i.id = ap.item_id
+		left join attachment att on att.mainid = i.id and att.filetype = 31
+		where ap.id = ${id}
+    </select>
+    
+    <select id="productList" resultMap="wxActivityProduct" parameterType="java.util.Map">
+    	SELECT ap.*,i.detail,i.price iprice,att.filepath FROM activity_product ap
+		inner JOIN item i on i.id = ap.item_id
+		left join attachment att on att.mainid = i.id and att.filetype = 31
+		order by ap.id desc
+		limit #{rowStart}, #{limit}
+    </select>
+    
+    <select id="productListCount" resultType="long" parameterType="java.util.Map">
+    	SELECT count(1) FROM activity_product ap
+		inner JOIN item i on i.id = ap.item_id
+    </select>
+    
+    
+    <select id="selectOneWXActivityProductDetail" resultMap="wxActivityProduct">
+    SELECT 
+	  a.*,
+	  b.`title` AS itemTile,
+	  b.`detail`
+	FROM
+	  activity_product a 
+	  INNER JOIN item b
+	   ON a.`item_id`=b.`id`
+	   WHERE a.`id`=#{id}
+    </select>
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierProxyMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.supplier.view.VSupplierProxy">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="proxy_start_date" property="proxyStartDate"
+			jdbcType="DATE" />
+		<result column="proxy_end_date" property="proxyEndDate"
+			jdbcType="DATE" />
+		<result column="check_status" property="checkStatus" jdbcType="TINYINT" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="sname" property="sname" jdbcType="VARCHAR" />
+		<result column="uname" property="uname" jdbcType="VARCHAR" />
+		<result column="phot" property="phot" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="findAll" resultMap="BaseResultMap">
+		select s.*,p.sp_name as sname,p.contact_user as uname,p.contact_mobile as
+		phot from supplier_proxy s,supplier p where s.sp_id=p.id
+	</select>
+	<sql id="condition">
+		<if test="sname!=null and sname!=''">
+			and p.sp_name like '%${sname}%'
+		</if>
+		<if test="uname!=null and uname!=''">
+			and p.contact_user like '%${uname}%'
+		</if>
+		<if test="type!=null and type!=''">
+			and p.type=${type}
+		</if>
+		<if test="checkStatus!=null and checkStatus!=''">
+		and s.check_status=${checkStatus}
+		</if>
+		<if test="start!=null and start!=''">
+			and s.proxy_start_date >'${start}'
+		</if>
+		<if test="end!=null and end !=''">
+			and s.proxy_start_date &lt;='${end}'
+		</if>
+	</sql>
+	<select id="findPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT
+		s.*,
+		p.sp_name AS sname,
+		p.contact_user AS uname,
+		p.contact_mobile AS phot
+		FROM
+		supplier_proxy s,
+		supplier p
+		WHERE s.sp_id = p.id
+		<include refid="condition" />
+		limit ${rowStart}, ${limit}
+	</select>
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		select count(1) from supplier_proxy s,supplier p where s.sp_id=p.id
+		<include refid="condition" />
+	</select>
+</mapper>

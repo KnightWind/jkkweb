@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.sale_theme.mapper.ActivityGiftLogMapper">
+
+	<resultMap id="BaseResulMap" type="com.jkkp.modules.sale_theme.model.ActivityGiftLog">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="gift_id" property="giftId" jdbcType="INTEGER" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="used" property="used" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<resultMap type="com.jkkp.modules.sale_theme.view.VActivityGiftLog" id="VBaseMap" extends="BaseResulMap">
+		<result column="giftName" property="giftName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="condtion">
+		<if test="state != null">
+		  	  <choose>
+		  	  	<when test="state == 0">
+		  	  		and (agl.used = 0 or agl.used is null)
+		  	  	</when>
+		  	  	<otherwise>
+		  	  		and agl.used = 1
+		  	  	</otherwise>
+		  	  </choose>
+		  </if>
+		<if test="phone != null and phone != ''">
+			and agl.phone like '%${phone}%'
+		</if>
+		<if test="name != null and name != ''">
+			and ag.`name` like '%${name}%'
+		</if>
+	</sql>
+	
+	
+	<select id="takeGift" resultMap="VBaseMap" parameterType="java.util.Map">
+		select ag.`name` giftName,agl.* from activity_gift_log agl
+		left join activity_gift ag on ag.id = agl.gift_id
+		where 1 = 1
+		<include refid="condtion"/>
+		order by agl.id desc
+		limit #{rowStart}, #{limit}
+	</select>
+	
+	<select id="takeGiftCount" resultType="long" parameterType="java.util.Map">
+		select count(1) from activity_gift_log agl
+		left join activity_gift ag on ag.id = agl.gift_id
+		where 1 = 1
+		<include refid="condtion"/>
+	</select>
+	
+</mapper>

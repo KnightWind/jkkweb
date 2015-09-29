@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.SettlementMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.basedata.model.Settlement" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="role" property="role" jdbcType="TINYINT" />
+    <result column="mobile" property="mobile" jdbcType="CHAR" />
+    <result column="current_balance" property="currentBalance" jdbcType="REAL" />
+    <result column="sttle_balance" property="sttleBalance" jdbcType="REAL" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="stat_end_time" property="statEndTime" jdbcType="TIMESTAMP" />
+    <result column="stat_begin_time" property="statBeginTime" jdbcType="TIMESTAMP" />
+    <result column="settle_time" property="settleTime" jdbcType="TIMESTAMP" />
+    <result column="serial_code" property="serialCode" jdbcType="VARCHAR" />
+    <result column="admin_name" property="adminName" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap type="com.jkkp.modules.basedata.view.VSettlement" id="VBaseResultMap" extends="BaseResultMap">
+  	<result column="mName" property="mName" jdbcType="VARCHAR" />
+  </resultMap>
+  	
+  	<sql id="condtion">
+  		<if test="role != null and role != ''">
+			<choose>
+				<when test="role == 1">
+					SELECT scs.`name` mName,s.* FROM settlement s
+					JOIN supplier_company_staff scs 
+					ON scs.mobile = s.mobile
+				</when>
+				<otherwise>
+					SELECT m.nickname mName,s.* FROM settlement s
+					JOIN member m
+					ON m.mobile = s.mobile
+				</otherwise>
+			</choose>
+		</if>
+  	</sql>
+  	<sql id="condtion2">
+  		<if test="role != null and role != ''">
+			<choose>
+				<when test="role == 1">
+					SELECT count(1) FROM settlement s
+					JOIN supplier_company_staff scs 
+					ON scs.mobile = s.mobile
+				</when>
+				<otherwise>
+					SELECT count(1) FROM settlement s
+					JOIN member m
+					ON m.mobile = s.mobile
+				</otherwise>
+			</choose>
+		</if>
+  	</sql>
+  
+  	<select id="settlementByPhoneList" resultMap="VBaseResultMap" parameterType="java.util.Map">
+		<include refid="condtion"/>
+		WHERE s.mobile = #{phone}
+		and s.status = 0
+		limit ${rowStart}, ${limit}
+	</select>
+	
+	<select id="settlementByPhoneListCount" resultType="long" parameterType="java.util.Map">
+		<include refid="condtion2"/> WHERE s.mobile = ${phone}
+	</select>
+  
+  
+  	<select id="findUnCalePushMoney" resultType="java.lang.Double">
+  		SELECT SUM(st.current_balance) FROM settlement st
+		WHERE st.mobile = ${phone} and st.`status` = 0
+  	</select>
+  
+</mapper>

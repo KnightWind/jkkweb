@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.QuanCardMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.supplier.model.QuanCard" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="quan_id" property="quanId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+    <result column="is_lock" property="isLock" jdbcType="TINYINT" />
+    <result column="sp_id" property="spId" jdbcType="INTEGER" />
+    <result column="is_public" property="isPublic" jdbcType="TINYINT" />
+  </resultMap>
+</mapper>

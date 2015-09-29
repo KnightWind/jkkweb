@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.appointment.mapper.AppoinConditionMapper">
+	
+	<resultMap id="BaseMap" type="com.jkkp.modules.appointment.model.AppoinCondition">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="use_id" property="useId" jdbcType="INTEGER" />
+		<result column="aid" property="aid" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="repair_time" property="repairTime" jdbcType="VARCHAR" />
+		<result column="quantity_time" property="quantityTime" jdbcType="VARCHAR" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="use_remark" property="useRemark" jdbcType="VARCHAR" />
+		<result column="vrange" property="vrange" jdbcType="VARCHAR" />
+		<result column="style" property="style" jdbcType="VARCHAR" />
+		<result column="refer" property="refer" jdbcType="VARCHAR" />
+		<result column="special" property="special" jdbcType="VARCHAR" />
+		<result column="match_remark" property="matchRemark" jdbcType="VARCHAR" />
+		<result column="expediently" property="expediently" jdbcType="VARCHAR" />
+		<result column="oldnew" property="oldnew" jdbcType="INTEGER" />
+		<result column="vkey" property="vkey" jdbcType="INTEGER" />
+		<result column="method" property="method" jdbcType="INTEGER" />
+		<result column="favorite" property="favorite" jdbcType="INTEGER" />
+		<result column="vmatch" property="vmatch" jdbcType="INTEGER" />
+		<result column="area" property="area" jdbcType="VARCHAR" />
+		<result column="budget" property="budget" jdbcType="VARCHAR" />
+		<result column="called" property="called" jdbcType="INTEGER" />
+	    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="getById" resultMap="BaseMap">
+		select * from appoin_condition ac where ac.aid = #{id}
+	</select>
+	
+</mapper>

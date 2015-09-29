@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SgtopicMapper">
+	<resultMap id="VSupplierMap" type="com.jkkp.modules.supplier.view.VSgtopic">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="budget" property="budget" jdbcType="FLOAT" />
+		<result column="space" property="space" jdbcType="FLOAT" />
+		<result column="style" property="style" jdbcType="VARCHAR" />
+		<result column="house_type" property="houseType" jdbcType="VARCHAR" />
+		<result column="sid" property="sid" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="close_time" property="closeTime" jdbcType="TIMESTAMP" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="comment_count" property="commentCount"
+			jdbcType="INTEGER" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+		<result column="browse_count" property="browseCount" jdbcType="INTEGER" />
+
+		<!-- web 拓展属性 -->
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+		<result column="styleName" property="styleName" jdbcType="VARCHAR" />
+		<result column="houseTypeName" property="houseTypeName"
+			jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="BaseResultMapVsd" type="com.jkkp.appapi.modules.mapper.VISgtopic">
+		<result column="lname" property="lname" jdbcType="VARCHAR" />
+		<result column="pingfen" property="pingfen" jdbcType="VARCHAR" />
+		<result column="xingji" property="xingji" jdbcType="VARCHAR" />
+		<result column="spid" property="spid" jdbcType="VARCHAR" />
+		<result column="img" property="img" jdbcType="VARCHAR" />
+		<result column="zouping" property="zouping" jdbcType="VARCHAR" />
+		<result column="sname" property="sname" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="hs" property="hs" jdbcType="VARCHAR" />
+		<result column="shoucan" property="shoucan" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="all" resultMap="BaseResultMapVsd">
+		SELECT q.create_time as date,q.budget
+		as yushuan,q.comment_count as
+		liuluan,q.space mianji,q.style as
+		style,q.house_type as
+		huxing,q.community as community,
+		(SELECT COUNT(*)
+		from supplier_collect s where s.sp_id=#{spid}) as shoucan,
+		(SELECT
+		COUNT(*) from design d where d.designer=#{name} and
+		d.sp_id=#{spid}) as
+		zouping,
+		(SELECT GROUP_CONCAT(lname) from label l,staff_label g where
+		l.id=g.lid and
+		l.type=3 and g.sid=#{sid}) as label,
+		(SELECT s.name from
+		supplier_company_staff s,supplier p WHERE s.sp_id=p.id
+		and s.id=#{sid})
+		as name,
+		(SELECT y.sp_name from supplier_company_staff r,supplier y
+		WHERE r.sp_id=y.id
+		and r.id=#{sid}) as sname,
+		(SELECT COUNT(*) from
+		sgtopic m,sgtopic_reply b WHERE b.sg_id=m.id) as pinglu
+		from sgtopic q
+		where q.sid=#{sid}
+	</select>
+	<select id="query" resultMap="BaseResultMapVsd">
+		SELECT GROUP_CONCAT(lname) as
+		lname,(SELECT COUNT(*) from staff_collect
+		where sid=#{sid}) as shoucan,
+		(SELECT '1') as pingfen,
+		(SELECT '1') as xingji,
+		(SELECT sp_id from
+		supplier_company_staff where id=#{sid}) as spid,
+		(SELECT name from
+		supplier_company_staff where id=#{sid}) as name,
+		(SELECT filepath from
+		attachment WHERE mainid=#{sid} and filetype=3) as img,
+		(SELECT COUNT(*)
+		from design d where d.designer = (SELECT name from
+		supplier_company_staff where id=#{sid}) )as zouping,
+		(SELECT sp_name
+		from supplier WHERE id=(SELECT sp_id from
+		supplier_company_staff where
+		id=#{sid})) as sname,
+		(SELECT COUNT(*) from staff_collect where
+		sid=#{sid} and uid=#{uid}) as hs
+		from label l,staff_label g where
+		l.id=g.lid and l.type=3 and
+		g.sid=#{sid};
+	</select>
+
+	<!-- web 后台 -->
+	<select id="selectAllSgtopic" resultMap="VSupplierMap"
+		parameterType="java.util.Map">
+		SELECT
+		a.*,
+		c.`name` AS spName,
+		d.cate_name AS styleName,
+		e.cate_name AS
+		houseTypeName,
+		b.city AS city
+		FROM
+		sgtopic a
+		LEFT JOIN area_domain b
+		ON
+		a.city_domain = b.city_domain
+		LEFT JOIN supplier_company_staff c
+		ON
+		a.sid = c.id
+		LEFT JOIN design_cate d
+		ON d.id = a.style
+		LEFT JOIN
+		design_cate e
+		ON e.id = a.house_type
+		WHERE 1=1
+		<include refid="condition" />
+		ORDER BY a.`create_time` DESC
+		limit ${rowStart}, ${limit}
+	</select>
+
+	<select id="selectAllSgtopicCount" parameterType="java.util.Map"
+		resultType="long">
+		SELECT
+		COUNT(1)
+		FROM
+		sgtopic a
+		LEFT JOIN area_domain b
+		ON
+		a.city_domain =
+		b.city_domain
+		LEFT JOIN supplier_company_staff c
+		ON
+		a.sid = c.id
+		LEFT JOIN
+		design_cate
+		d
+		ON d.id = a.style
+		LEFT JOIN
+		design_cate e
+		ON e.id =
+		a.house_type
+		WHERE
+		1=1
+		<include refid="condition" />
+	</select>
+
+	<select id="sgtopicDetail" resultMap="VSupplierMap">
+		SELECT
+		a.*,
+		c.`name` AS
+		spName,
+		d.cate_name AS styleName,
+		e.cate_name AS
+		houseTypeName,
+		b.city AS
+		city
+		FROM
+		sgtopic a
+		LEFT JOIN
+		area_domain b
+		ON
+		a.city_domain = b.city_domain
+		LEFT JOIN
+		supplier_company_staff c
+		ON
+		a.sid = c.id
+		LEFT JOIN design_cate d
+		ON d.id =
+		a.style
+		LEFT JOIN
+		design_cate e
+		ON e.id = a.house_type
+		WHERE
+		a.id=#{id}
+	</select>
+
+	<sql id="condition">
+		<if test="status!=null and status!=''">
+			AND a.`status`=${status}
+		</if>
+		<if test="createBegin!=null and createBegin!=''">
+			and a.create_time >='${createBegin}'
+		</if>
+		<if test="createEnd!=null and createEnd!=''">
+			and a.create_time &lt;='${createEnd}'
+		</if>
+		<if test="checkBegin!=null and checkBegin!=''">
+			and a.check_time >='${checkBegin}'
+		</if>
+		<if test="checkEnd!=null and checkEnd!=''">
+			and a.check_time &lt;='${checkEnd}'
+		</if>
+		<if test="closeBegin!=null and closeBegin!=''">
+			and a.`close_time` >='${closeBegin}'
+		</if>
+		<if test="closeEnd!=null and closeEnd!=''">
+			and a.`close_time` &lt;='${closeEnd}'
+		</if>
+		<if test="city!=null and city!=''">
+			and a.city_domain='${city}'
+		</if>
+		<if test="spName!=null and spName!=''">
+		  AND c.`name` LIKE '%${spName}%'
+		</if>
+	</sql>
+	
+	<!-- 审核 不通过 -->
+	<update id="noPass">
+	 UPDATE sgtopic SET check_time =NOW(),STATUS=-1 WHERE id=${id}
+	</update>
+	
+	<update id="pass">
+	 UPDATE sgtopic SET check_time =NOW(),STATUS=1 WHERE id=${id}
+	</update>
+	<!-- /web -->
+</mapper>

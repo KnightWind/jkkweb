@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.order.mapper.RefundMapper">
+
+	<resultMap type="com.jkkp.modules.order.view.VRefund" id="VRefundMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="order_id" property="orderId" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="review_time" property="reviewTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="refund_money_discount" property="refundMoneyDiscount"
+			jdbcType="DECIMAL" />
+		<result column="refund_money_buyer" property="refundMoneyBuyer"
+			jdbcType="DECIMAL" />
+		<result column="refund_money_sp" property="refundMoneySp"
+			jdbcType="DECIMAL" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="back_method" property="backMethod" jdbcType="TINYINT" />
+		<result column="refund_method" property="refundMethod"
+			jdbcType="TINYINT" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="ship_province" property="shipProvince"
+			jdbcType="INTEGER" />
+		<result column="ship_city" property="shipCity" jdbcType="INTEGER" />
+		<result column="sihp_distruct" property="sihpDistruct"
+			jdbcType="INTEGER" />
+		<result column="ship_address" property="shipAddress" jdbcType="VARCHAR" />
+		<result column="contcat" property="contcat" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="pid" property="pid" jdbcType="VARCHAR" />
+		<result column="arbitration_status" property="arbitrationStatus"
+			jdbcType="TINYINT" />
+		<result column="agree_time" property="agreeTime" jdbcType="TIMESTAMP" />
+		<result column="bank_id" property="bankId" jdbcType="TINYINT" />
+		<result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+
+		<result column="itemSumPrice" property="itemSumPrice" jdbcType="DECIMAL"></result>
+		<result column="paySumPrice" property="paySumPrice" jdbcType="DECIMAL"></result>
+		<result column="discount" property="discount" jdbcType="DECIMAL"></result>
+		<result column="contactUser" property="contactUser" jdbcType="VARCHAR"></result>
+		<result column="contactMobile" property="contactMobile"
+			jdbcType="VARCHAR"></result>
+	</resultMap>
+
+	<sql id="condition">
+         <if test="city!=null and city!=''">
+              AND b.city_domain='${city}'
+         </if>
+         <if test="id!=null and id!=''">
+              AND a.id=${id}
+         </if>
+         <if test="orderId!=null and orderId!=''">
+              AND a.order_id=${orderId}
+         </if>
+         <if test="contactUser!=null and contactUser!=''">
+              AND b.contact_user LIKE '%${contactUser}%'
+         </if>
+         <if test="begin!=null and begin!=''">
+              AND a.create_time>'${begin}'
+         </if>
+         <if test="end!=null and end!=''">
+              AND a.create_time&lt;'${end}'
+         </if>
+         <if test="status!=null and status!=''">
+              AND a.status=${status}
+         </if>
+	</sql>
+
+
+	<select id="findPage" resultMap="VRefundMap">
+		SELECT
+			a.*,
+			b.item_sum_price AS itemSumPrice,
+			b.pay_sum_price AS paySumPrice,
+			b.discount AS discount,
+			b.contact_user AS contactUser,
+			b.contact_mobile AS contactMobile
+		FROM
+			refund a,
+			order_ship b,
+			order_id c
+		WHERE a.order_id = c.id
+			AND b.main_id = c.id
+			<include refid="condition"></include>
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		SELECT count(1)
+		FROM
+			refund a,
+			order_ship b,
+			order_id c
+		WHERE a.order_id = c.id
+			AND b.main_id = c.id
+		<include refid="condition"></include>
+	</select>
+
+</mapper>

@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.design.mapper.DesignMapper">
+	<resultMap id="Design_map" type="com.jkkp.modules.design.model.Design">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="design_name" property="designName" jdbcType="VARCHAR" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="forman" property="forman" jdbcType="VARCHAR" />
+		<result column="designer" property="designer" jdbcType="VARCHAR" />
+		<result column="company" property="company" jdbcType="VARCHAR" />
+		<result column="image_num" property="imageNum" jdbcType="INTEGER" />
+		<result column="huxing" property="huxing" jdbcType="INTEGER" />
+		<result column="kongjian" property="kongjian" jdbcType="INTEGER" />
+		<result column="fengge" property="fengge" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="is_lock" property="isLock" jdbcType="TINYINT" />
+		<result column="pid" property="pid" jdbcType="INTEGER" />
+		<result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+		<result column="display_name" property="displayName" jdbcType="VARCHAR" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="aid" property="aid" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="dname" property="dname" jdbcType="VARCHAR" />
+		<result column="ename" property="ename" jdbcType="VARCHAR" />
+		<result column="fname" property="fname" jdbcType="VARCHAR" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="mingcheng" property="mingcheng" jdbcType="VARCHAR" />
+        <result column="bidding" property="bidding" jdbcType="INTEGER" />
+        <result column="budget" property="budget" jdbcType="FLOAT" />
+        <result column="space" property="space" jdbcType="FLOAT" />
+        <result column="method" property="method" jdbcType="INTEGER" />
+        <result column="su_type" property="suType" jdbcType="VARCHAR" />
+        <result column="duration" property="duration" jdbcType="FLOAT" />
+        
+        <result column="work_time" property="workTime" jdbcType="INTEGER" />
+        <result column="start_work" property="startWork" jdbcType="INTEGER" />
+        <result column="tile_wood" property="tileWood" jdbcType="INTEGER" />
+        <result column="white_fuel" property="whiteFuel" jdbcType="INTEGER" />
+        <result column="completion" property="completion" jdbcType="INTEGER" />
+        <result column="staffid" property="staffid" jdbcType="INTEGER" />
+        
+	</resultMap>
+	<resultMap type="com.jkkp.modules.design.view.VDesign" id="Design_vmap" extends="Design_map">
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+		<result column="huXing" property="huXing" jdbcType="VARCHAR" />
+		<result column="kongJian" property="kongJian" jdbcType="VARCHAR" />
+		<result column="fengGe" property="fengGe" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap type="com.jkkp.modules.design.view.VDesign" id="Design_detail" extends="Design_vmap">
+		
+	</resultMap>
+	
+	<!-- web pc say     start   -->
+	
+	<resultMap id="VdecoratePCSay" type="com.jkkp.pc.decorate.view.VDecorate">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="space" property="space" jdbcType="FLOAT" />
+		<result column="money" property="money" jdbcType="VARCHAR" />
+		<result column="houseType" property="houseType" jdbcType="VARCHAR" />
+		<result column="path" property="path" jdbcType="VARCHAR" />
+		<result column="style" property="style" jdbcType="VARCHAR" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	
+	<sql id="decorateCondtion">
+		
+		<if test="huxing != null and huxing > 0">
+			and c.huxing = ${huxing}
+		</if>
+		<if test="kongjian != null and kongjian > 0">
+			and c.kongjian = ${kongjian}
+		</if>
+		<if test="fengge != null and fengge > 0">
+			and c.fengge = ${fengge}
+		</if>
+	
+	</sql>
+	
+	<select id="queryDecorateById" resultMap="VdecoratePCSay" >
+		SELECT
+		c.id,
+		c.pid,
+		c.`space`,
+		c.budget as money,
+		dc1.cate_name as houseType,
+		dc2.cate_name as style,
+		c.community
+		FROM
+		design c
+		left Join design_cate dc1
+		ON c.huxing = dc1.id
+		left Join design_cate dc2
+		ON c.fengge = dc2.id
+		WHERE c.id = #{id}
+	</select>
+	
+	<select id="queryDecorateByPBL" resultMap="VdecoratePCSay" parameterType="java.util.Map">
+		SELECT
+		c.id,
+		c.`space`,
+		c.budget as money,
+		dc1.cate_name as houseType,
+		dc2.cate_name as style
+		FROM
+		design c
+		left Join design_cate dc1
+		ON c.huxing = dc1.id
+		left Join design_cate dc2
+		ON c.fengge = dc2.id
+		WHERE 1 = 1
+		<include refid="decorateCondtion"/>
+		order by c.id desc
+		limit #{page},#{pageSize}
+	</select>
+	<select id="queryDecorateByPBLCount" resultType="long" parameterType="java.util.Map">
+		SELECT
+		count(1)
+		FROM
+		design c
+		left Join design_cate dc1
+		ON c.huxing = dc1.id
+		left Join design_cate dc2
+		ON c.fengge = dc2.id
+		WHERE 1 = 1
+		<include refid="decorateCondtion"/>
+	</select>
+	<!-- web pc say     end  -->
+	
+	<select id="findDesignInfoById">
+	    
+	    SELECT
+		a.*,
+		b.`sp_name` AS spName,
+		c.`cate_name` AS huXing,
+		d.`cate_name` AS kongJian ,
+		e.`cate_name` AS fengGe,
+		FROM
+		design a
+		LEFT JOIN supplier b
+		ON a.`sp_id` = b.`id`
+		LEFT JOIN design_cate c
+		ON a.`huxing` = c.`id`
+		LEFT JOIN design_cate d
+		ON a.`kongjian` = d.`id`
+		LEFT JOIN design_cate e
+		ON a.`fengge` = e.`id`
+		LEFT JOIN a f
+		ON f.`city_domain`=a.`city_domain`
+		WHERE a.`id`=#{id}
+	    
+	</select>
+	
+	
+	
+	
+	
+	
+	<select id="finAll" resultMap="Design_vmap">
+		SELECT s.*,d.cate_name as
+		dname,e.cate_name as ename,f.cate_name as fname
+		from design s left join
+		design_cate d on s.kongjian=d.id LEFT JOIN
+		design_cate e on
+		s.fengge=e.id LEFT JOIN design_cate f on
+		s.huxing=f.id
+	</select>
+	<sql id="condition">
+		<if test="city!=null and city!=''">
+			and s.city_domain='${city}'
+		</if>
+		<if test="sname!=null and sname!=''">
+			and s.company like '%${sname}%'
+		</if>
+		<if test="id!=null and id!=''">
+			and s.id=${id}
+		</if>
+		<if test="name!=null and name!=''">
+			and s.design_name like '%${name}%'
+		</if>
+		<if test="status!=null and status!=''">
+			and s.status=${status}
+		</if>
+		<if test="spId!=null and spId!=''">
+			and s.sp_id=${spId}
+		</if>
+	</sql>
+	<select id="findPage" parameterType="java.util.Map" resultMap="Design_vmap">
+		SELECT
+		s.*,
+		d.cate_name AS dname,
+		e.cate_name AS ename,
+		f.cate_name AS
+		fname
+		FROM
+		design s
+		LEFT JOIN design_cate d
+		ON s.kongjian = d.id
+		LEFT JOIN
+		design_cate e
+		ON s.fengge = e.id
+		LEFT JOIN design_cate f
+		ON s.huxing =
+		f.id
+		WHERE 1 = 1
+		<include refid="condition" />
+		order by s.create_time desc
+		limit ${rowStart}, ${limit}
+	</select>
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		select count(1) from design s left join design_cate d on
+		s.kongjian=d.id LEFT JOIN design_cate e on s.fengge=e.id LEFT JOIN
+		design_cate f on s.huxing=f.id where 1=1
+		<include refid="condition" />
+	</select>
+
+	<select id="findDesignBySpId" parameterType="java.util.Map"
+		resultMap="Design_vmap">
+		SELECT
+		s.*,
+		sp.sp_name as spName,
+		d.cate_name AS dname,
+		e.cate_name AS ename,
+		f.cate_name AS fname
+		FROM
+		design s
+		left join supplier sp
+		on s.sp_id = sp.id
+		LEFT JOIN design_cate d
+		ON s.kongjian = d.id
+		LEFT JOIN
+		design_cate e
+		ON s.fengge = e.id
+		LEFT JOIN design_cate f
+		ON s.huxing =
+		f.id
+		WHERE 1 = 1
+		<include refid="condition" />
+		<if test="status != null and status !=''">
+		    AND s.status = '${status}'
+		</if>
+		order by s.create_time desc
+		limit ${rowStart}, ${limit}
+	</select>
+	<select id="findDesignBySpIdCount" parameterType="java.util.Map"
+		resultType="long">
+		select count(1) from design s left join design_cate d on
+		s.kongjian=d.id LEFT JOIN design_cate e on s.fengge=e.id LEFT JOIN
+		design_cate f on s.huxing=f.id where 1=1
+		<include refid="condition" />
+		<if test="status != null and status !=''">
+		    AND s.status = '${status}'
+		</if>
+	</select>
+
+	<select id="fin" resultMap="Design_vmap">
+		SELECT s.* FROM design s WHERE
+		s.sp_id=#{id}
+	</select>
+
+	<select id="get" resultType="long">
+		SELECT COUNT(*) from design
+		d,supplier_company_staff s where d.sp_id=s.sp_id and
+		d.designer=#{name}
+	</select>
+
+	<select id="queryDesignDetail">
+		SELECT t.quote as pushQuote,CONCAT(t3.para_value,t2.pid)as
+		fileUrl,t2.type
+		as fielType from appointment_push t
+		LEFT JOIN design t1
+		on t.id = t1.aid LEFT JOIN design_image t2 on
+		t2.design_id=t1.id
+		,sysconfig t3
+		where t3.para_name='PHOTO_PREFIX_URL'
+		<if test="appointmentPushId!=null and appointmentPushId!=''">
+			and t.id=${appointmentPushId}
+		</if>
+		<if test="opType!=null and opType!=''">
+			and t2.type=${opType}
+		</if>
+	</select>
+	<select id="pagin" parameterType="java.util.Map" resultMap="Design_vmap">
+		SELECT d.design_name as mingcheng from design d where 1=1
+		<if test="name!=null and name!=''">
+			and d.designer='${name}'
+		</if>
+		<if test="spid!=null and spid!=''">
+			and d.sp_id=${spid}
+		</if>
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+
+	<!-- web -->
+	<!-- 获取工程单-装修方案 -->
+	<select id="engineeringDesignDetail" resultMap="Design_vmap">
+		SELECT
+		a.*,
+		b.`sp_name` AS spName,
+		c.`cate_name` AS huXing,
+		d.`cate_name` AS kongJian ,
+		e.`cate_name` AS fengGe,
+		f.`city`
+		FROM
+		design a
+		LEFT JOIN supplier b
+		ON a.`sp_id` = b.`id`
+		LEFT JOIN design_cate c
+		ON a.`huxing` = c.`id`
+		LEFT JOIN design_cate d
+		ON a.`kongjian` = d.`id`
+		LEFT JOIN design_cate e
+		ON a.`fengge` = e.`id`
+		LEFT JOIN area_domain f
+		ON f.`city_domain`=a.`city_domain`
+		WHERE a.`id`=#{id}
+	</select>
+	<!-- -web -->
+	
+	<resultMap id="BaseResultCaseDesign" type="com.jkkp.appapi.modules.mapper.VDesignCaseSV">
+		<result column="jiage" property="jiage" jdbcType="VARCHAR" />
+		<result column="mianji" property="mianji" jdbcType="VARCHAR" />
+		<result column="fengge" property="fengge" jdbcType="VARCHAR" />
+		<result column="hu" property="hu" jdbcType="VARCHAR" />
+		<result column="designid" property="designid" jdbcType="VARCHAR" />
+		<result column="sjsid" property="sjsid" jdbcType="VARCHAR" />
+		<result column="fangshi" property="fangshi" jdbcType="VARCHAR" />
+		<result column="zhong" property="zhong" jdbcType="VARCHAR" />
+		<result column="xingji" property="xingji" jdbcType="VARCHAR" />
+		<result column="img" property="img" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+	</resultMap>
+<select id="getCaseDesign" parameterType="java.util.Map"  resultMap="BaseResultCaseDesign">
+SELECT d.budget as jiage,d.space as mianji,
+dc1.cate_name as fengge,
+dc2.cate_name as hu,
+d.id as designid,
+s.id as  sjsid,
+CASE method 
+WHEN 1 THEN '半包'
+WHEN 2 THEN '全包' END as fangshi,
+s.name as name,
+CASE bidding
+WHEN 1 THEN '中标'
+WHEN 0 THEN '' END as zhong,
+s.estimate_average as xingji,
+(SELECT CONCAT(t3.para_value,a.filepath) from attachment a,sysconfig t3 WHERE a.mainid=s.id and filetype=3 and t3.para_name='PHOTO_PREFIX_URL') as img
+from   supplier_company_staff s,design d
+left join
+			design_cate dc1
+		on 
+			dc1.id =d.fengge
+		left join
+			design_cate dc2
+		on
+			dc2.id = d.huxing
+where   d.aid=${aid} and d.staffid=s.id ORDER BY bidding DESC,estimate_average DESC;
+</select>
+
+
+	<resultMap id="Design3imgMap" type="com.jkkp.appapi.modules.mapper.VDesign3img">
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="pid" property="pid" jdbcType="INTEGER" />
+		<result column="designName" property="designName" jdbcType="VARCHAR" />
+		<result column="designer" property="designer" jdbcType="VARCHAR" />
+		<result column="bigimg" property="bigimg" jdbcType="VARCHAR" />
+		<result column="img1" property="img1" jdbcType="VARCHAR" />
+		<result column="img2" property="img2" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="qrydesigns" parameterType="java.util.Map" resultMap="Design3imgMap">
+		SELECT d.*,a.filepath as bigimg  from design d  
+		LEFT JOIN attachment a on d.pid=a.id
+		where 1=1 
+		ORDER BY d.id DESC
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+
+	<!-- ↓↓ysc============================== -->
+	<sql id="tbl">design</sql>
+	<sql id="temp_tbl">
+		select
+		bb.sp_name AS spName,
+		cc.cate_name AS hxName,
+		dd.cate_name AS kjName,
+		ee.cate_name AS fgName,
+		aa.* from <include refid="tbl" /> aa
+		LEFT JOIN supplier 		bb ON bb.id= aa.sp_id 
+		LEFT JOIN design_cate cc ON cc.id= aa.huxing
+		LEFT JOIN design_cate dd ON dd.id= aa.kongjian
+		LEFT JOIN design_cate ee ON ee.id= aa.fengge
+	</sql>
+	<select id="getList" resultMap="Design_vmap"	parameterType="string">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="Design_vmap"	parameterType="com.jkkp.utils.Pager">
+		select t.* from (<include refid="temp_tbl" />) t
+		where 1=1 ${value}
+		limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (
+		<include refid="temp_tbl" />
+		) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="Design_detail" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from
+		<include refid="tbl" />
+		t where 1=1 ${value}
+	</delete>
+	<!-- ↑↑ysc============================== -->
+</mapper>

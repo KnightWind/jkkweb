@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.product.mapper.ItemRecommandMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.product.view.VItemRecommand" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="label" property="label" jdbcType="VARCHAR" />
+    <result column="seq" property="seq" jdbcType="INTEGER" />
+    <result column="pid" property="pid" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="img" property="img" jdbcType="VARCHAR" />
+   <result column="price" property="price" jdbcType="DECIMAL" />
+  </resultMap>
+  <select id="index" resultMap="BaseResultMap">
+  	SELECT i.*,t.title as title,t.price as price,t.pid as img from item_recommand i ,item t where i.item_id=t.id  and i.label='special' and i.city_domain=#{name}
+  </select>
+   <select id="yugao" resultMap="BaseResultMap">
+  	SELECT i.*,t.title as title,t.price as price,t.pid as img from item_recommand i ,item t where i.item_id=t.id  and i.label='yugao' and i.city_domain=#{name}
+  </select>
+  <delete id="dele">
+  	delete from item_recommand  where label='yugao' and city_domain=#{name}
+  </delete>
+</mapper>

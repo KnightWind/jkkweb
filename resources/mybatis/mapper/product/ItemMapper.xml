@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.product.mapper.ItemMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.product.view.VItem">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="sub_title" property="subTitle" jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="start_sell" property="startSell" jdbcType="BIT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="brand_id" property="brandId" jdbcType="INTEGER" />
+		<result column="cate" property="cate" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="is_lock" property="isLock" jdbcType="TINYINT" />
+		<result column="sales_num" property="salesNum" jdbcType="INTEGER" />
+		<result column="follow_num" property="followNum" jdbcType="INTEGER" />
+		<result column="stock" property="stock" jdbcType="INTEGER" />
+		<result column="pid" property="pid" jdbcType="VARCHAR" />
+		<result column="snapshot_id" property="snapshotId" jdbcType="INTEGER" />
+		<result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+		<result column="is_free" property="isFree" jdbcType="TINYINT" />
+		<result column="sku_data" property="skuData" jdbcType="VARCHAR" />
+		<result column="rel_id" property="relId" jdbcType="INTEGER" />
+		<result column="sku_1" property="sku1" jdbcType="INTEGER" />
+		<result column="sku_2" property="sku2" jdbcType="INTEGER" />
+		<result column="detail" property="detail" jdbcType="LONGVARCHAR" />
+		<result column="zc_flag" property="zcFlag" jdbcType="BIT" />
+		<result column="model" property="model" jdbcType="VARCHAR" />
+		<result column="zitemStatus" property="zitemStatus" jdbcType="INTEGER" />
+		<result column="cnt" property="cnt" jdbcType="INTEGER" />
+		
+		<!-- <result column="top_price" property="topPrice" jdbcType="FLOAT" />-->
+		<!-- <result column="low_price" property="lowPrice" jdbcType="FLOAT" />-->
+		<!-- <result column="td_price" property="tdPrice" jdbcType="FLOAT" /> -->
+		<result column="bname" property="bname" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 建材端   -->
+	
+	<select id="selectById" resultMap="BaseResultMap">
+		SELECT
+		i.*,
+		b.name AS bname
+		FROM
+		item i
+		left join
+		brand b
+		on i.brand_id = b.id
+		where i.id = #{id}
+	</select>
+	
+	
+	<select id="selecSpItemList" resultMap="BaseResultMap" parameterType="java.util.Map">
+		SELECT
+		COUNT(zi.item_id) cnt,
+		zi.`status` zitemStatus, 
+		i.*,
+		b.name AS bname
+		FROM
+		item i
+		LEFT JOIN zc_item zi on zi.item_id = i.id
+		LEFT JOIN
+		item_category b
+		ON i.cate=b.`id`
+		WHERE 1 = 1
+		and i.`status` = 0
+		<include refid="condition" />
+		GROUP BY i.id
+		order by i.id desc
+		limit ${rowStart}, ${limit}
+	</select>
+	<select id="selectSpItemCount" resultType="long" parameterType="java.util.Map">
+		SELECT
+		count(1)
+		FROM
+		item i
+		left join
+		brand b
+		on i.brand_id = b.id
+		where 1 = 1
+		and i.`status` = 0
+		<include refid="condition" />
+	</select>
+	<!-- 建材端   -->
+	
+	<select id="name" resultMap="BaseResultMap">
+		SELECT * from item t where t.title like #{name}
+	</select>
+	
+	<select id="fin" resultMap="BaseResultMap">
+		SELECT * from item t where t.is_free=1 and t.title like #{name}
+	</select>
+	
+	<sql id="condition">
+		<if test="spId != null and spId != ''">
+			and i.sp_id = ${spId}
+		</if>
+		<if test="city!=null and city!=''">
+			and i.city_domain='${city}'
+		</if>
+		<if test="sname!=null and sname!=''">
+			and s.sp_name like '%${sname}%'
+		</if>
+		<if test="id!=null and id!=''">
+			and i.id=${id}
+		</if>
+		<if test="title!=null and title!=''">
+			and i.title like '%${title}%'
+		</if>
+		<if test="bid!=null and bid!=''">
+			and b.id=${bid}
+		</if>
+		<if test="zt!=null and zt!=''">
+			and i.start_sell=${zt}
+		</if>
+		<if test="oyg!=null and oyg!=''">
+			and i.is_free=${oyg}
+		</if>
+		<if test="status!=null and status!=''">
+			and i.is_lock = '${status}'
+		</if>
+	</sql>
+	<select id="findPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select i.*,b.name AS bname,s.sp_name spName
+		FROM  item i 
+		LEFT JOIN brand b on b.id = i.brand_id
+		LEFT JOIN supplier s on s.id = i.sp_id
+		where i.status = 0
+		<include refid="condition" />
+		order by i.id desc
+		limit ${rowStart}, ${limit}
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		select count(1)
+		FROM  item i 
+		LEFT JOIN brand b on b.id = i.brand_id
+		LEFT JOIN supplier s on s.id = i.sp_id
+		where i.status = 0
+		<include refid="condition" />
+	</select>
+	
+	<resultMap id="activityitemMap"	type="com.jkkp.modules.product.view.VItemHot" extends="BaseResultMap">
+		<result column="promotionalprice" property="promotionalprice" jdbcType="DOUBLE" />
+	</resultMap>
+	<select id="activityitem" parameterType="java.util.Map" resultMap="activityitemMap">
+		SELECT 
+		  i.*,
+		  ap.price AS promotionalprice 
+		FROM
+		  activity_product ap 
+		  LEFT JOIN item i 
+		    ON ap.item_id = i.id 
+		ORDER BY ap.`orders` ASC 
+		LIMIT 0, 100 
+	</select>
+</mapper>

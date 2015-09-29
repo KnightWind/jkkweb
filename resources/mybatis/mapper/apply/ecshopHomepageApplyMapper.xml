@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.apply.mapper.EcshopHomepageApplyMapper" >
+  <resultMap id="ecHomeApplyResult" type="com.jkkp.pc.apply.model.EcshopHomepageApply" >
+   <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="member_name" property="memberName" jdbcType="VARCHAR" />
+    <result column="member_mobile" property="memberMobile" jdbcType="CHAR" />
+    <result column="apply_type" property="applyType" jdbcType="TINYINT" />
+    <result column="supervisor_package_type" property="supervisorPackageType" jdbcType="TINYINT" />
+    <result column="house_acreage" property="houseAcreage" jdbcType="REAL" />
+    <result column="house_decorate_status" property="houseDecorateStatus" jdbcType="TINYINT" />
+    <result column="house_addr_full" property="houseAddrFull" jdbcType="VARCHAR" />
+    <result column="house_addr_province" property="houseAddrProvince" jdbcType="VARCHAR" />
+    <result column="house_addr_city" property="houseAddrCity" jdbcType="VARCHAR" />
+    <result column="house_addr_area" property="houseAddrArea" jdbcType="VARCHAR" />
+    <result column="house_model" property="houseModel" jdbcType="TINYINT" />
+    <result column="house_model_room" property="houseModelRoom" jdbcType="TINYINT" />
+    <result column="house_model_hall" property="houseModelHall" jdbcType="TINYINT" />
+    <result column="house_model_kitchen" property="houseModelKitchen" jdbcType="TINYINT" />
+    <result column="house_model_toilet" property="houseModelToilet" jdbcType="TINYINT" />
+    <result column="house_model_balcony" property="houseModelBalcony" jdbcType="TINYINT" />
+    <result column="house_decorate_grade" property="houseDecorateGrade" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="ser_reply_time" property="serReplyTime" jdbcType="TIMESTAMP" />
+    <result column="ser_reply_content" property="serReplyContent" jdbcType="VARCHAR" />
+    <result column="ser_has_reply" property="serHasReply" jdbcType="TINYINT" />
+    <result column="isChecked" property="isChecked" jdbcType="TINYINT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+ 
+</mapper>

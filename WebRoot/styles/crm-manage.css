@@ -1,0 +1,7 @@
+.merchandiser ul li{height:30px;line-height:30px;font-size:14px;}
+.marginR{margin-right:10px;}
+.nowMerchandiser{font-size:14px;height: 30px;line-height: 30px;margin-bottom: 10px;}
+.nowMerchandiser span{margin-right:10px;}
+.changeMerchandiser p{height:30px;line-height:30px;font-size: 14px;}
+span.moveSubmitBtn{margin-top: 10px;}
+span.moveSubmitBtn:hover{opacity: 0.8;filter:alpha(opacity=80%);}

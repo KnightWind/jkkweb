@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.CaseMapper">
+	<resultMap id="Case_map" type="com.jkkp.modules.basedata.model.Case">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="design_id" property="designId" jdbcType="INTEGER" />
+		<result column="sjs_id" property="sjsId" jdbcType="INTEGER" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+		<result column="jl_id" property="jlId" jdbcType="INTEGER" />
+		<result column="topic_id" property="topicId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="space" property="space" jdbcType="FLOAT" />
+		<result column="method" property="method" jdbcType="INTEGER" />
+		<result column="zx_fund" property="zxFund" jdbcType="FLOAT" />
+		<result column="zx_stage" property="zxStage" jdbcType="INTEGER" />
+		<result column="kgd_flag" property="kgdFlag" jdbcType="INTEGER" />
+		<result column="kgd_linktel" property="kgdLinktel" jdbcType="VARCHAR" />
+		
+		<result column="case_source" property="caseSource" jdbcType="INTEGER" />
+		<result column="aid" property="aid" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER"/>
+		<result column="comment_count" property="commentCount" jdbcType="INTEGER" />
+		<result column="browse_count" property="browseCount" jdbcType="INTEGER" />
+		<result column="house_type" property="houseType" jdbcType="INTEGER" />
+		<result column="style" property="style" jdbcType="INTEGER" />
+		<result column="budget" property="budget" jdbcType="FLOAT" />
+	</resultMap>
+	<resultMap id="Case_vmap" type="com.jkkp.modules.basedata.view.VCase" extends="Case_map">
+		<result column="design_name" property="designName" jdbcType="VARCHAR" />
+		<result column="engcommunity" property="engcommunity" jdbcType="VARCHAR" />
+		<result column="subject" property="subject" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="supervisorName" property="supervisorName" jdbcType="VARCHAR" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+		<result column="jlName" property="jlName" jdbcType="VARCHAR" />
+		<result column="stylename" property="stylename" jdbcType="VARCHAR" />
+		<result column="housestyle" property="housestyle" jdbcType="VARCHAR" />
+		<result column="coverurl" property="coverurl" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="VCasesPCSay" type="com.jkkp.pc.cases.view.VCases">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="space" property="space" jdbcType="FLOAT" />
+		<result column="money" property="money" jdbcType="VARCHAR" />
+		<result column="houseType" property="houseType" jdbcType="VARCHAR" />
+		<result column="path" property="path" jdbcType="VARCHAR" />
+		<result column="style" property="style" jdbcType="VARCHAR" />
+		<result column="design_id" property="designId" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="pcCondtion">
+		<if test="id != null and id > 0">
+			and c.sp_id = #{id}
+		</if>
+		<if test="type != null and type > 0">
+			and c.style = #{type}
+		</if>
+	</sql>
+
+	<select id="queryXCases" resultMap="VCasesPCSay">
+		SELECT
+		c.id,
+		c.`space`,
+		c.design_id,
+		c.budget as money,
+		dc1.cate_name as houseType,
+		dc2.cate_name as style
+		FROM
+		cases c
+		left Join design_cate dc1
+		ON c.house_type = dc1.id
+		left Join design_cate dc2
+		ON c.style = dc2.id
+		WHERE 1 = 1
+		<include refid="pcCondtion"></include>
+		order by c.create_time desc
+		limit 0,#{count}
+	</select>
+
+
+	<sql id="conntion">
+		<if test="title != null and title != ''">
+			and t.subject like '%${title}%'
+		</if>
+		<if test="designName != null and designName != ''">
+			and d.design_name like '%${designName}%'
+		</if>
+		<if test="uname != null and uname != ''">
+			and scs.name like '%${uname}%'
+		</if>
+		<if test="createBegin!=null and createBegin!=''">
+			and c.create_time >='${createBegin}'
+		</if>
+		<if test="createEnd!=null and createEnd!=''">
+			and c.create_time &lt;='${createEnd}'
+		</if>
+		<if test="sId!=null and sId!=''">
+			and c.sp_id = ${sId}
+		</if>
+	</sql>
+
+	<select id="findPage" resultMap="Case_vmap" parameterType="java.util.Map">
+		select 
+			c.*,
+			d.design_name as designName,
+			e.community as engcommunity,
+			t.subject as subject,
+			scs.name as name,
+			s.sp_name as spName,
+			ss.sp_name as jlName
+		from 
+			cases c
+		left join
+			supplier s
+		on
+			s.id = c.sp_id
+		left join
+			supplier ss
+		on
+			ss.id = c.jl_id
+		left join
+			design d
+		on
+			d.id = c.design_id
+		left join
+			supplier_company_staff scs
+		on
+			scs.id = c.sjs_id
+		left join
+			engineerings e
+		on
+			e.id = c.gcd_id
+		left join 
+			topic t
+		on 
+			t.id = c.topic_id
+		where
+			1 = 1
+		<include refid="conntion"/>
+		order by c.create_time desc
+		limit
+			${rowStart}, ${limit}
+	</select>
+
+	<select id="countPage" resultType="long" parameterType="java.util.Map">
+		select 
+			count(1)
+		from 
+			cases c
+		left join
+			supplier s
+		on
+			s.id = c.sp_id
+		left join
+			supplier ss
+		on
+			ss.id = c.jl_id
+		left join
+			design d
+		on
+			d.id = c.design_id
+		left join
+			supplier_company_staff scs
+		on
+			scs.id = c.sjs_id
+		left join
+			engineerings e
+		on
+			e.id = c.gcd_id
+		left join 
+			topic t
+		on 
+			t.id = c.topic_id
+		where
+			1 = 1
+		<include refid="conntion"/>
+		order by c.create_time desc
+	</select>
+
+	<!-- ↓↓ysc============================================= -->
+	<sql id="tbl">cases</sql>
+	<sql id="temp_tbl">
+		select	
+		concat(t4.para_value,t3.filepath) as coverurl,
+		t3.filepath,t4.para_value,
+		d0.cate_name as stylename,
+		d1.cate_name as housestyle,
+		aa.* from <include refid="tbl" />	aa
+		LEFT JOIN design_cate d0 ON d0.id=aa.style
+		LEFT JOIN design_cate d1 ON d1.id=aa.house_type
+		LEFT JOIN design 		d2 on d2.id=aa.design_id 
+		left join attachment	t3 on t3.id=d2.pid
+		left join sysconfig 	t4 on t4.para_name='PHOTO_PREFIX_URL'
+	</sql>
+	<select id="getList" resultMap="Case_vmap" parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="Case_vmap" parameterType="com.jkkp.utils.Pager">
+		select t.*	from (	<include refid="temp_tbl" />) t	where 1=1 ${value}	limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="Case_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from	<include refid="tbl" />	t where 1=1 ${value}
+	</delete>
+	<select id="getListBySpId" resultMap="Case_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t 
+		where t.sp_id=#{id} 
+		GROUP BY t.`id`
+	</select>
+	<select id="getKgdFlag1ListBySpId" resultMap="Case_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t 
+		where t.kgd_flag=1 and sp_id=#{id}
+	</select>
+	<select id="getKgdFlag0ListBySpId" resultMap="Case_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t 
+		where (t.kgd_flag is null or t.kgd_flag=0) and sp_id=#{id}
+	</select>
+	<!-- ↑↑ysc============================================= -->
+
+</mapper>

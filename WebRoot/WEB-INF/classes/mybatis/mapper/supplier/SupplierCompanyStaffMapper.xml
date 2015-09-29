@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierCompanyStaffMapper">
+	<resultMap id="SupplierCompanyStaff_map" type="com.jkkp.modules.supplier.model.SupplierCompanyStaff">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="avatar" property="avatar" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="job" property="job" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="sjs_suggest" property="sjsSuggest" jdbcType="VARCHAR" />
+		<result column="gz_suggest" property="gzSuggest" jdbcType="VARCHAR" />
+		<result column="sid" property="sid" jdbcType="INTEGER" />
+		<result column="estimate_average" property="estimateAverage" jdbcType="FLOAT" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="branch_id" property="branchId" jdbcType="INTEGER" />
+		<result column="leader_id" property="leaderId" jdbcType="INTEGER" />
+		<result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+		<result column="account_name" property="accountName" jdbcType="VARCHAR" />
+		<result column="bank_id" property="bankId" jdbcType="INTEGER" />
+		<result column="gain_rate" property="gainRate" jdbcType="FLOAT" />
+		<result column="total_sttle_money" property="totalSttleMoney" jdbcType="FLOAT" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+	</resultMap>
+	
+    <resultMap id="SupplierCompanyStaff_mapV1" type="com.jkkp.modules.supplier.view.VSupplierCompanyStaff">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="avatar" property="avatar" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="job" property="job" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="sjs_suggest" property="sjsSuggest" jdbcType="VARCHAR" />
+		<result column="gz_suggest" property="gzSuggest" jdbcType="VARCHAR" />
+		<result column="sid" property="sid" jdbcType="INTEGER" />
+		<result column="photoUrl" property="photoUrl" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="SupplierCompanyStaff_vmap" type="com.jkkp.modules.supplier.view.VSupplierCompanyStaff" extends="SupplierCompanyStaff_map">
+		<result column="leaderName" property="leaderName" jdbcType="VARCHAR" />
+		<result column="branchName" property="branchName" jdbcType="VARCHAR" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+		<result column="bankName" property="bankName" jdbcType="VARCHAR" />
+		
+		<!-- 结算记录 -->
+		<result column="ddCount" property="ddCount" jdbcType="INTEGER" />
+		<result column="amountTotal" property="amountTotal" jdbcType="DOUBLE" />
+		<result column="jsMoneyTotal" property="jsMoneyTotal" jdbcType="DOUBLE" />
+	</resultMap>
+	<resultMap id="SupplierCompanyStaffInfoMap"	type="com.jkkp.modules.supplier.view.SupplierCompanyStaffInfo">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="sp_name" property="spName" jdbcType="VARCHAR" />
+		<result column="avatar" property="avatar" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="job" property="job" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="sjs_suggest" property="sjsSuggest" jdbcType="VARCHAR" />
+		<result column="gz_suggest" property="gzSuggest" jdbcType="VARCHAR" />
+		<result column="sid" property="sid" jdbcType="INTEGER" />
+		<result column="supplierPosition" property="supplierPosition"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="BaseResultMapVs" type="com.jkkp.appapi.modules.mapper.Staff">
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="job" property="job" jdbcType="VARCHAR" />
+		<result column="id" property="id" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap id="BaseResultMapVsio" type="com.jkkp.appapi.modules.mapper.VDesing">
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="job" property="job" jdbcType="VARCHAR" />
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="collectNum" property="collectNum" jdbcType="INTEGER" />
+		<result column="desinNum" property="desinNum" jdbcType="INTEGER" />
+		<result column="pingfe" property="pingfe" jdbcType="FLOAT" />
+	</resultMap>
+	<resultMap id="BaseResult" type="com.jkkp.appapi.modules.mapper.VIStaff">
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="job" property="job" jdbcType="VARCHAR" />
+		<result column="sjs" property="sjs" jdbcType="VARCHAR" />
+		<result column="introduce" property="introduce" jdbcType="VARCHAR" />
+		<result column="img" property="img" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	
+	<resultMap id="PCBaseMap" type="com.jkkp.pc.staff.view.VStaff">
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="stylistName" property="stylistName" jdbcType="VARCHAR" />
+		<result column="position" property="position" jdbcType="VARCHAR" />
+		<result column="path" property="path" jdbcType="VARCHAR" />
+		<result column="grade" property="grade" jdbcType="FLOAT" />
+	</resultMap>
+	
+	 <!-- /////////////////建材后台员工列表 -->
+    <select id="selectJCSupplierStaff" resultMap="SupplierCompanyStaff_vmap">
+      SELECT 
+		  a.*,
+		  b.`name` AS leaderName,
+		  c.`name` AS branchName,
+		  d.amountTotal,
+		  d.ddCount,
+		  e.jsMoneyTotal 
+		FROM
+		  supplier_company_staff a 
+		  LEFT JOIN supplier_company_staff b 
+		    ON a.`leader_id` = b.`id` 
+		  LEFT JOIN supplier_branch c 
+		    ON a.`branch_id` = c.`id` 
+		  LEFT JOIN 
+		    (SELECT 
+		      pr.`recommend_mobile` AS recommendMobile,
+		      SUM(pr.`amount`) AS amountTotal,
+		      COUNT(pr.`record_id`) AS ddCount 
+		    FROM
+		      payment_record pr 
+		    WHERE pr.type IN (5, 6, 7) 
+		      AND pr.`status` IN ('1', 'TRADE_SUCCESS', 'SUCCESS') 
+		    GROUP BY pr.`recommend_mobile`) d 
+		    ON d.recommendMobile = b.`mobile` 
+		  LEFT JOIN 
+		    (SELECT 
+		      a.`mobile`,
+		      SUM(a.`sttle_balance`) AS jsMoneyTotal 
+		    FROM
+		      settlement a 
+		    WHERE a.`status` = 1 
+		      AND a.`role` = 1 
+		    GROUP BY a.`mobile`) e 
+		    ON e.`mobile` = b.`mobile`
+		    WHERE a.`sp_id`=${spId}
+	       <if test="status!=null and status!=''">
+	         AND a.`status`=${status}
+	       </if>
+	       ORDER BY d.amountTotal DESC
+    </select>
+    
+    <!-- /////////////////建材后台员工列表 -->
+    
+    <!-- 家可可管理后台商家员工审核 -->
+    <select id="adminSupplierStaff" resultMap="SupplierCompanyStaff_vmap" parameterType="java.util.Map">
+    SELECT 
+	  a.*,
+	  b.`name` AS leaderName,
+	  c.`name` AS branchName,
+	  d.`sp_name` AS spName,
+	  e.`name` AS bankName 
+	FROM
+	  supplier_company_staff a 
+	  INNER JOIN supplier d 
+	    ON a.`sp_id` = d.`id` 
+	  LEFT JOIN supplier_company_staff b 
+	    ON a.`leader_id` = b.`id` 
+	  LEFT JOIN supplier_branch c 
+	    ON a.`branch_id` = c.`id` 
+	  LEFT JOIN bank e 
+	    ON a.`bank_id` = e.`id` 
+	  where 1=1
+	  <include refid="adminCondition"/>
+	  limit #{rowStart}, #{limit}
+    </select>
+	
+	<select id="adminSupplierStaffCount" resultType="Long" parameterType="java.util.Map">
+	SELECT 
+	  COUNT(1)
+	FROM
+	  supplier_company_staff a 
+	  INNER JOIN supplier d 
+	    ON a.`sp_id` = d.`id` 
+	  LEFT JOIN supplier_company_staff b 
+	    ON a.`leader_id` = b.`id` 
+	  LEFT JOIN supplier_branch c 
+	    ON a.`branch_id` = c.`id` 
+	  LEFT JOIN bank e 
+	    ON a.`bank_id` = e.`id` 
+	  where 1=1
+	  <include refid="adminCondition"/>
+	</select>
+	
+	<sql id="adminCondition">
+	   <if test="status!=null and status!=''">
+	       AND a.`status`=${status}
+	   </if>
+	   
+	   <if test="leaderName!=null and leaderName!=''">
+	     AND b.`name` LIKE '%${leaderName}%'
+	   </if>
+	   
+	   <if test="branchName!=null and branchName!=''">
+	    AND c.`name` LIKE '%${branchName}%'
+	   </if>
+	   
+	   <if test="nickname!=null and nickname!=''">
+	     AND a.`name` LIKE '%${nickname}%'
+	   </if>
+	   
+	   <if test="mobile!=null and mobile!=''">
+	    AND a.`mobile`='${mobile}'
+	   </if>
+	</sql>
+	
+	<update id="updateSupplierStaffStatus">
+	 UPDATE supplier_company_staff a SET a.`gain_rate`=${gainRate},a.`status`=${status} WHERE a.`id`=${staffId}
+	</update>
+   <!-- //////家可可管理后台商家员工审核 -->
+	<select id="query4Staff" resultMap="PCBaseMap">
+		SELECT
+		scs.id,
+		sp.name as position,
+		scs.name as stylistName,
+		scs.estimate_average as grade,
+		a.filepath as path
+		FROM
+		supplier_company_staff AS scs
+		Left Join supplier_position AS sp ON scs.sid = sp.id
+		Left Join attachment a ON a.mainid = scs.id and a.filetype = 3
+		where scs.sp_id = #{id} and sp.id = 1
+		order by scs.estimate_average desc
+		limit 0,4
+	</select>
+	
+	
+	
+	<select id="getAllDesginStaffs" resultMap="BaseResultMapVsio">
+		
+		SELECT *,(SELECT COUNT(e.sjs_id) FROM engineerings e WHERE e.sjs_id = scs.`id`) AS cnt
+		FROM supplier_company_staff scs WHERE scs.`sid` = 1
+	
+	</select>
+	
+	
+	
+	<sql id="conntion">
+		<if test="uid!=null and uid!=''">
+			<if test="id > 0">
+				and scs.id = ${uid}
+			</if>
+		</if>
+		<if test="uname!=null and uname!=''">
+			and scs.name like '%${uname}%'
+		</if>
+		<if test="createBegin!=null and createBegin!=''">
+			and scs.create_time >='${createBegin}'
+		</if>
+		<if test="createEnd!=null and createEnd!=''">
+			and scs.create_time &lt;='${createEnd}'
+		</if>
+		<if test="sid!=null and sid!=''">
+			<if test="sid > 0">
+				and scs.sid = ${sid}
+			</if>
+		</if>
+	</sql>
+	<select id="queryDesignStaffBySpId" resultMap="SupplierCompanyStaff_mapV1" >
+		SELECT t.*,GROUP_CONCAT(ts.para_value,ta.filepath)as photoUrl
+		from  sysconfig ts,supplier_company_staff t LEFT JOIN attachment ta on ta.filetype='15'
+		and t.avatar=ta.id
+		where 1=1 and ts.para_name='PHOTO_PREFIX_URL'
+		<if test="suppId>0">
+			and t.sp_id=${suppId}
+		</if>
+		<if test="designStaffId>0">
+			and t.id=${designStaffId}
+		</if>
+	</select>
+	<select id="all" resultMap="BaseResultMapVs">
+		SELECT s.name as name,s.job as
+		job,s.id as id from supplier_company_staff s where s.sp_id=#{spid} and
+		s.sid=1
+	</select>
+	
+	<select id="findSaffListBySpId" resultMap="SupplierCompanyStaffInfoMap">
+		SELECT scs.*,sp.name as
+		supplierPosition from supplier_company_staff scs,supplier_position sp
+		where scs.sid=sp.id and sp_id=#{id}
+		<include refid="conntion"></include>
+		order by scs.create_time desc
+	</select>
+	
+	
+	<!-- 后台/商家  获取员工列表 ==========================-->
+	<select id="selectSaffListBySpId" resultMap="SupplierCompanyStaffInfoMap">
+		SELECT scs.*,sp.name as
+		supplierPosition from supplier_company_staff scs,supplier_position sp
+		where scs.sid=sp.id and sp_id=#{id}
+		<include refid="conntion"></include>
+		order by scs.create_time desc
+		limit #{rowStart}, #{limit}
+	</select>
+	
+	<select id="findSaffListCountBySpId" resultType="long">
+		SELECT count(1)
+		supplierPosition from supplier_company_staff scs,supplier_position sp
+		where scs.sid=sp.id and sp_id=#{id}
+		<include refid="conntion"></include>
+		order by scs.create_time desc
+	</select>
+	<!-- =============================================== -->
+	
+	<!-- 后台获取装修公司设计师列表 ==========================-->
+	<select id="selectStaffDesgins" resultMap="SupplierCompanyStaffInfoMap">
+		SELECT scs.*,sp.name as
+		supplierPosition,s.sp_name as spName from supplier_company_staff scs join supplier_position sp
+		on scs.sid=sp.id join supplier s on s.id = scs.sp_id
+		<include refid="conntion"></include>
+		order by scs.create_time desc
+		limit #{rowStart}, #{limit}
+	</select>
+	
+	<select id="selectStaffDesginsCount" resultType="long">
+		SELECT count(1)
+		supplierPosition,s.sp_name as spName from supplier_company_staff scs join supplier_position sp
+		on scs.sid=sp.id join supplier s on s.id = scs.sp_id
+		<include refid="conntion"></include>
+		order by scs.create_time desc
+	</select>
+	
+	
+	<!-- =============================================== -->
+	
+	<select id="every" resultMap="BaseResultMapVsio">
+		SELECT t.name as name,t.job as job,t.id as id, (SELECT COUNT(*) from
+		designer_collect where sid=#{sid}) as collectNum,(SELECT COUNT(*) from
+		design d,supplier_company_staff s where d.sp_id=s.sp_id and
+		d.designer=#{name} and s.sid=1) as desinNum,(SELECT s.level from
+		staff_comment s where s.type=1 and s.sid=#{sid} ) as pingfe from
+		supplier_company_staff t where t.sp_id=#{spid} and t.sid=1 and
+		t.name=#{name}
+	</select>
+	
+	
+	<delete id="del">
+		DELETE FROM supplier_company_staff where sp_id=#{id}
+	</delete>
+	<select id="getById" resultMap="BaseResult">
+		SELECT name as name,job as
+		job,sjs_suggest as sjs,gz_suggest as introduce,(SELECT CONCAT(t3.para_value,a.filepath) from attachment a,sysconfig t3 WHERE a.mainid=#{sid} and filetype=3 and t3.para_name='PHOTO_PREFIX_URL') as img from
+		supplier_company_staff s where s.id=#{sid} and s.sid=1
+	</select>
+
+	<!-- ↓↓ysc============================== -->
+	<sql id="tbl">supplier_company_staff</sql>
+	<sql id="temp_tbl">
+		select	
+		sp.sp_name as spName,
+		ifnull(jd.cnt,0) as jds,
+		ifnull(sc.cnt,0) as scs,
+		concat(sf.para_value,ah.filepath) as photoUrl,		
+		aa.* from <include refid="tbl" />	aa
+		left join supplier		sp on sp.id=aa.sp_id
+		left join attachment 	ah on ah.mainid=aa.id and ah.filetype=3
+		left join sysconfig 	sf on sf.para_name='PHOTO_PREFIX_URL'
+		left join (
+			select xx.sid,count(*) as cnt
+			from staff_collect xx
+			where xx.sid is not null
+			group by xx.sid 
+		)sc on sc.sid=aa.id
+		left join(
+			select xx.sjs_id,count(*) as cnt
+			from engineerings xx
+			where xx.sjs_id is not null
+			group by xx.sjs_id 
+		)jd on jd.sjs_id=aa.id
+	</sql>
+	<select id="getList" resultMap="SupplierCompanyStaff_vmap" parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getListBySpId" resultMap="SupplierCompanyStaff_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where sp_id=#{sp_id}
+	</select>
+	<select id="getPageList" resultMap="SupplierCompanyStaff_vmap" parameterType="com.jkkp.utils.Pager">
+		select t.*	from (	<include refid="temp_tbl" />) t	where 1=1 ${value}	limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="SupplierCompanyStaff_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from	<include refid="tbl" />	t where 1=1 ${value}
+	</delete>
+	<!-- ↑↑ysc============================== -->
+</mapper>

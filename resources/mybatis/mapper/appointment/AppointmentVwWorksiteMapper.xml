@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.appointment.mapper.AppointmentVwWorksiteMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.appointment.model.AppointmentVwWorksite" >
+	    <!--
+	      WARNING - @mbggenerated
+	    -->
+	    <id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="aid" property="aid" jdbcType="INTEGER" />
+	    <result column="appoint_address" property="appointAddress" jdbcType="INTEGER" />
+	    <result column="appoint_time" property="appointTime" jdbcType="TIMESTAMP" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="user_id" property="userId" jdbcType="INTEGER" />
+	    <result column="engineering_id" property="engineeringId" jdbcType="INTEGER" />
+	    <result column="status" property="status" jdbcType="INTEGER" />
+	    <result column="SP_USER_ID" property="spUserId" jdbcType="INTEGER" />
+	    <result column="RESPOND_TIME" property="respondTime" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+  <resultMap id="BaseResultMapV" type="com.jkkp.modules.appointment.view.VAppointmentVwWorksite" >
+	    <!--
+	      WARNING - @mbggenerated
+	    -->
+	    <id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="aid" property="aid" jdbcType="INTEGER" />
+	    <result column="appoint_address" property="appointAddress" jdbcType="INTEGER" />
+	    <result column="appoint_time" property="appointTime" jdbcType="TIMESTAMP" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="user_id" property="userId" jdbcType="INTEGER" />
+	    <result column="engineering_id" property="engineeringId" jdbcType="INTEGER" />
+	    <result column="status" property="status" jdbcType="INTEGER" />
+	    <result column="SP_USER_ID" property="spUserId" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+  <resultMap type="com.jkkp.modules.appointment.view.VAppintmentSimpleVw" id="VSimpleMap" extends="BaseResultMap">
+  		<result column="nickname" property="nickName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- web商家预约看工地 -->
+  	<sql id="condtion">
+  		<if test="id != null and id > 0">
+  			AND a.sp_id = #{spId}
+  		</if>
+  		<if test="aid != null and aid > 0">
+  			AND a.id = #{aid}
+  		</if>
+  		<if test="member != null and member != ''">
+  			AND m.nickname like '%${member}%'
+  		</if>
+  		<if test="createTimeStart != null and createTimeStart != ''">
+  			AND a.create_time >= #{createTimeStart}
+  		</if>
+  		
+  		<if test="createTimeEnd != null and createTimeEnd != ''">
+  			AND a.create_time &lt;= #{createTimeEnd}
+  		</if>
+  		
+  		<if test="singleTimeStart != null and singleTimeStart != ''">
+  			AND a.RESPOND_TIME >= #{singleTimeStart}
+  		</if>
+  		
+  		<if test="singleTimeEnd != null and singleTimeEnd != ''">
+  			AND a.RESPOND_TIME &lt;= #{singleTimeEnd}
+  		</if>
+  		
+  		<if test="status != null and status != ''">
+  			AND a.status = #{status}
+  		</if>
+  	</sql>
+	<select id="appointmentBuilding"  parameterType="java.util.Map" resultMap="VSimpleMap">
+		SELECT a.*,m.`nickname` AS nickname FROM appointment_vw_worksite a    
+		LEFT JOIN member m ON a.`user_id` = m.`id`   
+		WHERE 1 = 1     
+		<include refid="condtion"/>
+		ORDER BY a.create_time DESC
+		limit #{rowStart}, #{limit}
+	</select>
+	<select id="appointmentBuildingCount" resultType="long">
+		SELECT count(1) FROM appointment_vw_worksite a 
+		LEFT JOIN member m ON a.`user_id` = m.`id`
+		WHERE 1 = 1
+		<include refid="condtion"/>
+	</select>
+  
+  
+  <select id="queryAppointmentVWorksiteList" parameterType="java.util.Map"
+		resultMap="VSimpleMap">
+		select vw.id ,vw.aid,vw.appoint_address appointAddress,vw.appoint_time appointTime,vw.create_time createTime,vw.user_id userId,vw.engineering_id engineeringId,vw.status,vw.sp_id spId,vw.SP_USER_ID spUserId,
+		a.community,a.space,a.budget,a.dcate_id dcateId,a.method,a.su_type suType,a.house_type houseType,a.address,a.zx_time zxTime
+		from appointment_vw_worksite vw left join appointment a on vw.aid = a.id
+		where 1=1
+		<if test="spId!=null and spId!=''">
+			and vw.sp_id=#{spId}
+		</if>
+		<if test="id!=null and id!=''">
+			and vw.id=#{id}
+		</if>
+		    ORDER BY vw.create_time DESC
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+  
+  <update id="updateVWorksiteInfo" parameterType="com.jkkp.modules.appointment.view.VAppointmentVwWorksite">
+		update appointment_vw_worksite 
+		set status = #{status},
+		SP_USER_ID = #{spUserId},
+		RESPOND_TIME = #{respondTime}
+		where 
+		id =#{id}
+		<if test="preStatus!=null">
+			and status=#{preStatus}
+		</if>
+		
+		
+	</update>
+  
+  
+</mapper>

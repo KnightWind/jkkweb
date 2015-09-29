@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.order.mapper.OrderShipMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.order.view.VOrderShip">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="contact_user" property="contactUser" jdbcType="VARCHAR" />
+		<result column="contact_mobile" property="contactMobile"
+			jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="item_sum_price" property="itemSumPrice"
+			jdbcType="DECIMAL" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="pay_type" property="payType" jdbcType="TINYINT" />
+		<result column="receipt_title_type" property="receiptTitleType"
+			jdbcType="TINYINT" />
+		<result column="receipt_title" property="receiptTitle"
+			jdbcType="VARCHAR" />
+		<result column="pay_sum_price" property="paySumPrice" jdbcType="DECIMAL" />
+		<result column="receipt_type" property="receiptType" jdbcType="TINYINT" />
+		<result column="ship_time" property="shipTime" jdbcType="TIMESTAMP" />
+		<result column="express_id" property="expressId" jdbcType="INTEGER" />
+		<result column="tracking" property="tracking" jdbcType="VARCHAR" />
+		<result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+		<result column="ship_province" property="shipProvince"
+			jdbcType="INTEGER" />
+		<result column="ship_city" property="shipCity" jdbcType="INTEGER" />
+		<result column="ship_district" property="shipDistrict"
+			jdbcType="INTEGER" />
+		<result column="main_id" property="mainId" jdbcType="INTEGER" />
+		<result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+		<result column="bank_gateway" property="bankGateway" jdbcType="VARCHAR" />
+		<result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+		<result column="discount" property="discount" jdbcType="DECIMAL" />
+		<result column="receiving_time" property="receivingTime"
+			jdbcType="TIMESTAMP" />
+		<result column="finish_time" property="finishTime" jdbcType="TIMESTAMP" />
+		<result column="refund_status" property="refundStatus"
+			jdbcType="TINYINT" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="num" property="num" jdbcType="INTEGER" />
+		<result column="bankName" property="bankName" jdbcType="VARCHAR" />
+		<result column="bankAuthor" property="bankAuthor" jdbcType="VARCHAR" />
+		<result column="bankAccount" property="bankAccount" jdbcType="VARCHAR" />
+		<result column="mid" property="mid" jdbcType="INTEGER" />
+		<result column="ga" property="ga" jdbcType="DECIMAL" />
+		<result column="img" property="img" jdbcType="VARCHAR" />
+		<result column="tid" property="tid" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT o.*,s.sp_name as
+		spName,i.item_price as price,i.num as
+		num,s.bank_full_name as
+		bankName,s.bank_author as
+		bankAuthor,s.bank_account as bankAccount from
+		order_ship
+		o,order_ship_item i,member m,supplier s where
+		o.id=i.order_id AND
+		o.uid=m.id and o.sp_id=s.id
+	</select>
+	<sql id="condition">
+		<if test="city!=null and city!=''">
+			and s.city_domain='${city}'
+		</if>
+		<if test="sname!=null and sname!=''">
+			and s.sp_name like '%${sname}%'
+		</if>
+		<if test="id!=null and id!=''">
+			and o.uid=${id}
+		</if>
+		<if test="user!=null and user!=''">
+			and s.contact_user like '%${user}%'
+		</if>
+		<if test="ppid!=null and ppid!=''">
+			and o.id=${ppid}
+		</if>
+		<if test="start!=null and start!=''">
+			and o.pay_time >'${start}'
+		</if>
+		<if test="end!=null and end!=''">
+			and o.pay_time &lt;'${end}'
+		</if>
+	</sql>
+	<select id="findPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT
+			o.*,
+			m.id AS MID,
+			t.id AS tid,
+			t.title AS title,
+			s.sp_name AS spName,
+			t.pid AS img,
+			s.gain_rate AS ga,
+			i.item_price AS price,
+			i.num AS num,
+			s.bank_full_name AS bankName,
+			s.bank_author AS bankAuthor,
+			s.bank_account AS bankAccount
+		FROM 
+			order_ship o,
+			order_ship_item i,
+			member m,
+			supplier s,
+			item t 
+		WHERE o.id = i.order_id
+			AND o.uid = m.id
+			AND o.sp_id = s.id
+			AND i.item_id = t.id
+			<include refid="condition" />
+			limit ${rowStart}, ${limit}
+	</select>
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		select count(1) FROM
+			order_ship o,
+			order_ship_item i,
+			member m,
+			supplier s,
+			item t
+		WHERE
+			o.id = i.order_id
+			AND o.uid = m.id
+			AND o.sp_id = s.id
+			AND i.item_id = t.id
+		<include refid="condition" />
+	</select>
+	
+	
+	<select id="selectOrderShipBySupplierId" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT
+			o.*,
+			m.id AS MID,
+			t.id AS tid,
+			t.title AS title,
+			s.sp_name AS spName,
+			t.pid AS img,
+			s.gain_rate AS ga,
+			i.item_price AS price,
+			i.num AS num
+		FROM 
+			order_ship o,
+			order_ship_item i,
+			member m,
+			supplier s,
+			item t 
+		WHERE 
+			o.id = i.order_id
+			AND o.sp_id = ${sId}
+			AND o.uid = m.id
+			AND o.sp_id = s.id
+			AND i.item_id = t.id
+			<include refid="condition" />
+			limit ${rowStart}, ${limit}
+	</select>
+	<select id="selectOrderShipCount" parameterType="java.util.Map" resultType="long">
+		select count(1) FROM
+			order_ship o,
+			order_ship_item i,
+			member m,
+			supplier s,
+			item t
+		WHERE
+			o.sp_id = ${sId}
+			AND o.id = i.order_id
+			AND o.uid = m.id
+			AND o.sp_id = s.id
+			AND i.item_id = t.id
+		<include refid="condition" />
+	</select>
+	
+	
+</mapper>

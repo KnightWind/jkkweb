@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.sale_theme.mapper.ActivityJoinSignMapper">
+
+	<resultMap id="BaseMap" type="com.jkkp.modules.sale_theme.model.ActivityJionSign">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="activity_id" property="activityId" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="INTEGER" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="joinFirst" property="joinFirst" jdbcType="BOOLEAN" />
+		<result column="jion_time" property="joinTime" jdbcType="TIMESTAMP" />
+		<result column="sign_time" property="signTime" jdbcType="TIMESTAMP" />
+		<result column="sms_inform" property="smsInform" jdbcType="BOOLEAN" />
+		<result column="decoration" property="decoration" jdbcType="INTEGER" />
+		<result column="vip" property="vip" jdbcType="INTEGER" />
+		<result column="admin_id" property="adminId" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<resultMap id="VUserActivityList"	type="com.jkkp.modules.sale_theme.view.VUserActivityList" extends="BaseMap">
+		<result column="nickname" property="nickname" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="VPhone"	type="com.jkkp.modules.sale_theme.view.VPhone">
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- web后台管理 -->
+	
+	<select id="selectPhone" resultMap="VPhone" parameterType="java.util.Map">
+		SELECT t.phone as phone FROM activity_join_sign t
+		<if test="gouka > 0 or xianxia > 0">
+    		LEFT JOIN activity_card_deals acd ON acd.`phone` = t.`phone`
+    	</if>
+    	where 1 = 1
+    	<if test="baoming > 0">
+    		AND t.sign_time is
+    		<if test="qiandao > 0">
+    			not
+    		</if>
+    		null
+    	</if>
+    	<if test="gouka > 0 and xianxia == null">
+	    	AND acd.`payment_type` &lt;> 4
+    	</if>
+    	<if test="gouka == null and xianxia > 0">
+	    	AND acd.`payment_type` = 4
+    	</if>
+    	<if test="gouka > 0 or xianxia > 0">
+    		AND acd.`pay_status` = 1
+    	</if>
+		ORDER BY RAND()
+		<if test="count != null and count > 0">
+			LIMIT ${count}
+		</if>
+	</select>
+	
+	<sql id="phone">
+		<if test="phone != null and phone != ''">
+			and a.phone like '%${phone}%'
+		</if>
+	</sql>
+	
+	<select id="selectAllActivityJoinSign" parameterType="java.util.Map" resultMap="VUserActivityList">
+		SELECT 
+		  a.*,ad.`nickname` as nickname
+		FROM
+		  activity_join_sign a 
+		LEFT JOIN admin ad
+		ON a.`admin_id` = ad.`id`
+		<!-- where a.sp_id = 0 -->
+		where 1 = 1
+		<include refid="phone"/>
+		ORDER BY a.`jion_time` DESC 
+		limit #{rowStart}, #{limit}
+	</select>
+	
+	<select id="selectAllActivityJoinSignCount" parameterType="java.util.Map" resultType="long">
+	    SELECT 
+		  COUNT(*)
+		FROM
+		  activity_join_sign a
+		 where 1 = 1
+		<include refid="phone"/>
+	</select>
+	
+	<!-- ////web后台管理 -->
+	
+	<select id="qryall" parameterType="java.util.Map" resultMap="VUserActivityList">
+		SELECT *
+		FROM activity_join_sign a
+		WHERE 1 = 1 
+		<if test="phone!=null and phone!=''">
+			and a.phone = '${phone}'
+	    </if>
+		ORDER BY a.`id` DESC
+		limit #{rowStart}, #{limit}
+	</select>
+	
+	<select id="qryRecommenNum" parameterType="java.util.Map" resultType="long">
+		SELECT 
+		  COUNT(ar.`id`) AS id 
+		FROM
+		  activity_recommend ar 
+		  INNER JOIN activity_join_sign ajs 
+		    ON ar.to_phone = ajs.phone 
+		  INNER JOIN activity_card_deals acd 
+		    ON ar.to_phone = acd.phone 
+		  where acd.`pay_status` = 1
+		<if test="phone!=null and phone!=''">
+			and ar.from_phone = '${phone}'
+	    </if>
+	</select>
+	
+
+	<select id="getLastAdminId" resultType="INTEGER">
+		
+		SELECT IFNULL(ajs.`admin_id`,0) FROM activity_join_sign ajs WHERE ajs.`admin_id` IS NOT NULL AND ajs.`sp_id` = 0 ORDER BY id DESC LIMIT 0,1
+	
+	</select>
+	
+	<resultMap id="BaseMapty" type="com.jkkp.modules.sale_theme.view.VDaoChu">
+		<result column="name" property="name" jdbcType="VARCHAR" />		
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="ka" property="ka" jdbcType="VARCHAR" />
+		<result column="aid" property="aid" jdbcType="VARCHAR" />
+		<result column="time" property="time" jdbcType="VARCHAR" />		
+	</resultMap>
+	<select id="querydaochu" parameterType="java.util.Map"  resultMap="BaseMapty">
+	   SELECT DISTINCT a.phone AS phone,a.name AS name, b.name AS ka,
+		avn.voucher_id as aid, a.jion_time AS time
+		FROM (activity_join_sign a LEFT JOIN (activity_card b JOIN activity_card_deals c ON c.card_id = b.id) ON a.phone = c.phone) LEFT JOIN activity_voucher_num avn ON a.phone = avn.phone
+		where  1=1
+		<if test="start!=null and start!=''">
+			and a.jion_time >'${start}'
+	    </if>
+	    <if test="end!=null and end!=''">
+			and a.jion_time &lt;= '${end}'
+	    </if>
+	</select>
+<resultMap id="BaseMaptypp" type="com.jkkp.modules.sale_theme.view.VRecommend">
+		<result column="tphone" property="tphone" jdbcType="VARCHAR" />		
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="time" property="time" jdbcType="VARCHAR" />		
+	</resultMap>
+		<select id="queryRecommend" parameterType="java.util.Map"  resultMap="BaseMaptypp">
+        SELECT from_phone as  phone, to_phone AS tphone, create_time AS time FROM activity_recommend WHERE LENGTH(from_phone) =11
+		<if test="start!=null and start!=''">
+			and create_time >'${start}'
+	    </if>
+	    <if test="end!=null and end!=''">
+			and create_time &lt;= '${end}'
+	    </if>
+	</select>
+	
+	
+	
+</mapper>

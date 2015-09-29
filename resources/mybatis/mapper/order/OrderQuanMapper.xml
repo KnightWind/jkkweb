@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.order.mapper.OrderQuanMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.order.view.VOrderQuan">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="card_id" property="cardId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="use_time" property="useTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="expire_date" property="expireDate" jdbcType="DATE" />
+		<result column="quan_id" property="quanId" jdbcType="INTEGER" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+		<result column="quan_city" property="quanCity" jdbcType="VARCHAR" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="quan_shop" property="quanShop" jdbcType="INTEGER" />
+		<result column="quan_cate" property="quanCate" jdbcType="INTEGER" />
+		<result column="pay_sum_price" property="paySumPrice" jdbcType="DECIMAL" />
+		<result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+		<result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+		<result column="pay_type" property="payType" jdbcType="TINYINT" />
+		<result column="bank_gateway" property="bankGateway" jdbcType="VARCHAR" />
+		<result column="refund_status" property="refundStatus"
+			jdbcType="TINYINT" />
+		<result column="refund_time" property="refundTime" jdbcType="TIMESTAMP" />
+		<result column="refund_money_time" property="refundMoneyTime"
+			jdbcType="TIMESTAMP" />
+		<result column="refund_bank_account" property="refundBankAccount"
+			jdbcType="VARCHAR" />
+		<result column="refund_bank_id" property="refundBankId"
+			jdbcType="TINYINT" />
+		<result column="source" property="source" jdbcType="TINYINT" />
+		<result column="nickName" property="nickName" jdbcType="VARCHAR" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+		<result column="parValue" property="parValue" jdbcType="DECIMAL" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<sql id="refundCondition">
+	  <if test="city!=null and city!=''">
+	  	  AND a.city_domain='${city}'
+	  </if>
+	  <if test="id!=null and id>0">
+	      AND a.id=${id}
+	  </if>
+	  <if test="spName!=null and spName!=''">
+	     AND d.sp_name LIKE '%${spName}%'
+	  </if>
+	  <if test="nickName!=null and nickName!=''">
+	     AND c.nickname LIKE '%${nickName}%'
+	  </if>
+	  <if test="begin!=null and begin!=''">
+	      AND a.refund_time>'${begin}'
+	  </if>
+	  <if test="end!=null and end!=''">
+	      AND a.refund_time &lt;'${end}'
+	  </if>
+	  <if test="type!=null and type>0">
+	     AND b.type=${type}
+	  </if>
+	</sql>
+	<select id="selectAllQuanRefund" resultMap="BaseResultMap">
+		SELECT 
+		  a.*,
+		  b.type AS TYPE,
+		  b.par_value AS parValue,
+		  b.price AS price,
+		  c.nickname AS nickName,
+		  c.mobile AS mobile,
+		  d.sp_name AS spName 
+		FROM
+		  order_quan a 
+		  INNER JOIN quan b 
+		    ON a.quan_id = b.id 
+		  LEFT JOIN member c 
+		    ON a.uid = c.id 
+		  LEFT JOIN supplier d 
+		    ON a.sp_id = d.id
+		<include refid="refundCondition"></include>
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="resultCount" parameterType="java.util.Map"
+		resultType="long">
+		SELECT count(1)
+		FROM
+		  order_quan a 
+		  INNER JOIN quan b 
+		    ON a.quan_id = b.id 
+		  LEFT JOIN member c 
+		    ON a.uid = c.id 
+		  LEFT JOIN supplier d 
+		    ON a.sp_id = d.id
+		<include refid="refundCondition"></include>
+	</select>
+
+	<sql id="condition">
+		<if test="status !=null and status!=''">
+			and a.status=${status}
+		</if>
+		<if test="type!=null and type>0">
+			AND d.type=${type}
+		</if>
+		<if test="nickname!=null and nickname!=''">
+			AND c.nickname LIKE '%${nickname}%'
+		</if>
+		<if test="spName!=null and spName!=''">
+			AND b.sp_name LIKE '%${spName}%'
+		</if>
+		<if test="city!=null and city!=''">
+			AND a.city_domain='${city}'
+		</if>
+		<if test="id!=null and id>0">
+			AND a.id=${id}
+		</if>
+		<if test="begin!=null and begin!=''">
+			AND a.create_time > '${begin}'
+		</if>
+		<if test="end!=null and end!=''">
+			AND a.create_time &lt; '${end}'
+		</if>
+	</sql>
+
+	<select id="findPage" resultMap="BaseResultMap">
+		SELECT
+		a.*,
+		c.nickname AS nickName,
+		b.sp_name AS spName,
+		d.par_value AS
+		parValue,
+		d.price AS price,
+		d.type AS TYPE,
+		e.city
+		FROM
+		order_quan a,
+		supplier b,
+		quan d,
+		member c,
+		area_domain e
+		WHERE a.uid = b.id
+		AND c.id =
+		a.uid
+		AND d.id = a.quan_id
+		AND a.city_domain = e.city_domain
+		<include refid="condition"></include>
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		SELECT count(1)
+		FROM
+		order_quan a,
+		supplier b,
+		quan d,
+		member c,
+		area_domain e
+		WHERE a.uid = b.id
+		AND c.id = a.uid
+		AND d.id = a.quan_id
+		AND a.city_domain = e.city_domain
+		<include refid="condition"></include>
+	</select>
+
+</mapper>

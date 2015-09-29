@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.EngineeringStageMxInstMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.basedata.view.VEngineeringStageMxInst">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="pid" property="pid" jdbcType="INTEGER" />
+		<result column="pass_flag" property="passFlag" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="order_by" property="orderBy" jdbcType="INTEGER" />
+	    <result column="mx_id" property="mxId" jdbcType="INTEGER" />
+	    
+	    <!-- 拓展属性 -->
+	    <result column="pstagName" property="pstagName" jdbcType="VARCHAR" />
+	    <result column="mxDesc" property="mxDesc" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	
+	<select id="selectEngineeringStageMxInsts" resultMap="BaseResultMap">
+	   SELECT 
+		a.*,
+		b.`stag_name` AS pstagName,
+		c.`mx_desc` AS mxDesc
+		FROM
+		  engineering_stage_mx_inst a
+		  INNER JOIN engineering_stage_inst b
+		  ON a.`pid`=b.`id`
+		  INNER JOIN engineering_stage_mx c
+		  ON a.`mx_id`=c.`id`
+		 INNER JOIN supervisor d
+		 ON d.`inst_id`=b.`id`
+		 WHERE d.`id`=#{id}
+	</select>
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.design.mapper.AdBannerMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.design.view.VAdBanner" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="seq" property="seq" jdbcType="INTEGER" />
+    <result column="place" property="place" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="admin_id" property="adminId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    
+    <result column="imgurl" property="imgurl" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="index" resultMap="BaseResultMap">
+  	select a.*,
+  	(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=a.id and filetype=44 and t3.para_name='PHOTO_PREFIX_URL') as imgurl
+  	 from ad_banner a where a.place='index' and a.region_id=#{name}
+  </select>
+  <select id="news" resultMap="BaseResultMap">
+   select a.*,
+  	(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=a.id and filetype=44 and t3.para_name='PHOTO_PREFIX_URL') as imgurl
+  	 from ad_banner a where a.place='news' and a.region_id=#{name}
+  </select>
+  <select id="quan" resultMap="BaseResultMap">
+  	select a.*,
+  	(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=a.id and filetype=44 and t3.para_name='PHOTO_PREFIX_URL') as imgurl
+  	 from ad_banner a where a.place='quan' and a.region_id=#{name}
+  </select>
+  <select id="design" resultMap="BaseResultMap">
+  	select a.*,
+  	(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=a.id and filetype=44 and t3.para_name='PHOTO_PREFIX_URL') as imgurl
+  	 from ad_banner a where a.place='design' and a.region_id=#{name}
+  </select>
+  
+  <resultMap id="BaseResultMapqq" type="com.jkkp.appapi.modules.mapper.VJlGcd" >
+    <result column="count" property="count" jdbcType="INTEGER" />
+  </resultMap>
+    <select id="querycount" resultMap="BaseResultMapqq">
+  	SELECT COUNT(*) as count from check_request c where c.gcd_id=#{gcdId} AND c.stage_id=#{stageId}
+  </select>
+</mapper>

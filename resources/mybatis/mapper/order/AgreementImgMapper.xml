@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.order.mapper.AgreementImgMapper">
+
+	<resultMap type="com.jkkp.modules.order.model.AgreementImg" id="VRefundMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="picture" property="picture" jdbcType="VARCHAR" />
+		<result column="agreement_id" property="agreementId" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<select id="qryAgreeImgByAgreeid" parameterType="java.util.Map" resultMap="VRefundMap">
+		SELECT
+		agreement_img.id AS id,
+		agreement_img.picture AS picture,
+		agreement_img.agreement_id AS agreement_id
+		FROM
+		agreement_img
+		where 1=1
+	<if test="agreement_id!=null and agreement_id!=''">
+        and agreement_img.agreement_id=${agreement_id}
+    </if>
+  </select>
+  
+</mapper>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="x.InterfaceRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.interfaceauth.model.InterfaceRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="tocken_id" property="tockenId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_type" property="userType" jdbcType="INTEGER" />
+    <result column="interface_code" property="interfaceCode" jdbcType="VARCHAR" />
+    <result column="interface_name" property="interfaceName" jdbcType="VARCHAR" />
+    <result column="input_param" property="inputParam" jdbcType="VARCHAR" />
+    <result column="out_param" property="outParam" jdbcType="VARCHAR" />
+    <result column="oper_result" property="operResult" jdbcType="VARCHAR" />
+    <result column="oper_type" property="operType" jdbcType="VARCHAR" />
+    <result column="oper_desc" property="operDesc" jdbcType="VARCHAR" />
+    <result column="oper_time" property="operTime" jdbcType="DATE" />
+    <result column="src_ip" property="srcIp" jdbcType="VARCHAR" />
+    <result column="oper_Result_Desc" property="operResultDesc" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, tocken_id, user_id, user_type, interface_code, interface_name, input_param, out_param, 
+    oper_result, oper_type, oper_desc, oper_time, src_ip
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from interface_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from interface_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.jkkp.modules.interfaceauth.model.InterfaceRecord" >
+    insert into interface_record (id, tocken_id, user_id, 
+      user_type, interface_code, interface_name, 
+      input_param, out_param, oper_result, 
+      oper_type, oper_desc, oper_time, 
+      src_ip,oper_Result_Desc)
+    values (#{id,jdbcType=INTEGER}, #{tockenId,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, 
+      #{userType,jdbcType=INTEGER}, #{interfaceCode,jdbcType=VARCHAR}, #{interfaceName,jdbcType=VARCHAR}, 
+      #{inputParam,jdbcType=VARCHAR}, #{outParam,jdbcType=VARCHAR}, #{operResult,jdbcType=VARCHAR}, 
+      #{operType,jdbcType=VARCHAR}, #{operDesc,jdbcType=VARCHAR}, #{operTime,jdbcType=DATE}, 
+      #{srcIp,jdbcType=VARCHAR}, #{operResultDesc,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jkkp.modules.interfaceauth.model.InterfaceRecord" >
+    insert into interface_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tockenId != null" >
+        tocken_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="interfaceCode != null" >
+        interface_code,
+      </if>
+      <if test="interfaceName != null" >
+        interface_name,
+      </if>
+      <if test="inputParam != null" >
+        input_param,
+      </if>
+      <if test="outParam != null" >
+        out_param,
+      </if>
+      <if test="operResult != null" >
+        oper_result,
+      </if>
+      <if test="operType != null" >
+        oper_type,
+      </if>
+      <if test="operDesc != null" >
+        oper_desc,
+      </if>
+      <if test="operTime != null" >
+        oper_time,
+      </if>
+      <if test="srcIp != null" >
+        src_ip,
+      </if>
+       <if test="operResultDesc != null" >
+        oper_Result_Desc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="tockenId != null" >
+        #{tockenId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="interfaceCode != null" >
+        #{interfaceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="interfaceName != null" >
+        #{interfaceName,jdbcType=VARCHAR},
+      </if>
+      <if test="inputParam != null" >
+        #{inputParam,jdbcType=VARCHAR},
+      </if>
+      <if test="outParam != null" >
+        #{outParam,jdbcType=VARCHAR},
+      </if>
+      <if test="operResult != null" >
+        #{operResult,jdbcType=VARCHAR},
+      </if>
+      <if test="operType != null" >
+        #{operType,jdbcType=VARCHAR},
+      </if>
+      <if test="operDesc != null" >
+        #{operDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="operTime != null" >
+        #{operTime,jdbcType=DATE},
+      </if>
+      <if test="srcIp != null" >
+        #{srcIp,jdbcType=VARCHAR},
+      </if>
+       <if test="operResultDesc != null" >
+        #{operResultDesc,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jkkp.modules.interfaceauth.model.InterfaceRecord" >
+    update interface_record
+    <set >
+      <if test="tockenId != null" >
+        tocken_id = #{tockenId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="interfaceCode != null" >
+        interface_code = #{interfaceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="interfaceName != null" >
+        interface_name = #{interfaceName,jdbcType=VARCHAR},
+      </if>
+      <if test="inputParam != null" >
+        input_param = #{inputParam,jdbcType=VARCHAR},
+      </if>
+      <if test="outParam != null" >
+        out_param = #{outParam,jdbcType=VARCHAR},
+      </if>
+      <if test="operResult != null" >
+        oper_result = #{operResult,jdbcType=VARCHAR},
+      </if>
+      <if test="operType != null" >
+        oper_type = #{operType,jdbcType=VARCHAR},
+      </if>
+      <if test="operDesc != null" >
+        oper_desc = #{operDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="operTime != null" >
+        oper_time = #{operTime,jdbcType=DATE},
+      </if>
+      <if test="srcIp != null" >
+        src_ip = #{srcIp,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jkkp.modules.interfaceauth.model.InterfaceRecord" >
+    update interface_record
+    set tocken_id = #{tockenId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      user_type = #{userType,jdbcType=INTEGER},
+      interface_code = #{interfaceCode,jdbcType=VARCHAR},
+      interface_name = #{interfaceName,jdbcType=VARCHAR},
+      input_param = #{inputParam,jdbcType=VARCHAR},
+      out_param = #{outParam,jdbcType=VARCHAR},
+      oper_result = #{operResult,jdbcType=VARCHAR},
+      oper_type = #{operType,jdbcType=VARCHAR},
+      oper_desc = #{operDesc,jdbcType=VARCHAR},
+      oper_time = #{operTime,jdbcType=DATE},
+      src_ip = #{srcIp,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

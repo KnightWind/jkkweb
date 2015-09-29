@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.sale_theme.mapper.ActivityVoucherNumMapper">
+
+	<resultMap id="BaseMap" type="com.jkkp.modules.sale_theme.model.ActivityVoucherNum">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="voucher_id" property="voucherId" jdbcType="INTEGER" />
+		<result column="history_num" property="historyNum" jdbcType="INTEGER" />
+		<result column="num" property="num" jdbcType="INTEGER" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="is_use" property="isUse" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<resultMap id="VMyVouchersMap"	type="com.jkkp.modules.sale_theme.view.VMyVouchers" extends="BaseMap">
+	</resultMap>
+	
+	<resultMap id="VouchersNumWeb"	type="com.jkkp.modules.sale_theme.view.VActivityVoucherNum" extends="BaseMap">
+		<result column="name" property="name" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- web后台 -->
+	<select id="selectAllActivityVoucherNum" parameterType="java.util.Map" resultMap="VouchersNumWeb">
+	  SELECT 
+		  a.*,
+		  b.`name` 
+		FROM
+		  activity_voucher_num a 
+		  INNER JOIN activity_voucher b 
+		    ON a.`voucher_id` = b.`id` 
+		ORDER BY a.`update_time` DESC 
+		limit #{rowStart}, #{limit}
+	</select>
+	
+	<select id="selectAllActivityVoucherNumCount" parameterType="java.util.Map" resultType="Long">
+	   SELECT 
+		 COUNT(1)
+	   FROM
+	   activity_voucher_num a 
+	   INNER JOIN activity_voucher b 
+	    ON a.`voucher_id` = b.`id`
+	</select>
+	
+	<select id="qryall" parameterType="java.util.Map" resultMap="VMyVouchersMap">
+		SELECT *
+		FROM activity_voucher_num a
+		WHERE 1 = 1 
+		<if test="phone!=null and phone!=''">
+			and a.phone = '${phone}'
+	    </if>
+		ORDER BY a.`id` DESC
+	</select>
+
+</mapper>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.order.mapper.PaymentRecordMapper" >
+  <resultMap id="PaymentRecordMap" type="com.jkkp.modules.order.model.PaymentRecord" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="record_id" property="recordId" jdbcType="INTEGER" />
+    <result column="serial_code" property="serialCode" jdbcType="VARCHAR" />
+    <result column="business_id" property="businessId" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="FLOAT" />
+    <result column="pay_type" property="payType" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="payway" property="payway" jdbcType="INTEGER" />
+  </resultMap>
+  
+  	<resultMap id="VPaymentRecordMap" type="com.jkkp.appapi.modules.mapper.VPaymentRecordApi" extends="PaymentRecordMap">
+		<result column="imgurl" property="imgurl" jdbcType="VARCHAR" />
+		<result column="paynameString" property="paynameString" jdbcType="VARCHAR" />
+		<result column="payresultString" property="payresultString" jdbcType="VARCHAR" />
+		<result column="paytypeString" property="paytypeString" jdbcType="VARCHAR" />
+		<result column="paywayString" property="paywayString" jdbcType="VARCHAR" />
+		<result column="paynameLongString" property="paynameLongString" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap type="com.jkkp.modules.basedata.view.VExpenditure" id="VExpenditure">
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="orderCount" property="orderCount" jdbcType="INTEGER" />
+		<result column="rphone" property="rphone" jdbcType="VARCHAR" />
+		<result column="rname" property="rname" jdbcType="VARCHAR" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+		<result column="departStore" property="departStore" jdbcType="VARCHAR" />
+		<result column="departPerson" property="departPerson" jdbcType="VARCHAR" />
+		<result column="orderMoney" property="orderMoney" jdbcType="DOUBLE" />
+		<result column="unCalePushMoney" property="unCalePushMoney" jdbcType="DOUBLE" />
+		<result column="pushMoneyCount" property="pushMoneyCount" jdbcType="DOUBLE" />
+		<result column="pushMoney" property="pushMoney" jdbcType="FLOAT" />
+	</resultMap>
+	
+	<sql id="staffCondtion">
+		<if test="name != null and name != ''">
+			and (pr.recommend_mobile like '%${name}%' or scs.`name` like '%${name}%' or s.sp_name like '%${name}%')
+		</if>
+	</sql>
+	
+	<sql id="memberCondtion">
+		<if test="name != null and name != ''">
+			and (pr.recommend_mobile like '%${name}%' or m.nickname like '%${name}%')
+		</if>
+	</sql>
+	
+	<!-- 后台支出管理 -->
+	
+	
+	<select id="memberExpenList" resultMap="VExpenditure"  parameterType="java.util.Map">
+		SELECT pr.record_id id,pr.recommend_mobile rphone,m.nickname rname,
+		COUNT(pr.recommend_mobile) orderCount,SUM(pr.amount) orderMoney,(SUM(pr.amount) * 0.05) pushMoneyCount
+		FROM payment_record pr 
+		JOIN member m on m.mobile = pr.recommend_mobile and pr.recommend_mobile is not null
+		where 1=1
+		<include refid="memberCondtion"/>
+		GROUP BY pr.recommend_mobile
+		limit ${rowStart}, ${limit}
+	</select>
+	
+	<select id="memberExpenListCount" resultType="long"  parameterType="java.util.Map">
+		SELECT count(1)
+		FROM payment_record pr 
+		JOIN member m on m.mobile = pr.recommend_mobile and pr.recommend_mobile is not null
+		where 1=1
+		<include refid="memberCondtion"/>
+	</select>
+	
+	
+	<select id="expenditureList" resultMap="VExpenditure" parameterType="java.util.Map">
+		SELECT pr.record_id id,pr.recommend_mobile rphone,scs.`name` rname,s.sp_name spName,sb.`name` departStore,scs1.`name` departPerson,
+		COUNT(pr.recommend_mobile) orderCount,SUM(pr.amount) orderMoney,scs.gain_rate pushMoney,(SUM(pr.amount) * scs.gain_rate) pushMoneyCount
+		FROM payment_record pr 
+		JOIN supplier_company_staff scs ON scs.mobile = pr.recommend_mobile and pr.recommend_mobile is not null
+		JOIN supplier s on s.id = scs.sp_id 
+		JOIN supplier_branch sb on sb.id = scs.branch_id
+		JOIN supplier_company_staff scs1 on scs1.id = scs.leader_id
+		where 1=1
+		<include refid="staffCondtion"/>
+		GROUP BY pr.recommend_mobile
+		limit ${rowStart}, ${limit}
+	</select>
+	
+	<select id="expenditureListCount" resultType="long"  parameterType="java.util.Map">
+		SELECT count(1)
+		FROM payment_record pr 
+		JOIN supplier_company_staff scs ON scs.mobile = pr.recommend_mobile and pr.recommend_mobile is not null
+		JOIN supplier s on s.id = scs.sp_id 
+		JOIN supplier_branch sb on sb.id = scs.branch_id
+		JOIN supplier_company_staff scs1 on scs1.id = scs.leader_id
+		where 1=1
+		<include refid="staffCondtion"/>
+	</select>
+	<!-- 后台支出管理 -->
+	
+  
+  	<select id="qryBillByUid" parameterType="java.util.Map" resultMap="VPaymentRecordMap">
+		SELECT * from 
+		(
+			SELECT
+			pr.*
+			FROM
+			payment_record pr
+			LEFT JOIN appointment_push ap ON pr.business_id = ap.id  
+			LEFT JOIN appointment_member am ON am.aid=ap.aid
+			WHERE 1=1 and pr.type in (1,3) and pr.trade_no is not null
+			<if test="uid!=null and uid!=''">
+	        and am.mid=${uid}
+	    	</if>
+		)u1
+		UNION
+		(
+			SELECT
+			pr.*
+			FROM
+			payment_record pr
+			LEFT JOIN member am on am.id=pr.business_id
+			WHERE 1=1 and pr.type =2  and pr.trade_no is not null 
+			<if test="uid!=null and uid!=''">
+	        and am.id=${uid}
+	    	</if>
+		)
+	    ORDER BY create_date desc
+    	<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+  </select>
+  
+  
+  <select id="queryDepositPayRecordByPushId" parameterType="integer" resultMap="VPaymentRecordMap">
+		SELECT 
+		    ID,
+		    APPLY_USER_ID APPLYUSERID,
+		    STATUS,
+		    BUSINESS_ID BUSINESSID,
+		    APPOINT_ID APPOINTID,
+		    APPLY_REASON APPLYREASON,
+		    AUDIT_USER_ID AUDITUSERID,
+		    AUDIT_DATE AUDITDATE,
+		    APPLY_DATE APPLYDATE,
+		    AUDIT_REMARK AUDITREMARK,
+		    AUDIT_USER_NAME AUDITUSERNAME,
+		    APPLY_AMOUNT APPLYAMOUNT,
+		    REFUND_RECORD_ID REFUNDRECORDID,
+		    REFUND_TYPE REFUNDTYPE
+		FROM
+		    refund_apply_audit a,
+		    appointment_push b,
+		    payment_record c
+		where a.BUSINESS_ID = b.id 
+		  and b.deposit_pay_rec_id = c.id
+		  and a.BUSINESS_ID=#{pushId}
+  </select>
+  
+  
+  
+  
+</mapper>

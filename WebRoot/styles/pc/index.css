@@ -1,0 +1,105 @@
+/*图片滚动*/
+.picshowBox{ width: 100%; position: relative; overflow: hidden;}
+.picshowBox span{ width: 62px; height: 116px; display: none; cursor: pointer; background:url(../../images/pc/arrow_left.png); z-index: 2;}
+.sp span{display: block;}
+.picshowBox span.prev{ left: 80px; top: 214px; position: absolute;}
+.picshowBox span.next{ right: 80px; top: 214px; position: absolute; background:url(../../images/pc/arrow_right.png);}
+.picshow{ width: 980px; height: 576px; margin: 0 auto; position: relative;}
+.picshow ul{ width: 1920px; height: 576px; position: absolute; left: -470px; top: 0;}
+.picshow ul li{ height: 576px; float: left;}
+.picshow p.point{ height: 50px; position: absolute; bottom: 100px; left: 0; width: 100%; text-align: center;}
+.picshow p.point span{ width: 10px; height: 10px; display: inline-block; overflow:hidden; background: #fff; border-radius: 50%; margin:20px 0 0 10px; cursor: pointer;}
+.picshow p.point span.cur{ background: #ff3737;}
+/*发布需求*/
+.grey{background-color: #f6f6f6;}
+.publishNeed{width: 1000px;margin: 0 auto 23px;padding-top: 25px;}
+.forms{background-color: #464857;}
+.forms h2{font-size: 22px;color: #fff;font-weight: normal;text-align: center;margin-top: 20px;}
+.forms div.inputs{padding: 27px 27px 0 27px;}
+.forms div input[type="text"]{display: block;width: 360px;height: 38px;border: 1px solid #c0c0c0;margin-bottom:28px;padding-left: 10px; }
+.forms div input[type="button"]{display: block;width: 370px;height: 60px;background-color: #f25618;border: none;font-size: 24px;color: #fff;}
+.forms div div{position: relative;width: 360px;background-color: #fff;height: 38px;line-height: 40px;border:1px solid #c0c0c0;margin-bottom:28px;padding-left: 10px;}
+.forms div div b{font-weight: normal;}
+.forms div ul{position: absolute;top: 40px;background-color: #eee;width: 360px;left: 0;padding-left: 10px;display: none;}
+.forms div ul li{cursor: pointer;}
+.forms div div span{display: block;background: url(../../images/select_arrow_down.png) no-repeat 98% center;width: 10px;height: 8px;margin: 15px 11px 0 0;}
+.forms .deal{display: block;color: #fff;text-align: center;line-height: 40px;}
+.forms .deal b.selected{display: inline-block;background: url(../images/radio_blue_icon.png) no-repeat 0 0;width: 11px;height: 11px;margin-right: 8px;}
+.forms .deal b{display: inline-block;background: url(../images/radio_white_icon.png) no-repeat 0 0;width: 11px;height: 11px;margin-right: 8px;}
+.forms .deal a{color: #03a9f4;text-decoration: underline;}
+.download{border: 1px solid #c0c0c0;padding: 60px 28px 27px;margin-left: 40px;}
+.download h2{font-size: 24px;font-weight: normal;margin-bottom: 20px;}
+.download div p{margin-left: 26px;}
+.download div span img{width: 176px;}
+.download div p span{display: block;background-color: #fff;}
+.download div p span b{border: 1px solid #d5d5d5;width: 164px;margin-bottom: 33px;padding-left: 85px;height: 85px;line-height: 85px;font-size: 24px;border-radius: 3px;-webkit-border-radius:3px;-moz-border-radius:3px;font-weight: normal;}
+.download div p span b.anzhuo{background: url(../../images/pc/anzhuo.png) no-repeat 25px center;}
+.download div p span b.iphone{background: url(../../images/pc/iphone_logo.png) no-repeat 25px center;}
+.erweima b{text-align: center;margin-top: 10px;}
+.download div span b{display: block;font-size: 14px;}
+/**/
+.step{border-top: 1px solid #e9e9e9;border-bottom: 1px solid #e9e9e9;background-color: #fff;padding: 33px 0 39px;}
+.stepContent{width: 1000px;margin:0 auto; }
+.stepContent p{text-align: center;width: 182px;float: left;margin-right: 90px;}
+.stepContent p.noMr{margin-right: 0;}
+.stepContent p span{display: block;color: #f25618;font-size: 18px;margin: 17px 0 13px;}
+.stepContent p b{font-weight: normal;font-size: 14px;}
+
+.manyCompany{background-color:#5bc4f2;height: 900px;}
+.manyCompany .bg{background: url(../images/bg.png) no-repeat 70% bottom;height: 900px; }
+.manyCompanyText{width: 560px;margin: 0 auto;background: url(../../images/pc/iphone_blue.png) no-repeat 15px 100px;height: 900px;padding:100px 0 0 440px;}
+.manyCompanyTextTop{color: #fff;}
+.manyCompanyTextTop b{font-size: 40px;display: block;font-weight: normal;margin-bottom: 15px;}
+.manyCompanyTextTop span{font-size: 18px;line-height: 25px;}
+
+.manyCompanyText .bottom{margin-top: 113px;}
+.manyCompanyText .bottom p{width: 135px;float: left;margin-right: 32px;text-align: center;}
+.manyCompanyText .bottom p span{color: #fff;margin-top: 26px;display: block;font-size: 16px;}
+
+.freeRod{height: 808px;width: 970px;margin: 0 auto;background: url(../../images/pc/iphone_white.png) no-repeat 584px 92px;padding-top: 92px;padding-left: 30px;}
+.freeRod strong{font-size: 24px;display: block;font-weight: normal;line-height: 40px;color: #444;}
+.freeRod p{margin-top: 80px;font-size: 24px;color: #666;}
+.freeRod p img{float: left;margin-right: 50px;display: block;float: left;}
+.freeRod p span{float: left;padding-top: 19px;}
+.freeRod p b{display: block;font-size: 36px;font-weight: normal;margin-bottom: 10px;color: #444;}
+
+.goodLife{background-color: #2bb06a;height: 900px;}
+.goodLifePic{width: 1000px;margin: 0 auto;text-align: center;padding-top: 40px;}
+.goodLifePic h2{font-size: 36px;font-weight: normal;color: #fff;margin-bottom: 20px;}
+.goodLifePic span{font-size: 24px;color: #fff;margin-bottom: 60px;line-height: 30px;display: block;}
+.goodLifePic img{display: block;float: left;margin-bottom: 10px;}
+
+.security{margin: 0 auto;width: 1000px;padding: 80px 0;position: relative;color: #444;}
+.security h2{font-size: 50px;text-align: center;font-weight: 100;}
+.security p{font-size: 40px;text-align: center;margin-top: 10px;}
+.security ul{margin-top: 118px;}
+.security ul li{margin-bottom: 100px;}
+.security ul li img{width: 192px;float: left;margin-left: 50px;}
+.security ul li span{ float: left;font-size: 30px;padding-top: 60px;margin-left: 50px;}
+.security .arrowUp{position: absolute;top: 40%;right: 0;width: 91px;font-size: 36px;text-align: center;line-height: 60px;color: #03a9f4;}
+.security .arrowUp img{width: 91px;}
+
+.advantage{background-color: #20cc71;}
+.advantageContent{width: 1000px;margin: 0 auto;padding-bottom: 100px;}
+.advantageContent h2{font-size: 30px;text-align: center;padding: 40px 0;color: #fff;line-height: 50px;}
+.advantageContent h2 span{display: block;font-weight: normal;font-size: 26px;}
+.advantageContent ul{width: 520px;margin: 0 auto;}
+.advantageContent ul li{float: left;height: 60px;line-height: 60px;margin-right: 30px;background: url(../../images/pc/ok1_icon.png) no-repeat 0 center;background-size: 45px;padding-left: 70px;color: #fff;font-size: 24px;margin-bottom: 20px;}
+
+.select{width: 1000px;margin: 0 auto;text-align: center;padding: 40px 0 60px 0;}
+.select b{display: block;margin-bottom: 20px;}
+.select span{display: block;}
+.selectTop b{font-size: 30px;}
+.selectTop span{font-size: 26px;}
+.selectBottom{margin-top: 20px;}
+.selectBottom b{font-size: 26px;}
+.selectBottom span{font-size: 20px;}
+.noKonw{width: 600px;background-color: #383838;height: 250px;margin: 50px auto 20px;}
+
+/*弹窗*/
+.indexShadow{display: none;position: absolute;top: 0;width: 100%;height: 100%;background-color: #000;opacity: 0.5;filter:alpha(opacity=50);z-index: 888;}
+.frames{display: none;background-color: #fff;border-radius: 5px;position: absolute;width: 430px;top: 35%;margin-left:-215px;left: 50%;z-index: 999;}
+.frames h2{color: #000;font-size: 22px;position: relative;z-index: 999;margin-top: 40px;}
+.frames .deal{color: #000;}
+.frames .deal b.frameSelect{display: inline-block;background: url(../images/frames_radio.png) no-repeat 0 0;width: 11px;height: 11px;margin-right: 8px;}
+.close{display:block;width:15px;height: 15px;background:url(../images/framesclose.png) no-repeat 0 0;position: absolute;top: -30px;right: 12px;z-index: 1000;cursor: pointer;}

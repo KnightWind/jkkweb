@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.sale_theme.mapper.ActivityThemeMapper">
+
+	<resultMap id="activityTheme" type="com.jkkp.modules.sale_theme.model.ActivityTheme">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="addr" property="addr" jdbcType="VARCHAR" />
+		<result column="joined_num" property="joinedNum" jdbcType="INTEGER" />
+		<result column="signed_num" property="signedNum" jdbcType="INTEGER" />
+		<result column="descr" property="descr" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="lottery_activities_id" property="lotteryActivitiesId" jdbcType="INTEGER" />
+		<result column="share_chance" property="shareChance" jdbcType="INTEGER" />
+		<result column="share_card_chance" property="shareCardChance" jdbcType="INTEGER" />
+		<result column="share_lottery_chance" property="shareLotteryChance" jdbcType="INTEGER" />
+		<result column="msgAlarm" property="msg_alarm" jdbcType="TIMESTAMP" />
+		<result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+		<result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+    <resultMap id="vactivityTheme" extends="activityTheme" type="com.jkkp.modules.sale_theme.view.VActivityTheme">
+    
+    </resultMap>
+
+    <!-- 引流活动列表   web后台 -->
+    <select id="selectAllActivityTheme" resultMap="vactivityTheme" parameterType="java.util.Map">
+     	 SELECT 
+	 	    * 
+		FROM
+		  activity_theme a 
+		where 1=1
+		<include refid="condition"/>
+		ORDER BY a.`begin_time` DESC 
+		limit #{rowStart},#{limit}
+    </select>
+    
+    <select id="selectAllActivityThemeCount" resultType="long" parameterType="java.util.Map">
+        SELECT 
+	 	    COUNT(1)
+		FROM
+		  activity_theme 
+		where 1=1
+		<include refid="condition"/>
+    </select>
+    
+    <sql id="condition">
+    
+    </sql>
+    
+    <!-- 微信接口  活动主题 -->
+    <select id="selectAllActivityThemeWX" resultMap="vactivityTheme">
+     SELECT 
+	  a.*
+	FROM
+	  activity_theme a 
+	WHERE a.`status` = 0 
+	<!--  AND a.`end_time` >= NOW()  --> 
+	ORDER BY a.`begin_time` DESC
+    </select>
+    
+    
+     <!-- 引流活动列表   web后台 -->
+    <select id="latest" resultMap="activityTheme" parameterType="java.util.Map">
+ 		SELECT 
+	 	    * 
+		FROM
+		  activity_theme a 
+		where 1=1
+		ORDER BY a.id DESC 
+		limit 0,1
+    </select>
+</mapper>

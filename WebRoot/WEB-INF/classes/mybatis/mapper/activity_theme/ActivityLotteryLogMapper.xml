@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.sale_theme.mapper.ActivityLotteryLogMapper">
+	<resultMap id="activityLotteryLog"
+		type="com.jkkp.modules.sale_theme.model.ActivityLotteryLog">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="activity_id" property="activityId" jdbcType="INTEGER" />
+		<result column="phone" property="phone" jdbcType="CHAR" />
+		<result column="win" property="win" jdbcType="BOOLEAN" />
+		<result column="receive" property="receive" jdbcType="BOOLEAN" />
+		<result column="award_id" property="awardId" jdbcType="INTEGER" />
+		<result column="award_content" property="awardContent" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="receive_time" property="receiveTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<resultMap id="vActivityLotteryLog" type="com.jkkp.modules.sale_theme.view.VActivityLotteryLog" extends="activityLotteryLog">
+	
+	</resultMap>
+
+	<sql id="condtionlog">
+		<if test="state != null">
+		  	  <choose>
+		  	  	<when test="state == 0">
+		  	  		and (a.receive = 0 or a.receive is null)
+		  	  	</when>
+		  	  	<otherwise>
+		  	  		and a.receive = 1
+		  	  	</otherwise>
+		  	  </choose>
+		  </if>
+		  <if test="phone != null and phone !=''">
+		  		and a.phone like '%${phone}%'
+		  </if>
+		  <if test="name != null and name !=''">
+		  		and a.award_content like '%${name}%'
+		  </if>
+	</sql>
+
+    <select id="selectAllActivityLotteryLog" parameterType="java.util.Map" resultMap="activityLotteryLog">
+      SELECT 
+		  * 
+	  FROM
+		  activity_lottery_log a 
+	 where 1=1
+	 <include refid="condtionlog"/>
+	  ORDER BY a.`create_time` DESC 
+	  limit #{rowStart}, #{limit}
+    </select>
+
+    <select id="selectAllActivityLotteryLogCount" parameterType="java.util.Map" resultType="Long">
+     SELECT 
+		 COUNT(1)
+	  FROM
+		  activity_lottery_log a
+		   where 1=1
+	 	<include refid="condtionlog"/>
+    </select>
+
+	<!-- 最新的抽奖日志 -->
+	<select id="findLastLogs" resultMap="activityLotteryLog"
+		parameterType="java.lang.Integer">
+		SELECT * FROM activity_lottery_log a
+		ORDER BY a.`create_time` DESC limit 0, #{limit}
+	</select>
+
+	<select id="findLotteryLogs" resultMap="activityLotteryLog"
+		parameterType="java.util.Map">
+		SELECT * FROM activity_lottery_log 
+			WHERE 1=1
+		<if test="activityId != null">
+			AND activity_id = #{activityId}
+		</if>
+		<if test="phone != null">
+			and phone = #{phone}
+		</if>
+		<if test="beginTime != null">
+			and create_time &gt;= #{beginTime}
+		</if>
+		<if test="endTime != null">
+			and create_time &lt;= #{endTime}
+		</if>
+		<if test="offset != null and limit != null">
+			limit #{offset},#{limit}
+		</if>
+	</select>
+
+	<select id="findLuckyPeopleAwards" resultMap="vActivityLotteryLog" parameterType="java.util.Map">
+		SELECT aj.name,ad.rank,al.* FROM (activity_lottery_log al JOIN activity_join_sign aj
+			ON al.activity_id = aj.activity_id ) JOIN awards ad ON al.award_id = ad.id  
+			WHERE al.activity_id = #{activityId} AND aj.phone = al.phone
+			<if test="phone != null">
+				and al.phone = #{phone} 
+			</if>
+			<if test="win != null">
+				and al.win = #{win} 
+			</if>
+			<if test="receive != null">
+				and receive = #{receive} 
+			</if>
+			ORDER BY al.id DESC 
+			limit ${(pageNo-1) * pageSize},#{pageSize}
+	</select>
+	
+</mapper>

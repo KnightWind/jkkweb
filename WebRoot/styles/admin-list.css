@@ -1,0 +1,8 @@
+@charset"utf-8";
+.addManager ul{ padding: 20px 0;}
+.addManager ul li{ height: 46px; line-height: 30px; text-align: center; font-size: 14px;}
+.addManager ul li strong{ width: 30%; display: block; float: left; text-align: right; margin-right: 5px;}
+.addManager ul li input{ width: 200px; float: left;}
+.addManager ul li.btn{ line-height: normal; text-align: center;}
+.addManager ul li.btn span{ padding: 4px 20px;}
+.addManager ul li.btn span.save{ margin-right: 15px;}

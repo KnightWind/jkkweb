@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.system.mapper.SysconfigMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.system.model.Sysconfig" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="para_code" property="paraCode" jdbcType="INTEGER" />
+    <result column="para_name" property="paraName" jdbcType="VARCHAR" />
+    <result column="para_value" property="paraValue" jdbcType="VARCHAR" />
+    <result column="para_desc" property="paraDesc" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="findPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT * from sysconfig limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		SELECT COUNT(*) from sysconfig
+	</select>
+	
+	<select id="selectByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select para_code paraCode ,para_name paraName,para_value paraValue,para_desc paraDesc from sysconfig
+		where 1=1
+		<if test="paraName!=null and paraName!=''">
+			and para_name=#{paraName}
+		</if>
+		<if test="paraCode!=null and paraCode!=''">
+			and para_code=#{paraCode}
+		</if>
+	</select>
+	
+	
+	
+</mapper>

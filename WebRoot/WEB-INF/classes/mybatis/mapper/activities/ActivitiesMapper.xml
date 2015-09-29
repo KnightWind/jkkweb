@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.activities.mapper.ActivitiesMapper">
+
+	<resultMap id="BaseMap" type="com.jkkp.modules.activities.view.VActivities">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="part_num" property="partNum" jdbcType="INTEGER" />
+		<result column="total" property="total" jdbcType="INTEGER" />
+		<result column="awardsCount" property="awardsCount" jdbcType="INTEGER" />
+		<result column="display_num" property="displayNum" jdbcType="INTEGER" />
+		<result column="max_num" property="maxNum" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="keyword" property="keyword" jdbcType="VARCHAR" />
+		
+		<result column="lottery_type" property="lotteryType" jdbcType="INTEGER" />
+		<result column="times" property="times" jdbcType="INTEGER" />
+		<result column="lucky_times" property="luckyTimes" jdbcType="INTEGER" />
+		
+	</resultMap>
+
+	<sql id="condtion">
+	
+	  <if test="name!=null and name!=''">
+			and a.name like '%${name}%'
+	  </if>
+	
+	  <if test="createStart!=null and createStart!=''">
+			and a.create_time >= '${createStart}'
+	  </if>
+	  <if test="createEnd!=null and createEnd !=''">
+			and a.create_time &lt;= '${createEnd}'
+	  </if>
+	  
+	  <if test="startTime1!=null and startTime1!=''">
+			and a.`start_time` >= '${startTime1}'
+	  </if>
+	  <if test="startTime2!=null and startTime2 !=''">
+			and a.`start_time` &lt;= '${startTime2}'
+	  </if>
+	  
+	  <if test="endTime1!=null and endTime1!=''">
+			and a.`end_time` >= '${endTime1}'
+	  </if>
+	  <if test="endTime2!=null and endTime2 !=''">
+			and a.`end_time` &lt;= '${endTime2}'
+	  </if>
+	</sql>
+
+
+	<select id="findPage" parameterType="java.util.Map" resultMap="BaseMap">
+
+		SELECT *,COUNT(b.`active_id`) as awardsCount
+		FROM activities a 
+		LEFT JOIN awards b
+		ON a.`id` = b.`active_id`
+		where 1 = 1
+		<include refid="condtion" />
+		GROUP BY a.`id`
+		ORDER BY a.`id` DESC
+		limit #{rowStart}, #{limit}
+
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+
+		SELECT count(1)
+		FROM activities a 
+		LEFT JOIN awards b
+		ON a.`id` = b.`active_id`
+		where 1 = 1
+		<include refid="condtion" />
+		ORDER BY a.`id` DESC
+
+	</select>
+
+	<select id="findByActId" resultMap="BaseMap">
+
+		SELECT *,COUNT(b.`active_id`) as awardsCount
+		FROM activities a 
+		LEFT JOIN awards b
+		ON a.`id` = b.`active_id`
+		where a.id = #{id}
+
+	</select>
+	
+
+
+</mapper>

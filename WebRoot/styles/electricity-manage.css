@@ -1,0 +1,7 @@
+/*电商管理*/
+.clear{clear:both;}
+.dataList{padding:10px 0 20px;}
+.dataList p{height: 30px;line-height: 30px;float: left;font-size:14px;width:50%;}
+.dataList p span{display: inline-block; width: 100px; text-align:right; margin-right:8px;}
+.dataList p i{font-style:normal;font-size:14px;font-family:'微软雅黑';}
+.order-info h3,.thing-info h3{font-size:16px;height:40px;line-height:40px;padding-left:3px;margin-top:10px;}

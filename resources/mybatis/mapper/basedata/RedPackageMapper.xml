@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.RedPackageMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.basedata.model.RedPackage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="REAL" />
+    <result column="platform" property="platform" jdbcType="SMALLINT" />
+    <result column="start_money" property="startMoney" jdbcType="REAL" />
+    <result column="limit_num" property="limitNum" jdbcType="INTEGER" />
+    <result column="total_num" property="totalNum" jdbcType="INTEGER" />
+    <result column="get_num" property="getNum" jdbcType="INTEGER" />
+    <result column="is_split" property="isSplit" jdbcType="BIT" />
+    <result column="use_condition" property="useCondition" jdbcType="TINYINT" />
+    <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="udpate_time" property="udpateTime" jdbcType="TIMESTAMP" />
+    <result column="admin_name" property="adminName" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap type="com.jkkp.modules.basedata.view.VRedPackage" id="VBaseResultMap" extends="BaseResultMap">
+  	<result column="sendCount" property="sendCount" jdbcType="INTEGER" />
+  	<result column="sendMoneyCount" property="sendMoneyCount" jdbcType="DOUBLE" />
+  	<result column="usedMoneyCount" property="usedMoneyCount" jdbcType="DOUBLE" />
+  </resultMap>
+  
+  
+  <resultMap type="com.jkkp.modules.basedata.view.VSendRedPackageBean" id="VSendRedPackageMap">
+  	<result column="mid" property="mid" jdbcType="INTEGER" />
+  	<result column="rpid" property="rpid" jdbcType="INTEGER" />
+  	<result column="gender" property="gender" jdbcType="INTEGER" />
+  	<result column="takeCount" property="takeCount" jdbcType="INTEGER" />
+  	<result column="takeMoney" property="takeMoney" jdbcType="DOUBLE" />
+  	<result column="nickname" property="nickname" jdbcType="VARCHAR" />
+  	<result column="phone" property="phone" jdbcType="VARCHAR" />
+  	<result column="title" property="title" jdbcType="VARCHAR" />
+  	<result column="decorate" property="decorate" jdbcType="VARCHAR" />
+  	<result column="type" property="type" jdbcType="VARCHAR" />
+  	<result column="adminName" property="adminName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="condtion">
+  	<if test="name != null and name != ''">
+  		and rp.name like '%${name}%'
+  	</if>
+  </sql>
+  
+  <sql id="redPackageCondtion">
+  	<if test="name != null and name != ''">
+  		and (ajs.phone like '%${name}%' or m.nickname like '%${name}%')
+  	</if>
+  	<if test="type != null and type != ''">
+  		and ajs.vip = ${type}
+  	</if>
+  	<if test="themeId != null and themeId != ''">
+  		and ah.id = ${themeId}
+  	</if>
+  </sql>
+  
+  <select id="sendRedPackageList" resultMap="VSendRedPackageMap" parameterType="java.util.Map">
+	  	SELECT m.id mid,ajs.phone,ajs.sex gender,m.nickname,ah.title,acd.decorate_req decorate,
+		CASE
+			WHEN ajs.vip = 0 THEN '报名'
+			WHEN ajs.vip = 1 THEN '购卡'
+			ELSE '投诉'
+		END
+		AS type,COUNT(mrp.mobile) takeCount,SUM(mrp.price) takeMoney,ad.username adminName
+		FROM activity_join_sign ajs
+		INNER JOIN member m on m.mobile = ajs.phone
+		LEFT JOIN activity_theme ah on ah.id = ajs.activity_id
+		LEFT JOIN activity_card_deals acd on acd.phone = ajs.phone
+		LEFT JOIN member_red_package mrp on mrp.mobile = ajs.phone
+		LEFT JOIN admin ad on ajs.admin_id = ad.id
+		where 1 = 1
+		<include refid="redPackageCondtion"/>
+		GROUP BY ajs.id
+		ORDER BY ajs.id desc
+		limit #{rowStart}, #{limit}
+  </select>
+  
+  <select id="sendRedPackageListCount" parameterType="java.util.Map" resultType="long">
+	 	SELECT
+	 		count(1)
+		FROM activity_join_sign ajs
+		INNER JOIN member m on m.mobile = ajs.phone
+		where 1 = 1
+		<include refid="redPackageCondtion"/>
+  </select>
+  
+  
+  <select id="findPackageById" resultMap="VBaseResultMap">
+  	select * from red_package rp where rp.id = ${id}
+  </select>
+  
+  
+  <select id="findPage" resultMap="VBaseResultMap" parameterType="java.util.Map">
+  	SELECT COUNT(mrp.red_package_id) sendCount,SUM(mrp.price) sendMoneyCount,SUM(mrp.used_money) usedMoneyCount,rp.* 
+  	FROM red_package rp
+	LEFT JOIN member_red_package mrp ON rp.id = mrp.red_package_id
+	WHERE 1 = 1
+	<include refid="condtion"/>
+	GROUP BY rp.id
+	limit #{rowStart}, #{limit}
+  </select>
+  
+  <select id="countPage" resultType="long" parameterType="java.util.Map">
+  	SELECT COUNT(1)
+  	FROM red_package rp
+  	WHERE 1 = 1
+	<include refid="condtion"/>
+  </select>
+  
+</mapper>

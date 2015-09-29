@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.crowdfunding.mapper.ZcjsMapper">
+
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.crowdfunding.model.Zcjs">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="order_id" property="orderId" jdbcType="INTEGER" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="admin_name" property="adminName" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<resultMap type="com.jkkp.modules.crowdfunding.view.VZcJs" id="webZcjsMap" extends="BaseResultMap">
+	    <result column="spName" property="spName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="selectJSTotal" resultType="java.lang.Double">
+	 SELECT SUM(a.`price`)FROM zc_js a WHERE a.`sp_id`=#{spId}
+	</select>
+	
+	<!-- web后台  钱包交易 -->
+	<select id="selectAllZcjs" resultMap="webZcjsMap" parameterType="java.util.Map">
+	SELECT 
+	  b.*,
+	  a.`sp_name` AS spName 
+	FROM
+	  supplier a 
+	  INNER JOIN zc_js b 
+	    ON a.`id` = b.`sp_id` 
+	ORDER BY b.`create_time` DESC 
+	limit #{rowStart},#{limit}
+	</select>
+	
+	<select id="selectAllZcjsCount" parameterType="java.util.Map" resultType="Long">
+	SELECT 
+	 Count(1)
+	FROM
+	  supplier a 
+	  INNER JOIN zc_js b 
+	    ON a.`id` = b.`sp_id` 
+	</select>
+	
+</mapper>

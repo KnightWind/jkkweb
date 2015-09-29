@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.StartWorkMapper">
+	<resultMap id="VSupplierMap" type="com.jkkp.modules.supplier.model.StartWork">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="drawing" property="drawing" jdbcType="INTEGER" />
+		<result column="quote" property="quote" jdbcType="INTEGER" />
+		<result column="other_ask" property="otherAsk" jdbcType="VARCHAR" />
+		<result column="conditions" property="conditions" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		</resultMap>
+</mapper>

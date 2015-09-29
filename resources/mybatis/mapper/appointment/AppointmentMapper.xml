@@ -1,0 +1,958 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.appointment.mapper.AppointmentMapper">
+	<resultMap id="appointmentMap"		type="com.jkkp.modules.appointment.model.Appointment">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sub_type" property="subType" jdbcType="TINYINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="space" property="space" jdbcType="FLOAT" />
+		<result column="review_num" property="reviewNum" jdbcType="INTEGER" />
+		<result column="user" property="user" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="get_room" property="getRoom" jdbcType="TINYINT" />
+		<result column="budget" property="budget" jdbcType="FLOAT" />
+		<result column="get_room_date" property="getRoomDate" jdbcType="DATE" />
+		<result column="method" property="method" jdbcType="TINYINT" />
+		<result column="source" property="source" jdbcType="TINYINT" />
+		<result column="admin_id" property="adminId" jdbcType="INTEGER" />
+		<result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+		<result column="link_time" property="linkTime" jdbcType="TIMESTAMP" />
+		<result column="company" property="company" jdbcType="VARCHAR" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="review_time" property="reviewTime" jdbcType="TIMESTAMP" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="parlour_ground" property="parlourGround" jdbcType="TINYINT" />
+		<result column="parlour_ground_dismantle" property="parlourGroundDismantle" jdbcType="TINYINT" />
+		<result column="parlour_wall" property="parlourWall" jdbcType="TINYINT" />
+		<result column="parlour_wall_dismantle" property="parlourWallDismantle" jdbcType="TINYINT" />
+		<result column="bedroom_ground" property="bedroomGround" jdbcType="TINYINT" />
+		<result column="bedroom_ground_dismantle" property="bedroomGroundDismantle" jdbcType="TINYINT" />
+		<result column="bedroom_wall" property="bedroomWall" jdbcType="TINYINT" />
+		<result column="bedroom_wall_dismantle" property="bedroomWallDismantle" jdbcType="TINYINT" />
+		<result column="kitchen" property="kitchen" jdbcType="TINYINT" />
+		<result column="kitchen_dismantle" property="kitchenDismantle" jdbcType="TINYINT" />
+		<result column="toilet" property="toilet" jdbcType="TINYINT" />
+		<result column="toilet_dismantle" property="toiletDismantle" jdbcType="TINYINT" />
+		<result column="water" property="water" jdbcType="TINYINT" />
+		<result column="electric" property="electric" jdbcType="TINYINT" />
+		<result column="start_work" property="startWork" jdbcType="DATE" />
+		<result column="ht_bedroom" property="htBedroom" jdbcType="TINYINT" />
+		<result column="ht_living_room" property="htLivingRoom" jdbcType="TINYINT" />
+		<result column="ht_kitchen" property="htKitchen" jdbcType="TINYINT" />
+		<result column="ht_toilet" property="htToilet" jdbcType="TINYINT" />
+		<result column="select_push_id" property="selectPushId" jdbcType="INTEGER" />
+		<result column="payment" property="payment" jdbcType="DECIMAL" />
+		<result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+		<result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+		<result column="pay_type" property="payType" jdbcType="TINYINT" />
+		<result column="bank_gateway" property="bankGateway" jdbcType="VARCHAR" />
+		<result column="finish_time" property="finishTime" jdbcType="TIMESTAMP" />
+		<result column="enable_time" property="enableTime" jdbcType="TIMESTAMP" />
+		<result column="dcate_id" property="dcateId" jdbcType="TINYINT" />
+		<result column="allow_num" property="allowNum" jdbcType="INTEGER" />
+		<result column="zx_time" property="zxTime" jdbcType="TIMESTAMP" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="visit_time" property="visitTime" jdbcType="TIMESTAMP" />
+		<result column="su_type" property="suType" jdbcType="TINYINT" />
+		<result column="house_type" property="houseType" jdbcType="VARCHAR" />
+		<result column="whole_house" property="wholeHouse" jdbcType="TINYINT" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+		<result column="pointx" property="pointx" jdbcType="DOUBLE" />
+		<result column="pointy" property="pointy" jdbcType="DOUBLE" />
+		<result column="housestyle" property="housestyle" jdbcType="VARCHAR" />
+		<result column="grab_count" property="grabCount" jdbcType="INTEGER" />
+		<result column="version" property="version" jdbcType="INTEGER" />
+		<result column="regionid" property="regionid" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap id="appointment_vmap"	type="com.jkkp.modules.appointment.view.VAppointment" extends="appointmentMap">
+		<result column ="regionname" property="regionname" jdbcType="VARCHAR" />
+		<result column ="createUser" property="createUser" jdbcType="VARCHAR" />
+		
+		<!-- web预约单详情 -->
+		<result column ="nickname" property="nickname" jdbcType="VARCHAR" />
+		<result column ="cateName" property="cateName" jdbcType="VARCHAR" />
+		<result column ="regionname" property="regionname" jdbcType="VARCHAR" />
+		
+	</resultMap>
+	<resultMap id="appointment_detail" type="com.jkkp.modules.appointment.view.VAppointment" extends="appointment_vmap">
+		<association property="engineerings" column="gcd_id" select="com.jkkp.modules.basedata.mapper.EngineeringsMapper.getBeanById"></association>
+	</resultMap>
+	<resultMap id="BaseResultMap"
+		type="com.jkkp.modules.appointment.view.VAppointment">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sub_type" property="subType" jdbcType="TINYINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="space" property="space" jdbcType="FLOAT" />
+		<result column="review_num" property="reviewNum" jdbcType="INTEGER" />
+		<result column="user" property="user" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="get_room" property="getRoom" jdbcType="TINYINT" />
+		<result column="budget" property="budget" jdbcType="TINYINT" />
+		<result column="get_room_date" property="getRoomDate" jdbcType="DATE" />
+		<result column="method" property="method" jdbcType="TINYINT" />
+		<result column="source" property="source" jdbcType="TINYINT" />
+		<result column="admin_id" property="adminId" jdbcType="INTEGER" />
+		<result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+		<result column="link_time" property="linkTime" jdbcType="TIMESTAMP" />
+		<result column="company" property="company" jdbcType="VARCHAR" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="review_time" property="reviewTime" jdbcType="TIMESTAMP" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="parlour_ground" property="parlourGround"			jdbcType="TINYINT" />
+		<result column="parlour_ground_dismantle" property="parlourGroundDismantle"			jdbcType="TINYINT" />
+		<result column="parlour_wall" property="parlourWall" jdbcType="TINYINT" />
+		<result column="parlour_wall_dismantle" property="parlourWallDismantle"			jdbcType="TINYINT" />
+		<result column="bedroom_ground" property="bedroomGround"			jdbcType="TINYINT" />
+		<result column="bedroom_ground_dismantle" property="bedroomGroundDismantle"			jdbcType="TINYINT" />
+		<result column="bedroom_wall" property="bedroomWall" jdbcType="TINYINT" />
+		<result column="bedroom_wall_dismantle" property="bedroomWallDismantle"			jdbcType="TINYINT" />
+		<result column="kitchen" property="kitchen" jdbcType="TINYINT" />
+		<result column="kitchen_dismantle" property="kitchenDismantle"			jdbcType="TINYINT" />
+		<result column="toilet" property="toilet" jdbcType="TINYINT" />
+		<result column="toilet_dismantle" property="toiletDismantle"			jdbcType="TINYINT" />
+		<result column="water" property="water" jdbcType="TINYINT" />
+		<result column="electric" property="electric" jdbcType="TINYINT" />
+		<result column="start_work" property="startWork" jdbcType="DATE" />
+		<result column="ht_bedroom" property="htBedroom" jdbcType="TINYINT" />
+		<result column="ht_living_room" property="htLivingRoom"			jdbcType="TINYINT" />
+		<result column="ht_kitchen" property="htKitchen" jdbcType="TINYINT" />
+		<result column="ht_toilet" property="htToilet" jdbcType="TINYINT" />
+		<result column="select_push_id" property="selectPushId"			jdbcType="INTEGER" />
+		<result column="payment" property="payment" jdbcType="DECIMAL" />
+		<result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+		<result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+		<result column="pay_type" property="payType" jdbcType="TINYINT" />
+		
+		<!-- 以下为子类属性拓展 -->
+		<result column="bank_gateway" property="bankGateway" jdbcType="VARCHAR" />
+		<result column="finish_time" property="finishTime" jdbcType="TIMESTAMP" />
+		<result column="enable_time" property="enableTime" jdbcType="TIMESTAMP" />
+		<result column="allow_num" property="allowNum" jdbcType="INTEGER" />
+		<result column="dcate_id" property="dcateId" jdbcType="TINYINT" />
+		<result column="zx_time" property="zxTime" jdbcType="TIMESTAMP" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="visit_time" property="visitTime" jdbcType="TIMESTAMP" />
+		<result column="admin" property="admin" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="zt" property="zt" jdbcType="TINYINT" />
+		<result column="su_type" property="suType" jdbcType="TINYINT" />
+		<result column="house_type" property="houseType" jdbcType="TINYINT" />
+		<result column="whole_house" property="wholeHouse" jdbcType="TINYINT" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+		
+		<!-- 用户预约管理 -->
+		<result column="nickname" property="nickname" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="BaseResultInterMap" type="com.jkkp.appapi.modules.mapper.VIAppointment">
+		<!-- WARNING - @mbggenerated -->
+		<id column="appointmentid" property="appointmentid" jdbcType="INTEGER" />
+		<result column="subType" property="subType" jdbcType="TINYINT" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="space" property="space" jdbcType="TINYINT" />
+		<result column="reviewNum" property="reviewNum" jdbcType="INTEGER" />
+		<result column="user" property="user" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="getRoom" property="getRoom" jdbcType="TINYINT" />
+		<result column="budget" property="budget" jdbcType="FLOAT" />
+		<result column="getRoomDate" property="getRoomDate" jdbcType="DATE" />
+		<result column="method" property="method" jdbcType="TINYINT" />
+		<result column="source" property="source" jdbcType="TINYINT" />
+		<result column="adminId" property="adminId" jdbcType="INTEGER" />
+		<result column="cityDomain" property="cityDomain" jdbcType="VARCHAR" />
+		<result column="linkTime" property="linkTime" jdbcType="TIMESTAMP" />
+		<result column="company" property="company" jdbcType="VARCHAR" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="reviewTime" property="reviewTime" jdbcType="TIMESTAMP" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="parlourGround" property="parlourGround"
+			jdbcType="TINYINT" />
+		<result column="parlourGroundDismantle" property="parlourGroundDismantle"
+			jdbcType="TINYINT" />
+		<result column="parlourWall" property="parlourWall" jdbcType="TINYINT" />
+		<result column="parlourWallDismantle" property="parlourWallDismantle"
+			jdbcType="TINYINT" />
+		<result column="bedroomGround" property="bedroomGround"
+			jdbcType="TINYINT" />
+		<result column="bedroomGroundDismantle" property="bedroomGroundDismantle"
+			jdbcType="TINYINT" />
+		<result column="bedroomWall" property="bedroomWall" jdbcType="TINYINT" />
+		<result column="bedroomWallDismantle" property="bedroomWallDismantle"
+			jdbcType="TINYINT" />
+		<result column="kitchen" property="kitchen" jdbcType="TINYINT" />
+		<result column="kitchenDismantle" property="kitchenDismantle"
+			jdbcType="TINYINT" />
+		<result column="toilet" property="toilet" jdbcType="TINYINT" />
+		<result column="toiletDismantle" property="toiletDismantle"
+			jdbcType="TINYINT" />
+		<result column="water" property="water" jdbcType="TINYINT" />
+		<result column="electric" property="electric" jdbcType="TINYINT" />
+		<result column="startWork" property="startWork" jdbcType="DATE" />
+		<result column="htBedroom" property="htBedroom" jdbcType="TINYINT" />
+		<result column="htLivingRoom" property="htLivingRoom" jdbcType="TINYINT" />
+		<result column="htKitchen" property="htKitchen" jdbcType="TINYINT" />
+		<result column="htToilet" property="htToilet" jdbcType="TINYINT" />
+		<result column="selectPushId" property="selectPushId" jdbcType="INTEGER" />
+		<result column="payment" property="payment" jdbcType="DECIMAL" />
+		<result column="payTime" property="payTime" jdbcType="TIMESTAMP" />
+		<result column="tradeNo" property="tradeNo" jdbcType="VARCHAR" />
+		<result column="payType" property="payType" jdbcType="TINYINT" />
+		<result column="bankGateway" property="bankGateway" jdbcType="VARCHAR" />
+		<result column="finishTime" property="finishTime" jdbcType="TIMESTAMP" />
+		<result column="enableTime" property="enableTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<!-- 微信引流活动预约单 -->
+	<select id="selectAllWXActivityAppointment" resultMap="appointmentMap" parameterType="java.util.Map">
+	  SELECT 
+	  a.* 
+	FROM
+	  appointment a 
+	WHERE a.`type` = 5 
+	ORDER BY a.`create_time` DESC 
+	limit #{rowStart}, #{limit}
+	</select>
+	
+	<select id="selectAllWXActivityAppointmentCount" parameterType="java.util.Map" resultType="long">
+	SELECT 
+	  COUNT(1)
+	FROM
+	  appointment a 
+	WHERE a.`type` = 5 
+	</select>
+	
+	<!-- 预约单详情 -->
+	<select id="selectAppointmentDetailWeb" resultMap="appointment_vmap">
+	 SELECT 
+	  a.*,
+	  c.`nickname`,
+	  tt.cate_name AS cateName,
+	  d.`regionname`
+	FROM
+	  appointment a 
+	  INNER JOIN appointment_member b 
+	    ON b.`aid` = a.`id` 
+	  INNER JOIN member c 
+	    ON c.`id` = b.`mid` 
+	  LEFT JOIN 
+	    (SELECT 
+	      * 
+	    FROM
+	      design_cate d) tt 
+	    ON tt.id =a.housestyle
+	    LEFT JOIN region d 
+	    ON d.`regionid`=a.`regionid`
+	WHERE a.id = ${id}
+	</select>
+	
+	<!-- 微信活动 -->
+	<select id="ajaxGetDate" resultMap="appointment_vmap">
+		SELECT 
+		  a.*,
+		  r.regionname as regionname,
+          b.`nickname` 
+		FROM
+		  appointment a,
+		  member b,
+		  appointment_member c,
+		  region r
+		  WHERE a.`id`=c.`aid`
+		  AND b.`id`=c.`mid`
+		  AND r.regionid = a.regionid
+		  AND a.type = 3
+		  ORDER BY a.`id` DESC
+		  limit 0, 10
+	</select>
+	
+	<select id="selectAppointmentDetail" resultMap="appointment_vmap" >
+	  SELECT 
+		a.*,r.`regionname`
+		FROM appointment a,
+		     region r
+	     WHERE a.`regionid` = r.`regionid`
+	     AND a.`id`=#{id}
+	</select>
+	
+	
+	<!-- 微信活动 -->
+	<select id="beijingSay" parameterType="java.util.Map" resultMap="appointment_vmap">
+		SELECT 
+		  a.*,
+		  r.regionname AS regionname,
+		  b.`nickname`,
+		  e.`create_user` as createUser
+		FROM
+		  appointment a 
+		  INNER JOIN appointment_member c 
+		    ON a.`id` = c.`aid` 
+		  INNER JOIN member b 
+		    ON b.`id` = c.`mid` 
+		  INNER JOIN region r 
+		    ON r.regionid = a.regionid 
+		  LEFT JOIN appoin_condition e 
+		    ON e.`aid` = a.`id` 
+		WHERE a.type = 3 
+		  <include refid="weixinCondition"/>
+		  ORDER BY a.`id` DESC
+		  limit #{rowStart}, #{limit}
+	</select>
+	<!-- 微信活动 -->
+	<select id="beijingSayCount" parameterType="java.util.Map" resultType="long">
+		SELECT 
+		  count(1)
+		FROM
+		  appointment a 
+		  INNER JOIN appointment_member c 
+		    ON a.`id` = c.`aid` 
+		  INNER JOIN member b 
+		    ON b.`id` = c.`mid` 
+		  INNER JOIN region r 
+		    ON r.regionid = a.regionid 
+		  LEFT JOIN appoin_condition e 
+		    ON e.`aid` = a.`id` 
+		WHERE a.type = 3 
+		  <include refid="weixinCondition"/>
+		  ORDER BY a.`id` DESC
+	</select>
+	
+	<!-- 微信活动条件 -->
+	<sql id="weixinCondition">
+	     <if test="id!=null and id!=''">
+	       AND a.`id`=${id}
+		  </if>
+		  <if test="nickname!=null and nickname!=''">
+		      AND b.`nickname` LIKE '%${nickname}%'
+		  </if>
+		  <if test="budgetLeast!=null and budgetLeast!=''">
+		     AND a.`budget`>${budgetLeast}
+		  </if>
+		  <if test="budgetMost!=null and budgetMost!=''">
+		     AND a.`budget`&lt;${budgetMost}
+		  </if> 
+		  <if test="areaLeast!=null and areaLeast!=''">
+		     AND a.`space`>${areaLeast}
+		  </if>
+		  <if test="areaMost!=null and areaMost!=''">
+		     AND a.`space`&lt;${areaMost}
+		  </if>
+		  <if test="mobile!=null and mobile!=''">
+		     AND a.`mobile`='${mobile}'
+		  </if>
+		  <if test="status!=null and status!=''">
+		     AND e.`status`=${status}
+		  </if>
+		  <if test="adminName!=null and adminName!=''">
+		    AND e.`create_user` LIKE '%${adminName}%'
+		  </if>
+		  <if test="called!=null and called!=''">
+		   AND e.`called`=${called}
+		  </if>
+	</sql>
+	
+	<select id="getAppointmentCount" resultType="long">
+	
+		SELECT COUNT(id) FROM appointment
+	
+	</select>
+	
+	<select id="getAppointmentLiangFangCount" resultType="int">
+	
+	select COUNT(lf.lfno) from ( SELECT COUNT(a.id) as lfno FROM appointment a LEFT JOIN appointment_push ap ON a.id=ap.aid
+ WHERE ap.`status` IN (30,40,50,60) GROUP BY a.id ) lf
+
+	</select>
+	
+	
+	<!-- 20150625@针对最新的数据库结构，重新获取用户预约列表      注：数据库结构不提供所属区域 -->
+	<select id="selectMemberAppointments" parameterType="java.util.Map" resultMap="appointment_vmap" >
+	   SELECT 
+		  a.*,
+          b.`nickname` 
+		FROM
+		  appointment a,
+		  member b,
+		  appointment_member c
+		  WHERE a.`id`=c.`aid`
+		  AND b.`id`=c.`mid`
+		  <include refid="appointmentsCondition"/> 
+		  ORDER BY a.`create_time` DESC
+          limit #{rowStart}, #{limit}		  
+	</select>
+	
+	<select id="selectMemberAppointmentsCount" parameterType="java.util.Map" resultType="long">
+	    SELECT 
+		 count(1)
+		FROM
+		  appointment a,
+		  member b,
+		  appointment_member c
+		  WHERE a.`id`=c.`aid`
+		  AND b.`id`=c.`mid`
+		 <include refid="appointmentsCondition"/>         
+	</select>
+	
+	<sql id="appointmentsCondition">
+	  <if test="id!=null and id!=''">
+	      AND a.`id`=${id}
+	  </if>
+	  <if test="nickname!=null and nickname!=''">
+	      AND b.`nickname` LIKE '%${nickname}%'
+	  </if>
+	  <if test="start!=null and start!=''">
+			and a.create_time > '${start}'
+	  </if>
+	  <if test="end!=null and end !=''">
+			and a.create_time &lt; '${end}'
+	  </if>
+	  <if test="budgetLeast!=null and budgetLeast!=''">
+	     AND a.`budget`>${budgetLeast}
+	  </if>
+	  <if test="budgetMost!=null and budgetMost!=''">
+	     AND a.`budget`&lt;${budgetMost}
+	  </if>
+	  <if test="areaLeast!=null and areaLeast!=''">
+	     AND a.`company`>${areaLeast}
+	  </if>
+	  <if test="areaMost!=null and areaMost!=''">
+	     AND a.`company`&lt;${areaMost}
+	  </if>
+	  <if test="status!=null and status!=''">
+	     AND a.`status`=${status}
+	  </if>
+	</sql>
+
+	<!-- 20150626@黄宇健   push表重新推送，appointment表状态值跟着改变 -->
+	<update id="updateStatusTo10">
+	   UPDATE appointment SET STATUS=10,create_time=NOW() WHERE id=${id}
+	</update>
+	
+	<!-- 关闭预约   2015-6-11针对最新appointment表  status=90做关闭处理  @黄宇健 -->
+	  <update id="closeOneAppointment">
+	      UPDATE 
+			  appointment 	
+		  SET
+			  STATUS = 100 
+		  WHERE id = ${id}
+	  </update>
+	  
+	<!-- 获取跟单员所有的预约记录 -->
+  <select id="selectAllAdminAppo"  resultMap="appointment_vmap" >
+		SELECT
+			*
+		FROM
+			appointment
+		WHERE STATUS = 0
+			AND admin_id = ${id}
+	</select>
+	
+	
+	<select id="findByAppointmentId" resultMap="BaseResultInterMap">
+		SELECT id as appointmentid,
+			sub_type as subType,
+			create_time as
+			createTime,
+			status as status,
+			content as content,
+			space as space,
+			review_num as reviewNum,
+			user as user,
+			mobile as mobile,
+			address as
+			address,
+			get_room as getRoom,
+			budget as budget,
+			get_room_date as
+			getRoomDate,
+			method as method,
+			source as source,
+			admin_id as adminId,
+			city_domain as cityDomain,
+			link_time as linkTime,
+			company as company,
+			reason as reason,
+			review_time as reviewTime,
+			community as community,
+			parlour_ground as parlourGround,
+			parlour_ground_dismantle as
+			parlourGroundDismantle,
+			parlour_wall as parlourWall,
+			parlour_wall_dismantle as parlourWallDismantle,
+			bedroom_ground as
+			bedroomGround,
+			bedroom_ground_dismantle as bedroomGroundDismantle,
+			bedroom_wall as bedroomWall,
+			bedroom_wall_dismantle as
+			bedroomWallDismantle,
+			kitchen as kitchen,
+			kitchen_dismantle as
+			kitchenDismantle,
+			toilet as toilet,
+			toilet_dismantle as toiletDismantle,
+			water as water,
+			electric as electric,
+			start_work as startWork,
+			ht_bedroom as htBedroom,
+			ht_living_room as htLivingRoom,
+			ht_kitchen as
+			htKitchen,
+			ht_toilet as htToilet,
+			select_push_id as selectPushId,
+			payment as payment,
+			pay_time as payTime,
+			trade_no as tradeNo,
+			pay_type as
+			payType,
+			bank_gateway as bankGateway,
+			finish_time as finishTime,
+			enable_time as enableTime 
+		from appointment t 
+		    where 1=1
+		<if test="appointmentId!=null and appointmentId!=''">
+			and t.id=${appointmentId}
+		</if>
+	</select>
+
+	<select id="findAll" resultMap="appointment_vmap">
+		SELECT 
+			 a.*,u.nickname as
+			 admin,c.city as city 
+		from 
+			appointment a,admin
+			u,area_domain c 
+		where
+			a.admin_id=u.id 
+			and a.city_domain=c.city_domain
+	</select>
+	
+		<select id="countAll" resultMap="appointment_vmap">
+		SELECT COUNT(
+			 a.id) as id
+		from 
+			appointment a
+		where
+			1=1 and a.type=1
+	</select>
+
+	<sql id="condition">
+		<if test="city!=null and city!=''">
+			and a.city_domain='${city}'
+		</if>
+		<if test="id !=null and id !=''">
+			and a.id=${id}
+		</if>
+		<if test="type!=null and type!=''">
+			and a.source=${type}
+		</if>
+		<if test="start!=null and start!=''">
+			and a.create_time > '${start}'
+		</if>
+		<if test="end!=null and end !=''">
+			and a.create_time &lt; '${end}'
+		</if>
+		<if test="name!=null and name!=''">
+			and u.nickname like '%${name}%'
+		</if>
+		<if test="status!=null and status!=''">
+			and a.status=${status}
+		</if>
+	</sql>
+	<select id="findPage" parameterType="java.util.Map" resultMap="appointment_vmap">
+		SELECT
+			a.*,
+			u.nickname AS admin,
+			c.city AS city,
+			h.status AS zt
+		FROM
+			appointment a,
+			admin u,
+			area_domain c,
+			appointment_push h
+		WHERE a.admin_id
+			= u.id
+			AND a.city_domain = c.city_domain
+			AND h.aid = a.id
+		<include refid="condition" />
+		GROUP BY a.id
+		limit ${rowStart}, ${limit}
+	</select>
+	
+	
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		 select count(1) from (
+			 SELECT COUNT(*) count
+					FROM
+						appointment a,
+						admin u,
+						area_domain c,
+						appointment_push h 
+					WHERE 
+						a.admin_id = u.id
+						AND a.city_domain = c.city_domain
+						AND h.aid = a.id 
+					<include refid="condition" />
+						GROUP BY a.id
+		)t
+	</select>
+	<!-- 子查询为所有已抢单的aid -->
+	<select id="findOverTimeList" resultMap="appointmentMap">
+		<![CDATA[
+			select t.* from appointment t where not exists (
+				select * from appointment_push where aid = t.id and status <> 0 and status <> 11
+			) and status = 10 and TIMESTAMPDIFF(Minute, create_time, now()) > ${time} * 60
+		]]>
+	</select>
+	
+	
+	<select id="selectAppointmentBySupplierId" parameterType="java.util.Map" resultMap="appointment_vmap">
+		SELECT 
+			a.*,
+			c.city AS city,
+			ap.status AS zt 
+		FROM 
+			appointment a,appointment_push ap,area_domain c,appointment_push h
+		WHERE 
+			a.ID = ap.AID
+			AND a.city_domain = c.city_domain
+			AND h.aid = a.id 
+			<include refid="conditionAppointment"/>
+			<include refid="condition" />
+		    ORDER BY a.CREATE_TIME DESC
+		    limit ${rowStart}, ${limit}
+	</select>	
+	
+	<select id="selectAppointmentCount" parameterType="java.util.Map" resultType="long">
+			SELECT 
+				count(1)
+			FROM 
+				appointment a,appointment_push ap,area_domain c,appointment_push h
+			WHERE  
+			a.ID = ap.AID
+			AND a.city_domain = c.city_domain
+			AND h.aid = a.id 
+			<include refid="conditionAppointment"/>
+			<include refid="condition" />
+	</select>
+	
+	<sql id="conditionAppointment">
+		<if test="sId != null and sId != -1">
+				AND ap.sp_id = ${sId}
+		</if>
+	    <if test="isRead != null and isRead != -1">
+				AND ap.status = ${isRead}
+		</if>
+	</sql>
+	
+	
+	<!-- ysc -->
+	<sql id="tbl">appointment</sql>
+	<sql id="temp_tbl">
+		select
+		gc.design_id as designId,
+		gc.end_time as endTime,
+		d1.cate_name as cateName,
+		(case when aa.whole_house=1 then '整装'
+		when aa.whole_house=2 then '局部'
+		else aa.whole_house end) as wholeHouseVal,
+		aa.* from <include refid="tbl" /> aa
+		left join design_cate d1 on d1.id=aa.dcate_id
+		left join engineerings gc on gc.id=aa.gcd_id
+	</sql>
+	<select id="getList" resultMap="appointment_vmap"	parameterType="string">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="appointment_vmap"	parameterType="com.jkkp.utils.Pager">
+		select t.* from (<include refid="temp_tbl" />) t
+		where 1=1 ${value}
+		limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (
+		<include refid="temp_tbl" />
+		) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="appointment_detail" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from
+		<include refid="tbl" />
+		t where 1=1 ${value}
+	</delete>
+	<!-- ysc -->
+<resultMap id="BaseResultMapVsdBen" type="com.jkkp.appapi.modules.mapper.VIQiangDan">
+	<result column="community" property="community" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="budget" property="budget" jdbcType="VARCHAR" />
+     <result column="space" property="space" jdbcType="VARCHAR" />
+    <result column="catename" property="catename" jdbcType="VARCHAR" />
+     <result column="method" property="method" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="zxtime" property="zxtime" jdbcType="VARCHAR" />
+     <result column="sutype" property="sutype" jdbcType="VARCHAR" />
+    <result column="wholehouse" property="wholehouse" jdbcType="VARCHAR" />
+     <result column="housetype" property="housetype" jdbcType="VARCHAR" />
+	</resultMap>
+<select id="qiangDan" resultMap="BaseResultMapVsdBen">
+SELECT 
+  a.`community` as community,
+  c.`nickname` as name,
+  a.`budget` as budget,
+  a.`space` as space,
+  tt.cate_name  AS catename,
+  CASE
+    a.`method` 
+    WHEN 1 
+    THEN "半包" 
+    WHEN 2 
+    THEN "全包" 
+    ELSE "" 
+  END AS method,
+  a.address as address,
+  a.zx_time AS zxtime,
+  CASE
+    a.su_type 
+    WHEN 1 
+    THEN "新房" 
+    WHEN 2 
+    THEN "老房" 
+    ELSE "" 
+  END AS sutype,
+  CASE
+    a.whole_house 
+    WHEN 1 
+    THEN "整装" 
+    WHEN 2 
+    THEN "局部" 
+    ELSE "" 
+  END AS wholehouse,
+  CASE
+    a.house_type 
+    WHEN 1 
+    THEN "出租" 
+    WHEN 2 
+    THEN "自用" 
+    WHEN 3 
+    THEN "婚房" 
+    WHEN 4 
+    THEN "儿童房" 
+    WHEN 5 
+    THEN "会所" 
+    WHEN 6 
+    THEN "工装" 
+    ELSE "" 
+  END AS housetype
+FROM
+  appointment a 
+  INNER JOIN appointment_member b 
+    ON b.aid = a.id 
+  INNER JOIN member c 
+    ON c.id = b.mid
+  LEFT JOIN 
+    (SELECT 
+      * 
+    FROM
+      design_cate d) tt 
+    ON tt.id = a.dcate_id 
+WHERE a.id =#{aid}
+</select>	
+
+<resultMap id="BaseResultMapVsdBenHpp" type="com.jkkp.appapi.modules.mapper.VISupplierQingDan">
+	<result column="spname" property="spname" jdbcType="VARCHAR" />
+    <result column="img" property="img" jdbcType="VARCHAR" />
+	</resultMap>
+<select id="qiangDanSupplier" parameterType="java.util.Map" resultMap="BaseResultMapVsdBenHpp">
+SELECT 
+  (SELECT sp_name from supplier where id=a.sp_id ) as spname,
+ (SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) 
+ from attachment a,sysconfig t3 WHERE a.mainid=a.sp_id and filetype=4 and t3.para_name='PHOTO_PREFIX_URL') as img
+FROM
+  appointment_push a
+   WHERE  a.aid=${aid} and a.`status`!=0 and a.`status`!=70
+  <if test="curpage!=null and curpage!=''">   
+			limit ${curpage}, ${pageSize}
+	</if>
+</select> 
+
+
+
+<!-- 查询预约单列表 -->
+<select id="queryAppointmentList" parameterType="java.util.Map" resultMap="appointment_vmap">
+			SELECT a.id as id,
+			sub_type as subType,
+			a.create_time as
+			createTime,
+			a.status as status,
+			content as content,
+			space as space,
+			review_num as reviewNum,
+			user as user,
+			mobile as mobile,
+			a.address as address,
+			get_room as getRoom,
+			budget as budget,
+			get_room_date as
+			getRoomDate,
+			method as method,
+			source as source,
+			a.admin_id as adminId,
+			a.city_domain as cityDomain,
+			link_time as linkTime,
+			company as company,
+			a.reason as reason,
+			review_time as reviewTime,
+			community as community,
+			parlour_ground as parlourGround,
+			parlour_ground_dismantle as
+			parlourGroundDismantle,
+			parlour_wall as parlourWall,
+			parlour_wall_dismantle as parlourWallDismantle,
+			bedroom_ground as
+			bedroomGround,
+			bedroom_ground_dismantle as bedroomGroundDismantle,
+			bedroom_wall as bedroomWall,
+			bedroom_wall_dismantle as
+			bedroomWallDismantle,
+			kitchen as kitchen,
+			kitchen_dismantle as
+			kitchenDismantle,
+			toilet as toilet,
+			toilet_dismantle as toiletDismantle,
+			water as water,
+			electric as electric,
+			start_work as startWork,
+			ht_bedroom as htBedroom,
+			ht_living_room as htLivingRoom,
+			ht_kitchen as
+			htKitchen,
+			ht_toilet as htToilet,
+			select_push_id as selectPushId,
+			payment as payment,
+			pay_time as payTime,
+			trade_no as tradeNo,
+			pay_type as
+			payType,
+			bank_gateway as bankGateway,
+			finish_time as finishTime,
+			enable_time as enableTime ,
+			b.sp_id as spid,
+			c.sp_name as spname
+				from appointment a 
+			left join appointment_push b on a.id = b.aid
+			left join supplier c on b.sp_id = c.id
+		    where 1=1
+		<if test="aid!=null and aid!=''">
+			and a.id=#{aid}
+		</if>
+		<if test="vAid!=null and vAid!=''">
+			and a.id=#{vAid}
+		</if>
+		<if test="spId!=null and spId!=''">
+			and b.sp_id=#{spId}
+		</if>
+		<if test="type!=null and type!=''">
+			and a.type=#{type}
+		</if>
+		<if test="pushStatus!=null and pushStatus!=''">
+			and b.status=#{pushStatus}
+		</if>
+		order by b.create_time desc
+		 <if test="curpage!=null and curpage!=''">   
+			limit ${curpage}, ${pageSize}
+		 </if>
+			
+</select>
+
+<!-- 根据看工地预约单id查找关联的需求单id -->
+<select id="queryAppointmentDetailByViewAid" parameterType="java.util.Map" resultMap="appointment_vmap">
+			SELECT a.id as id,
+			sub_type as subType,
+			a.create_time as
+			createTime,
+			a.status as status,
+			content as content,
+			space as space,
+			review_num as reviewNum,
+			user as user,
+			mobile as mobile,
+			a.address as address,
+			get_room as getRoom,
+			budget as budget,
+			get_room_date as
+			getRoomDate,
+			method as method,
+			source as source,
+			a.admin_id as adminId,
+			a.city_domain as cityDomain,
+			link_time as linkTime,
+			company as company,
+			a.reason as reason,
+			review_time as reviewTime,
+			community as community,
+			parlour_ground as parlourGround,
+			parlour_ground_dismantle as
+			parlourGroundDismantle,
+			parlour_wall as parlourWall,
+			parlour_wall_dismantle as parlourWallDismantle,
+			bedroom_ground as
+			bedroomGround,
+			bedroom_ground_dismantle as bedroomGroundDismantle,
+			bedroom_wall as bedroomWall,
+			bedroom_wall_dismantle as
+			bedroomWallDismantle,
+			kitchen as kitchen,
+			kitchen_dismantle as
+			kitchenDismantle,
+			toilet as toilet,
+			toilet_dismantle as toiletDismantle,
+			water as water,
+			electric as electric,
+			start_work as startWork,
+			ht_bedroom as htBedroom,
+			ht_living_room as htLivingRoom,
+			ht_kitchen as
+			htKitchen,
+			ht_toilet as htToilet,
+			select_push_id as selectPushId,
+			payment as payment,
+			pay_time as payTime,
+			trade_no as tradeNo,
+			pay_type as
+			payType,
+			bank_gateway as bankGateway,
+			finish_time as finishTime,
+			enable_time as enableTime 
+			from appointment a 
+			inner join appointment_fitment_view ref on a.id =ref.fitment_aid
+		    where 1=1 and a.type=1
+		<if test="vAid!=null and vAid!=''">
+			 and  ref.view_aid=#{vAid} ;
+		</if>
+</select>
+
+	<resultMap id="appointment_vmap1"	type="com.jkkp.appapi.modules.mapper.VAppointmentDetial" extends="appointmentMap">
+	</resultMap>
+<select id="qrydetial" parameterType="java.util.Map" resultMap="appointment_vmap1">
+	SELECT
+	id,address,budget,community,housestyle,method,mobile,regionid,
+	space,su_type,type,water,whole_house,house_type,review_time,status,zx_time
+	 FROM
+	 appointment a
+	 WHERE 1=1 
+	 <if test="id!=null and id!=''">   
+		and	a.id=${id}
+	</if>
+</select> 
+
+</mapper>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierUserMapper">
+	<resultMap id="SupplierUserMap" type="com.jkkp.modules.supplier.model.SupplierUser">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="userpwd" property="userpwd" jdbcType="VARCHAR" />
+		<result column="clas" property="clas" jdbcType="INTEGER" />
+		<result column="qd_flag" property="qdFlag" jdbcType="INTEGER" />
+		<result column="is_audit" property="isAudit" jdbcType="INTEGER" />
+		<result column="is_admin" property="isAdmin" jdbcType="INTEGER" />
+		<result column="is_merchandiser" property="isMerchandiser" jdbcType="INTEGER" />
+		<result column="is_designer" property="isDesigner" jdbcType="INTEGER" />
+		<result column="spname" property="spname" jdbcType="VARCHAR" />
+		<result column="sp_code" property="spCode" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap type="com.jkkp.modules.supplier.view.VSupplierUser" id="VSupplierUserMap" extends="SupplierUserMap">
+		<association property="supplier" column="sp_id" select="com.jkkp.modules.supplier.mapper.SupplierMapper.getBeanById" />
+	</resultMap>
+	<sql id="condition">
+		<if test="sid!=null and sid !=''">
+			and s.sp_id=${sid}
+		</if>
+		<if test="uid!=null and uid !=''">
+			and s.id=${uid}
+		</if>
+		<if test="uname!=null and uname !=''">
+			and s.username like '%${uname}%'
+		</if>
+	</sql>
+	
+	<!-- web端 检查账号是否存在 -->
+	<select id="checkUserName" resultType="long">
+	    select 
+	    	count(id)
+	    from
+	    	supplier_user su
+	    where
+	    	su.username = '${name}'
+    	<if test="id > 0">
+    	    and su.id != ${id}
+    	</if>
+	</select>
+	
+	<!-- 检查手机号码是否已经绑定 -->
+	<select id="selectSupplierUserByMobile" resultMap="SupplierUserMap">
+	   SELECT * FROM supplier_user a WHERE a.`mobile`=${mobile} and a.id != ${id}
+	</select> 
+	
+	<select id="login" resultMap="VSupplierUserMap">
+		SELECT s.*,p.sp_name as spname from
+		supplier_user s,supplier p where s.sp_id=p.id and s.username=#{name}
+		and s.userpwd=#{pass} and p.status = 0
+		and p.type = #{loginType}
+	</select>
+	
+	<select id="findSupplier" resultMap="VSupplierUserMap">
+		SELECT s.*,p.sp_name as spname from
+		supplier_user s,supplier p where s.sp_id=p.id and s.username=#{name}
+		and p.status = 0 and p.type = #{loginType}
+	</select>
+	
+	<select id="getc" resultType="long">
+		SELECT COUNT(1) as m from
+		supplier_user s,supplier u where s.sp_id=u.id and s.sp_id=#{sid}
+	</select>
+	<select id="findByUserName" parameterType="java.util.Map"
+		resultMap="VSupplierUserMap">
+		select * from supplier_user t where 1=1
+		<if test="userName!=null and userName!=''">
+			and t.username='${userName}'
+		</if>
+		<if test="userName==null">
+			and t.username='0'
+		</if>
+	</select>
+
+	<select id="findPage" parameterType="java.util.Map" resultMap="VSupplierUserMap">
+		SELECT * from supplier_user s,supplier u where s.sp_id=u.id
+		<include refid="condition" />
+		order by s.create_time desc
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		SELECT COUNT(*) from supplier_user s,supplier u where s.sp_id=u.id
+		<include refid="condition" />
+		order by s.create_time desc
+	</select>
+
+	<!-- ysc -->
+	<sql id="tbl">supplier_user</sql>
+	<sql id="temp_tbl">
+		select
+		aa.* from
+		<include refid="tbl" />
+		aa
+	</sql>
+	<select id="getList" resultMap="VSupplierUserMap" parameterType="string">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="VSupplierUserMap"
+		parameterType="com.jkkp.utils.Pager">
+		select t.*
+		from (
+		<include refid="temp_tbl" />
+		) t
+		where 1=1 ${value}
+		limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (
+		<include refid="temp_tbl" />
+		) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="VSupplierUserMap"
+		parameterType="string">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t where trim(cast(id as char))=trim(#{id})
+	</select>
+	<select id="getBeanByUsername" resultMap="VSupplierUserMap"
+		parameterType="string">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t
+		where trim(cast(username as char))=trim(#{username})
+		limit 0,1
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from
+		<include refid="tbl" />
+		t where 1=1 ${value}
+	</delete>
+	<!-- ysc -->
+	
+	
+	
+	
+	<select id="getBeanByMap" resultMap="VSupplierUserMap"
+		parameterType="hashMap">
+		select t.*,bb.type from (
+		<include refid="temp_tbl" />
+		) t,
+    	supplier bb
+		where  t.sp_id = bb.id
+   	 	and binary trim(cast(t.username as char))=trim(#{username})
+   	 	<if test="type!=null">
+			and type=#{type}
+		</if>
+		limit 0,1
+	</select>
+	
+	<select id="getBeanByMobile" resultMap="VSupplierUserMap"
+		parameterType="string">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t
+		where mobile = #{mobile}
+		limit 0,1
+	</select>
+	
+	<select id="getBeanByParamMap" resultMap="VSupplierUserMap"
+		parameterType="hashMap">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t
+		where 1=1
+		<if test="mobile!=null and mobile!=''">
+			and mobile = #{mobile}
+		</if>
+		<if test="username!=null and username!=''">
+			and username = #{username}
+		</if>
+		<if test="userpwd!=null and userpwd!=''">
+			and userpwd = #{userpwd}
+		</if>
+		limit 0,1
+	</select>
+	
+	
+	<select id="queryUserInfo" resultMap="VSupplierUserMap"
+		parameterType="hashMap">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t,
+    	supplier bb
+		where  t.sp_id = bb.id
+   	 	<if test="type!=null">
+			and type=#{type}
+		</if>
+		<if test="mobile!=null">
+			and mobile=#{mobile}
+		</if>
+		limit 0,1
+	</select>
+</mapper>

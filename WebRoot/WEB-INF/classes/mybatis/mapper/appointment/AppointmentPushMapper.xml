@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.appointment.mapper.AppointmentPushMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jkkp.modules.appointment.view.VAppointmentPush">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="aid" property="aid" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="supplier_count" property="supplierCount"
+			jdbcType="INTEGER" />
+		<result column="random" property="random" jdbcType="INTEGER" />
+		<result column="changNoC" property="changNoC" jdbcType="INTEGER" />
+		<result column="changNoB" property="changNoB" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="admin_id" property="adminId" jdbcType="INTEGER" />
+		<result column="quote" property="quote" jdbcType="DECIMAL" />
+		<result column="parlour_ground_price" property="parlourGroundPrice"
+			jdbcType="INTEGER" />
+		<result column="parlour_wall_price" property="parlourWallPrice"
+			jdbcType="INTEGER" />
+		<result column="bedroom_ground_price" property="bedroomGroundPrice"
+			jdbcType="INTEGER" />
+		<result column="bedroom_wall_price" property="bedroomWallPrice"
+			jdbcType="INTEGER" />
+		<result column="kitchen_price" property="kitchenPrice"
+			jdbcType="INTEGER" />
+		<result column="toilet_price" property="toiletPrice" jdbcType="INTEGER" />
+		<result column="water_price" property="waterPrice" jdbcType="INTEGER" />
+		<result column="electric_price" property="electricPrice"
+			jdbcType="INTEGER" />
+		<result column="other_option" property="otherOption" jdbcType="VARCHAR" />
+		<result column="other_price" property="otherPrice" jdbcType="INTEGER" />
+		<result column="reminder" property="reminder" jdbcType="INTEGER" />
+		<result column="single_time" property="singleTime" jdbcType="TIMESTAMP" />
+		<result column="amount_time" property="amountTime" jdbcType="TIMESTAMP" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="money" property="money" jdbcType="FLOAT" />
+		<result column="send_collect_state" property="sendCollectState"
+			jdbcType="INTEGER" />
+		<!-- 子类拓展属性 -->
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="uname" property="uname" jdbcType="VARCHAR" />
+
+		<result column="sp_name" property="spName" jdbcType="VARCHAR" />
+		<result column="nickname" property="nickName" jdbcType="VARCHAR" />
+
+        <result column="community" property="community" jdbcType="VARCHAR" />
+        <result column="space" property="space" jdbcType="FLOAT" />
+        <result column="method" property="method" jdbcType="VARCHAR" />
+        <result column="budget" property="budget" jdbcType="FLOAT" />
+        <result column="descnt" property="descnt" jdbcType="INTEGER" />
+	</resultMap>
+
+	<resultMap id="BaseAppPushMap"
+		type="com.jkkp.appapi.modules.mapper.VIAppointmentPush">
+		<result column="appPushStatus" property="appPushStatus"
+			jdbcType="VARCHAR" />
+		<result column="suppName" property="suppName" jdbcType="VARCHAR" />
+		<result column="suppJkbFlag" property="suppJkbFlag" jdbcType="VARCHAR" />
+		<result column="suppLevelMoney" property="suppLevelMoney"
+			jdbcType="VARCHAR" />
+		<result column="suppEstimat" property="suppEstimat" jdbcType="VARCHAR" />
+		<result column="spplierId" property="spplierId" jdbcType="VARCHAR" />
+		<result column="grabNum" property="grabNum" jdbcType="VARCHAR" />
+		<result column="appCommunity" property="appCommunity" jdbcType="VARCHAR" />
+		<result column="appUser" property="appUser" jdbcType="VARCHAR" />
+		<result column="appSpace" property="appSpace" jdbcType="VARCHAR" />
+		<result column="appBudget" property="appBudget" jdbcType="VARCHAR" />
+		<result column="appSubType" property="appSubType" jdbcType="VARCHAR" />
+		<result column="quxiao" property="quxiao" jdbcType="VARCHAR" />
+		<result column="appointmentPushId" property="appointmentPushId"
+			jdbcType="VARCHAR" />
+		<result column="appointmentZxTimeDate" property="appointmentZxTimeDate"
+			jdbcType="TIMESTAMP" />
+		<result column="appointmentCateName" property="appointmentCateName"
+			jdbcType="VARCHAR" />
+		<result column="appointmentAddress" property="appointmentAddress"
+			jdbcType="VARCHAR" />
+
+		<result column="appointmentAmountTimeDate" property="appointmentAmountTimeDate"
+			jdbcType="TIMESTAMP" />
+			
+			<result column="city" property="city"
+			jdbcType="VARCHAR" />
+			<result column="qu" property="qu"
+			jdbcType="VARCHAR" />
+			<result column="sheng" property="sheng"
+			jdbcType="VARCHAR" />
+			<result column="mobile" property="mobile"
+			jdbcType="VARCHAR" />
+			<result column="random" property="random"	jdbcType="VARCHAR" />
+			<result column="scspid" property="scspid"	jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="BaseAppPushMapVs"
+		type="com.jkkp.appapi.modules.mapper.VAppointmentPushV1">
+		<result column="user" property="user" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="space" property="space" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="spname" property="spname" jdbcType="VARCHAR" />
+		<result column="time" property="time" jdbcType="VARCHAR" />
+		<result column="quote" property="quote" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="fin" resultMap="BaseAppPushMapVs">
+		select a.user as user ,a.mobile as
+		mobile,a.community as community ,a.space
+		as space,a.address as
+		address,s.sp_name as spname,a.zx_time as
+		time,p.quote as quote from
+		appointment_push p,appointment a,supplier s
+		where p.aid=a.id and
+		p.sp_id=s.id and p.id=#{id}
+	</select>
+	<resultMap id="BaseAppPushAndAppAndDesignCaseMap"
+		type="com.jkkp.appapi.modules.mapper.VIAppPushAndAppAndDesignCase">
+		<result column="design_image_pid" property="design_image_pid"
+			jdbcType="VARCHAR" />
+		<result column="appointment_id" property="appointment_id"
+			jdbcType="VARCHAR" />
+		<result column="appointment_push_id" property="appointment_push_id"
+			jdbcType="VARCHAR" />
+		<result column="design_image_type" property="design_image_type"
+			jdbcType="VARCHAR" />
+		<result column="design_image_id AS imageid" property="design_image_id"
+			jdbcType="VARCHAR" />
+		<result column="appointment_space" property="appointment_space"
+			jdbcType="VARCHAR" />
+		<result column="appointment_method" property="appointment_method"
+			jdbcType="VARCHAR" />
+		<result column="appointment_dcate_id" property="appointment_dcate_id"
+			jdbcType="VARCHAR" />
+		<result column="appointment_type" property="appointment_type"
+			jdbcType="VARCHAR" />
+		<result column="appointment_push_amount_time" property="appointment_push_amount_time"
+			jdbcType="VARCHAR" />
+		<result column="design_cate_cate_name" property="design_cate_cate_name"
+			jdbcType="VARCHAR" />
+		<result column="supplier_sp_name" property="supplier_sp_name"
+			jdbcType="VARCHAR" />
+		<result column="appointment_push_quote" property="appointment_push_quote"
+			jdbcType="VARCHAR" />
+		<result column="appointment_push_aid" property="appointment_push_aid"
+			jdbcType="VARCHAR" />
+		<result column="appointment_push_sp_id" property="appointment_push_sp_id"
+			jdbcType="VARCHAR" />
+		<result column="design_cate_id" property="design_cate_id"
+			jdbcType="VARCHAR" />
+		<result column="supplier_id" property="supplier_id" jdbcType="VARCHAR" />
+		<result column="appointment_budget" property="appointment_budget"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="condition">
+		<if test="id !=null and id !=''">
+			and p.id=${id}
+		</if>
+	</sql>
+
+	<!-- web -->
+	
+	<select id="findPushBySpIdAndAid" resultMap="BaseResultMap">
+		SELECT * from appointment_push ap WHERE ap.sp_id = ${spId} AND ap.aid = ${aid}
+		order by ap.id desc
+		limit 0,1
+	</select>
+	
+	
+	<select id="selectAllAppointmentPushes" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		SELECT
+		  IFNULL(COUNT(de.aid),0) descnt,
+		  a.*,
+		  b.`sp_name`,
+		  d.`nickname`,
+		  e.`community`,
+		  e.`space`,
+		  CASE
+		    e.`method` 
+		    WHEN 1 
+		    THEN "半包" 
+		    WHEN 2 
+		    THEN "全包" 
+		    ELSE "" 
+		  END AS method,
+		  e.budget 
+		FROM
+		appointment_push a
+		INNER JOIN
+		appointment e
+		ON e.`id`=a.`aid`
+		LEFT JOIN supplier b
+		ON a.`sp_id` =
+		b.`id`
+		LEFT JOIN appointment_member c
+		ON c.`aid` = a.`aid`
+		LEFT JOIN
+		member d
+		ON d.`id` = c.`mid`
+		LEFT JOIN design de ON de.sp_id = a.sp_id AND e.id=de.aid
+		WHERE 1 = 1
+		<include refid="appointmentPusheCondition" />
+		GROUP BY a.id
+		ORDER BY a.`create_time` DESC
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="selectAllAppointmentPushCount" parameterType="java.util.Map"
+		resultType="long">
+		SELECT
+		count(1)
+		FROM
+		appointment_push a
+		INNER JOIN appointment e
+		ON
+		e.`id`=a.`aid`
+		LEFT JOIN supplier b
+		ON a.`sp_id` = b.`id`
+		LEFT JOIN
+		appointment_member c
+		ON c.`aid` = a.`aid`
+		LEFT JOIN member d
+		ON d.`id` =
+		c.`mid`
+		LEFT JOIN design de ON de.sp_id = a.sp_id AND e.id=de.aid
+		WHERE 1 = 1
+		<include refid="appointmentPusheCondition" />
+	</select>
+
+	<sql id="appointmentPusheCondition">
+		<!-- 商家id 如果为空表示后台获取所有 -->
+		<if test="sId != null and sId !=''">
+			and a.sp_id = ${sId}
+		</if>
+
+		<if test="count !=null and status ==0">
+			and (e.grab_count &lt; ${count} or e.grab_count is null)
+		</if>
+
+		<if test="type != null and type != ''">
+			and e.type = ${type}
+		</if>
+		<if test="status!=null and status!=''">
+			and a.status=${status}
+			<if test="status == 0">
+				and a.random = 0
+			</if>
+		</if>
+		<!-- 创建时间 -->
+		<if test="createTimeStart!=null and createTimeStart!=''">
+			AND a.`create_time`>'${createTimeStart}'
+		</if>
+		<if test="createTimeEnd!=null and createTimeEnd!=''">
+			AND a.`create_time`&lt;'${createTimeEnd}'
+		</if>
+		<!-- 应单时间 -->
+		<if test="singleTimeStart!=null and singleTimeStart!=''">
+			AND a.`single_time`>'${singleTimeStart}'
+		</if>
+		<if test="singleTimeEnd!=null and singleTimeEnd!=''">
+			AND a.`single_time`&lt;'${singleTimeEnd}'
+		</if>
+		<!-- 量房时间 -->
+		<if test="amountTimeStart!=null and amountTimeStart!=''">
+			AND a.`amount_time`>'${amountTimeStart}'
+		</if>
+		<if test="amountTimEnd!=null and amountTimEnd!=''">
+			AND a.`amount_time`&lt;'${amountTimEnd}'
+		</if>
+		<!-- id -->
+		<if test="id!=null and id!=''">
+			AND a.`id`=${id}
+		</if>
+		<!-- aid -->
+		<if test="aid!=null and aid!=''">
+			AND a.`aid`=${aid}
+		</if>
+		<!-- 预约商户 -->
+		<if test="spName!=null and spName!=''">
+			AND b.`sp_name` LIKE '%${spName}%'
+		</if>
+		<!-- 预约用户 -->
+		<if test="member!=null and member!=''">
+			AND d.`nickname` LIKE '%${member}%'
+		</if>
+		<if test="random!=null and random!=''">
+			AND a.`random` = ${random}
+		</if>
+	</sql>
+
+
+	<!-- 重新推送 -->
+	<update id="updateStatusTo10">
+		UPDATE appointment_push SET random=0 WHERE id=${id}
+	</update>
+
+	<!-- 关闭单条记录 -->
+	<update id="closePush">
+		UPDATE appointment_push SET random=2 WHERE id=${id}
+	</update>
+
+    <update id="updateAppointmentLDStatus">
+     UPDATE appointment_push  b SET b.`status`=0,b.`random`=0 WHERE b.`id`=${id}
+    </update>
+
+	<!-- 关闭appointment所有的推送记录 -->
+	<update id="closeAppointmentPushes">
+		UPDATE appointment_push SET random=1 WHERE aid=${aid}
+	</update>
+	<!-- /web -->
+	<select id="findPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT a.*,s.sp_name as name,d.username as uname from appointment_push
+		a,supplier s,appointment p,admin d where a.admin_id=d.id and
+		a.sp_id=s.id and a.aid=p.id and a.status=1
+		<include refid="condition" />
+		limit ${rowStart}, ${limit}
+	</select>
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		SELECT count(1) from appointment_push a,supplier s,appointment p,admin
+		d where a.admin_id=d.id and a.sp_id=s.id and a.aid=p.id and a.status=1
+		<include refid="condition" />
+	</select>
+ 
+
+	<select id="queryAppPushlGrab" parameterType="java.util.Map"
+		resultType="Integer">
+		select count(1) from appointment_push t where 1=1 and 
+		<![CDATA[ t.status <70 and t.status >=10 ]]>    
+		<if test="appointmentId!=null and appointmentId!=''">
+			and aid=${appointmentId}
+		</if>
+	</select>
+	<select id="queryAppPush" parameterType="java.util.Map"
+		resultType="Integer">
+		select count(1) from appointment_push t where 1=1
+		<if test="appointmentId!=null and appointmentId!=''">
+			and aid=${appointmentId}
+		</if>
+	</select>
+
+	<select id="queryAppPushlByAppid" parameterType="java.util.Map"
+		resultMap="BaseAppPushMap">
+		select 
+		mt.random,
+		mt.amount_time as appointmentAmountTimeDate,
+		mt.status as appPushStatus,
+		mt.id as appointmentPushId,
+		mt.sp_name as suppName,
+		mt.ESTIMATE_SERVICE as suppEstimat,
+		mt.sp_id as spplierId,
+		mt.scspid,count(1) as grabNum from (
+		select
+		t.status,t.id,t1.sp_name,t1.jkb_flag,t2.level_money
+		,t1.ESTIMATE_SERVICE,t.sp_id,t.amount_time,
+		t.random,scc.sp_id as scspid
+		from appointment_push t,supplier t1 LEFT JOIN supplier_level t2 on
+		t1.level_id=t2.id
+		LEFT JOIN supplier_collect scc 
+		<if test="mid!=null and mid!=''">
+		    on scc.uid=${mid}
+		</if>
+		<if test="mid==null or mid==''">
+			on scc.uid=null
+		</if>
+		
+		where 1=1 and t.sp_id=t1.id 
+
+		<if test="appointmentId!=null and appointmentId!=''">
+			and t.aid=${appointmentId}
+		</if>
+
+		<if test="appointmentId==null or appointmentId==''">
+			and t.aid=0
+		</if>
+
+		) mt ,appointment_push tt LEFT JOIN appointment ap on tt.aid=ap.id  where 1=1 
+		<if test="appointmentId!=null and appointmentId!=''">
+			and tt.aid=${appointmentId}
+		</if>
+		<if test="type!=null and type!=''">
+				and ap.type=${type}
+		</if>
+		GROUP BY
+		mt.status,mt.sp_name,mt.jkb_flag,mt.level_money,mt.ESTIMATE_SERVICE,mt.sp_id
+		ORDER BY mt.level_money DESC
+	</select>
+
+	<select id="queryAppPushDetail" parameterType="java.util.Map"
+		resultMap="BaseAppPushMap">
+		SELECT t1.community as appCommunity,t1.user as appUser,
+		t.status as
+		appPushStatus,t1.space as appSpace,t1.budget as
+		appBudget,t1.sub_type
+		as appSubType
+		,t.id as appointmentPushId,t.sp_id as
+		supplierId,t1.zx_time as appointmentZxTimeDate,
+		t2.cate_name as
+		appointmentCateName,t1.address as appointmentAddress,
+		t.amount_time as
+		appointmentAmountTimeDate,
+		t.random as quxiao,
+    r.regionname as qu,
+    e.regionname as city,
+    d.regionname as sheng,
+    t1.mobile as mobile
+		from
+		appointment_push t 
+     INNER JOIN  appointment t1 on t.aid=t1.id 
+    left JOIN design_cate t2 ON t1.dcate_id = t2.id
+     LEFT JOIN region r on t1.regionid=r.regionid
+       LEFT JOIN region e on e.regionid =r.parentid
+       LEFT JOIN region d on d.regionid=e.parentid
+		where 1=1
+		<if test="supplierId!=null and supplierId!=''">
+			and t.sp_id=${supplierId}
+		</if>
+		<if test="appointmentPushId!=null and appointmentPushId!=''">
+			and t.id=${appointmentPushId}
+		</if>
+		<if test="appPushStatus!=null and appPushStatus!='40' and appPushStatus!='10'">
+			and t.status=${appPushStatus}
+		</if>
+		<if test="appPushStatus==10">
+			and (t.status=10 or t.status=15)
+		</if>
+        <if test="appPushStatus==40">
+			and (t.status=40 or t.status=60)
+		</if>
+		ORDER BY t.create_time DESC
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+
+	<select id="queryAppPushAndAppAndDesignCaseByAppid"
+		parameterType="java.util.Map" resultMap="BaseAppPushAndAppAndDesignCaseMap">
+		SELECT
+		design_image.pid AS design_image_pid,
+		appointment.id AS
+		appointment_id,
+		appointment_push.id AS appointment_push_id,
+		design_image.type AS design_image_type,
+		design_image.id AS
+		design_image_id,
+		appointment.space AS appointment_space,
+		appointment.method AS appointment_method,
+		appointment.dcate_id AS
+		appointment_dcate_id,
+		appointment.type AS appointment_type,
+		appointment_push.amount_time AS appointment_push_amount_time,
+		design_cate.cate_name AS design_cate_cate_name,
+		supplier.sp_name AS
+		supplier_sp_name,
+		appointment_push.quote AS appointment_push_quote,
+		appointment_push.aid AS appointment_push_aid,
+		appointment_push.sp_id AS
+		appointment_push_sp_id,
+		design_cate.id AS design_cate_id,
+		supplier.id AS
+		supplier_id,
+		appointment.budget AS appointment_budget
+		FROM
+		design_cate
+		INNER JOIN design_image ON design_cate.id = design_image.design_id
+		INNER JOIN appointment ON appointment.dcate_id = design_cate.id
+		INNER
+		JOIN appointment_push ON appointment_push.aid = appointment.id
+		INNER
+		JOIN supplier ON supplier.id = appointment_push.sp_id
+		WHERE 1=1
+		<if test="appointment_push_id!=null and appointment_push_id!=''">
+			and appointment_push.id=${appointment_push_id}
+		</if>
+		<if test="appointment_id!=null and appointment_id!=''">
+			and appointment.id=${appointment_id}
+		</if>
+	</select>
+	
+	<update id="upadteStatusByParam" parameterType="java.util.Map">
+		update appointment_push set status=#{status} where 
+		aid=#{aid}
+		and status in (0)
+	</update>
+	
+	<update id="upadteStatusByAid" parameterType="java.util.Map">
+		update appointment_push set status=#{status} where 
+		aid=#{aid}
+	</update>
+	
+	
+		<select id="queryAppPushbn" resultMap="BaseAppPushMap">
+		SELECT t1.community as appCommunity,t1.user as appUser,
+		t.status as
+		appPushStatus,t1.space as appSpace,t1.budget as
+		appBudget,t1.sub_type
+		as appSubType
+		,t.id as appointmentPushId,t.sp_id as
+		supplierId,t1.zx_time as appointmentZxTimeDate,
+		t2.cate_name as
+		appointmentCateName,t1.address as appointmentAddress,
+		t.amount_time as
+		appointmentAmountTime,
+		t.random as quxiao,
+    r.regionname as qu,
+    e.regionname as city,
+    d.regionname as sheng,
+    t1.mobile as mobile
+		from
+		appointment_push t 
+     INNER JOIN  appointment t1 on t.aid=t1.id 
+    left JOIN design_cate t2 ON t1.dcate_id = t2.id
+     LEFT JOIN region r on t1.regionid=r.regionid
+       LEFT JOIN region e on e.regionid =r.parentid
+       LEFT JOIN region d on d.regionid=e.parentid
+		where  t.id=#{appointmentPushId}
+	</select>
+	
+	<update id="updatePayStatusInfo" parameterType="java.util.Map">
+		update appointment_push 
+		 <set>
+		 	<if test="status!=null and status!=''">
+				set status=#{status} 
+			</if>
+            <if test="depositPayStatus!=null and depositPayStatus!=''">
+				set deposit_Pay_Status=#{depositPayStatus} 
+			</if>
+			 <if test="depositPayTime!=null and depositPayTime!=''">
+				set deposit_pay_time=#{depositPayTime} 
+			</if>
+			 <if test="depositPayRecId!=null and depositPayRecId!=''">
+				set deposit_pay_rec_id=#{depositPayRecId} 
+			</if>
+			 <if test="deposit_refund_time!=null and deposit_refund_time!=''">
+				set deposit_refund_time=#{depositRefundTime} 
+			</if>
+			 <if test="depositRefundRecId!=null and depositRefundRecId!=''">
+				set deposit_refund_rec_id=#{depositRefundRecId} 
+			</if>
+			
+			 <if test="projectPayStatus!=null and projectPayStatus!=''">
+				set project_pay_status=#{projectPayStatus} 
+			</if>
+			 <if test="projectPayTime!=null and projectPayTime!=''">
+				set project_pay_time=#{projectPayTime} 
+			</if>
+			<if test="projectPayRecId!=null and projectPayRecId!=''">
+				set project_pay_rec_id=#{projectPayRecId} 
+			</if>
+			
+			 <if test="projectRefundTime!=null and projectRefundTime!=''">
+				set project_refund_time=#{projectRefundTime} 
+			</if>
+			<if test="projectRefundRecId!=null and projectRefundRecId!=''">
+				set project_refund_rec_id=#{projectRefundRecId} 
+			</if>
+         </set>
+		where 
+		id=#{id}
+	</update>
+	
+</mapper>

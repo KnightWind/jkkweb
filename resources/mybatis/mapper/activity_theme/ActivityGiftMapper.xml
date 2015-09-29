@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.sale_theme.mapper.ActivityGiftMapper">
+
+	<resultMap id="BaseMap" type="com.jkkp.modules.sale_theme.model.ActivityGift">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="activity_id" property="activityId" jdbcType="INTEGER" />
+		<result column="card_id" property="cardId" jdbcType="INTEGER" />
+		<result column="admin_id" property="adminId" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="begin_time" property="startTime" jdbcType="TIMESTAMP" />
+		<result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<resultMap extends="BaseMap" type="com.jkkp.modules.sale_theme.view.VActivityGift" id="VBaseMap">
+		<result column="activityName" property="activityName" jdbcType="VARCHAR" />
+		<result column="cardName" property="cardName" jdbcType="VARCHAR" />
+		<result column="adminName" property="adminName" jdbcType="VARCHAR" />
+	</resultMap>
+
+     <resultMap type="com.jkkp.modules.sale_theme.view.VActivityGift" id="wxResulMap" extends="BaseMap">
+	    
+	</resultMap>
+	
+	<select id="selectMyActivityGift" resultMap="wxResulMap" parameterType="java.util.Map">
+		SELECT 
+		  b.* 
+		FROM
+		  activity_gift_log a 
+		  INNER JOIN activity_gift b 
+		  ON a.`gift_id`=b.`id`
+		WHERE a.`phone` ='${phone}'
+	</select>
+
+	<sql id="condtion">
+		<if test="title != null and title != ''">
+			a.`title` like '${title}'
+		</if>
+		<if test="name != null and name != ''">
+			ag.`name` like '${card}'
+		</if>
+		<if test="startTime != null and startTime != ''">
+			ag.`start_time` == ${startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			ag.`end_time` == ${endTime}
+		</if>
+	</sql>
+
+	<select id="selectActivityGiftById" resultMap="VBaseMap">
+		SELECT 
+			ag.*,a.`title` AS activityName,ac.name as cardName
+		FROM
+			activity_gift ag
+		LEFT JOIN 
+			activity_theme a
+		ON
+			ag.`activity_id` = a.`id`
+		LEFT JOIN 
+			activity_card ac
+		ON
+			ag.`card_id` = ac.`id`
+		where 
+			ag.id = #{id}
+	</select>
+	
+	<select id="selectActivityGift" resultMap="VBaseMap" parameterType="java.util.Map">
+		SELECT 
+			ag.*,a.`title` AS activityName,ac.name as cardName
+		FROM
+			activity_gift ag
+		LEFT JOIN 
+			activity_theme a
+		ON
+			ag.`activity_id` = a.`id`
+		LEFT JOIN 
+			activity_card ac
+		ON
+			ag.`card_id` = ac.`id`
+		where 
+			1 = 1
+		<include refid="condtion" />
+		ORDER BY
+			ag.`update_time` DESC
+			limit #{rowStart}, #{limit}
+	</select>
+	
+	<select id="selectActivityGiftCount" resultType="long" parameterType="java.util.Map">
+		SELECT 
+			count(1)
+		FROM
+			activity_gift ag
+		LEFT JOIN 
+			activity_theme a
+		ON
+			ag.`activity_id` = a.`id`
+		LEFT JOIN 
+			activity_card ac
+		ON
+			ag.`card_id` = ac.`id`
+		where 
+			1 = 1
+		<include refid="condtion" />
+	</select>
+
+</mapper>

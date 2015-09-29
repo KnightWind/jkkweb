@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.crowdfunding.mapper.ItemMemberMapper" >
+  <resultMap id="BaseResult" type="com.jkkp.modules.crowdfunding.model.ItemMember" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="member_id" property="memberId" jdbcType="INTEGER" />
+    <result column="activity_id" property="activityId" jdbcType="INTEGER" />
+    <result column="create_time" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+     
+     <resultMap id="VBaseResult" type="com.jkkp.modules.crowdfunding.view.VItemMember" extends="BaseResult" >
+	    <result column="statusString" property="statusString" jdbcType="VARCHAR" />
+	    <result column="userName" property="userName" jdbcType="VARCHAR" />
+	    <result column="spName" property="spName" jdbcType="VARCHAR" />
+	    <result column="itemName" property="itemName" jdbcType="VARCHAR" />
+     </resultMap>
+     
+      <sql id="condtion">
+  	 	<if test="spId != null and spId != ''">
+  	 		and i.`sp_id` = #{spId}
+  	 	</if>
+     	<if test="name != null and name != ''">
+     		and m.`nickname` like '%${name}%'
+     	</if>
+     	<if test="itemId != null and itemId != ''">
+     		and i.`id` = ${id}
+     	</if>
+     </sql>
+     
+     <!-- web -->
+     <select id="findPage" parameterType="java.util.Map" resultMap="VBaseResult">
+     	
+     	SELECT m.`nickname` userName,i.`title` itemName,s.`sp_name` spName,zm.* ,(CASE WHEN zi.flag = 1 THEN '进行中' ELSE '已结束' END) statusString
+		FROM zc_item_member zm
+		LEFT JOIN member m ON m.`id` = zm.member_id
+		LEFT JOIN item i ON i.`id` = zm.item_id
+		LEFT JOIN supplier s ON s.`id` = i.`sp_id`
+		LEFT JOIN zc_item zi ON zi.`item_id` = i.`id`
+		where 1=1
+		<include refid="condtion" />
+     	ORDER BY zm.id DESC LIMIT ${rowStart}, ${limit}
+     </select>
+     
+     <select id="countPage" parameterType="java.util.Map" resultType="long">
+     	
+     	SELECT count(1)
+		FROM zc_item_member zm
+		LEFT JOIN member m ON m.`id` = zm.member_id
+		LEFT JOIN item i ON i.`id` = zm.item_id
+		LEFT JOIN supplier s ON s.`id` = i.`sp_id`
+		LEFT JOIN zc_item zi ON zi.`item_id` = i.`id`
+     	where 1=1
+		<include refid="condtion" />
+     	
+     </select>
+     <!-- web -->
+</mapper>

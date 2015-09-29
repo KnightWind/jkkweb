@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.ApplicationVersionMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.basedata.model.ApplicationVersion" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="size" property="size" jdbcType="REAL" />
+    <result column="descr" property="descr" jdbcType="VARCHAR" />
+    <result column="focus_update" property="focusUpdate" jdbcType="BIT" />
+    <result column="os_type" property="osType" jdbcType="TINYINT" />
+    <result column="app_type" property="appType" jdbcType="TINYINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="display_version" property="displayVersion" jdbcType="VARCHAR" />
+  </resultMap>
+  
+</mapper>

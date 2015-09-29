@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.HelpMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.basedata.model.Help">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="cate_id" property="cateId" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="content" property="content" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<resultMap type="com.jkkp.modules.basedata.view.VHelp" id="VHelpMap">
+		<result column="secCata" property="secCata" jdbcType="VARCHAR" />
+		<result column="fistCata" property="fistCata" jdbcType="VARCHAR" />
+		<result column="Vcontent" property="vcontent" jdbcType="VARCHAR" />
+		<result column="VStatus" property="vstatus" jdbcType="INTEGER" />
+		<result column="vid" property="vid" jdbcType="INTEGER" />
+		<result column="pname" property="pname" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+
+	<select id="findPage" resultMap="VHelpMap" parameterType="java.util.Map">
+		SELECT
+			a.id AS vid,
+			b.name AS secCata,
+			a.content AS Vcontent,
+			a.status AS VStatus,
+			CASE
+			b.parent_id
+			WHEN 1
+			THEN "在线咨询"
+			WHEN 2
+			THEN "帮助中心"
+			WHEN 3
+			THEN "关于我们"
+			END AS fistCata
+		FROM
+			`help` a,
+			help_category b
+		WHERE a.cate_id = b.id
+			ORDER BY b.parent_id
+		limit #{rowStart},#{limit}
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		select count(1) FROM `help` a,help_category b
+		WHERE a.cate_id=b.id
+	</select>
+
+	<select id="selectOneHelpCata" resultMap="VHelpMap">
+		SELECT
+			(SELECT
+			NAME
+			FROM
+			help_category
+			WHERE id = b.`parent_id`) AS pname,
+			a.`content` AS
+			Vcontent,
+			b.`name`,
+			a.`id`
+		FROM
+			`help` a,
+			help_category b
+		WHERE 
+			a.cate_id =b.id
+			AND a.id = #{id}
+	</select>
+
+
+    <!-- help显示 -->
+    <update id="show">
+     UPDATE `help` SET STATUS=0 WHERE id=#{id}
+    </update>
+    
+      <!-- help隐藏-->
+    <update id="hidden">
+     UPDATE `help` SET STATUS=-1 WHERE id=#{id}
+    </update>
+</mapper>

@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.JtopicMapper">
+	<resultMap id="Jtopic_vmap" type="com.jkkp.modules.supplier.view.VJtopic">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="budget" property="budget" jdbcType="FLOAT" />
+		<result column="space" property="space" jdbcType="FLOAT" />
+		<result column="style" property="style" jdbcType="INTEGER" />
+		<result column="house_type" property="houseType" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="close_time" property="closeTime" jdbcType="TIMESTAMP" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="comment_count" property="commentCount" jdbcType="INTEGER" />
+		<result column="browse_count" property="browseCount" jdbcType="INTEGER" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+		<result column="sp_name" property="spName" jdbcType="INTEGER" />
+		<result column="styleName" property="styleName" jdbcType="INTEGER" />
+		<result column="houseTypeName" property="houseTypeName" jdbcType="INTEGER" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="browse_count" property="browseCount" jdbcType="INTEGER" />
+		<result column="stage_id" property="stageId" jdbcType="INTEGER" />
+	</resultMap>
+	
+	
+	<sql id="condition">
+		<if test="title != null and title != ''">
+			and j.title like '%${title}%'
+		</if>
+		<if test="createBegin!=null and createBegin!=''">
+			and j.create_time >='${createBegin}'
+		</if>
+		<if test="createEnd!=null and createEnd!=''">
+			and j.create_time &lt;='${createEnd}'
+		</if>
+		<if test="checkBegin!=null and checkBegin!=''">
+			and j.check_time >='${checkBegin}'
+		</if>
+		<if test="checkEnd!=null and checkEnd!=''">
+			and j.check_time &lt;='${checkEnd}'
+		</if>
+		<if test="closeBegin!=null and closeBegin!=''">
+			and j.`close_time` >='${closeBegin}'
+		</if>
+		<if test="closeEnd!=null and closeEnd!=''">
+			and j.`close_time` &lt;='${closeEnd}'
+		</if>
+		<if test="city!=null and city!=''">
+			and ad.city_domain='${city}'
+		</if>
+		<if test="spName!=null and spName!=''">
+		  AND s.`sp_name` LIKE '%${spName}%'
+		</if>
+		<if test="status!=null and status!=''">
+		  AND j.`status`=${status}
+		</if>
+		<if test="title!=null and title!=''">
+		  AND j.`title` LIKE '%${title}%'
+		</if>
+		<!-- 监理后台   -->
+		<if test="jlid!=null and jlid!=''">
+		 AND j.`sp_id`=${jlid}
+		</if>
+		
+		<!-- 商家后台 -->
+		<if test="supplierId!=null and supplierId!=''">
+		    AND j.`sp_id`=${supplierId}
+		</if>
+	</sql>
+	
+	<select id="findVJtopicById" resultMap="Jtopic_vmap">
+		select
+			j.*,
+			s.sp_name as spName,
+			dc1.cate_name as styleName,
+			dc2.cate_name as houseTypeName,
+			ad.city as city
+		from 
+			jtopic j
+		left join
+			area_domain ad
+		on 
+			j.city_domain = ad.city_domain
+		left join
+			supplier s
+		on
+			j.sp_id = s.id
+		left join
+			design_cate dc1
+		on 
+			dc1.id = j.style
+		left join
+			design_cate dc2
+		on
+			dc2.id = j.house_type
+		where 
+			j.id =${id}
+	</select>
+	
+	<select id="findPageHandle" resultMap="Jtopic_vmap" parameterType="java.util.Map">
+		select
+			j.*,
+			s.sp_name as spName,
+			dc1.cate_name as styleName,
+			dc2.cate_name as houseTypeName,
+			ad.city as city
+		from 
+			jtopic j
+		left join
+			area_domain ad
+		on 
+			j.city_domain = ad.city_domain
+		left join
+			supplier s
+		on
+			j.sp_id = s.id
+		left join
+			design_cate dc1
+		on 
+			dc1.id = j.style
+		left join
+			design_cate dc2
+		on
+			dc2.id = j.house_type
+		where 
+			s.`type`=5
+			<include refid="condition"></include>
+		order by 
+			j.create_time desc
+		limit
+			 ${rowStart}, ${limit}
+	</select>
+	
+	<select id="countPageHandle" parameterType="java.util.Map" resultType="long">
+		select
+			count(1)
+		from 
+			jtopic j
+		left join
+			area_domain ad
+		on 
+			j.city_domain = ad.city_domain
+		left join
+			supplier s
+		on
+			j.sp_id = s.id
+		left join
+			design_cate dc1
+		on 
+			dc1.id = j.style
+		left join
+			design_cate dc2
+		on
+			dc2.id = j.house_type
+		where 
+			s.`type`=5
+			<include refid="condition"></include>
+	</select>
+	
+	<!-- web 获取商家日记列表 -->
+	<select id="selectAllBusinessTopic" resultMap="Jtopic_vmap" parameterType="java.util.Map">
+	   SELECT 
+		  j.*,
+		  s.sp_name AS spName,
+		  dc1.cate_name AS styleName,
+		  dc2.cate_name AS houseTypeName,
+		  ad.city AS city 
+		FROM
+		  jtopic j 
+		  LEFT JOIN area_domain ad 
+		    ON j.city_domain = ad.city_domain 
+		  LEFT JOIN supplier s 
+		    ON j.sp_id = s.id 
+		  LEFT JOIN design_cate dc1 
+		    ON dc1.id = j.style 
+		  LEFT JOIN design_cate dc2 
+		    ON dc2.id = j.house_type 
+		WHERE s.`type` = 1 
+		<include refid="condition"/>		
+		 ORDER BY s.`create_time` DESC 
+		limit ${rowStart}, ${limit}
+	</select>
+	
+	<select id="selectBusinessTopicCount"  parameterType="java.util.Map" resultType="long">
+	   SELECT 
+		 COUNT(1)
+		FROM
+		  jtopic j 
+		  LEFT JOIN area_domain ad 
+		    ON j.city_domain = ad.city_domain 
+		  LEFT JOIN supplier s 
+		    ON j.sp_id = s.id 
+		  LEFT JOIN design_cate dc1 
+		    ON dc1.id = j.style 
+		  LEFT JOIN design_cate dc2 
+		    ON dc2.id = j.house_type 
+		WHERE s.`type` = 1 
+		<include refid="condition"/>		
+	</select>
+	
+	<select id="businessDetail" resultMap="Jtopic_vmap">
+	   SELECT 
+		  j.*,
+		  s.sp_name AS spName,
+		  dc1.cate_name AS styleName,
+		  dc2.cate_name AS houseTypeName,
+		  ad.city AS city 
+		FROM
+		  jtopic j 
+		  LEFT JOIN area_domain ad 
+		    ON j.city_domain = ad.city_domain 
+		  LEFT JOIN supplier s 
+		    ON j.sp_id = s.id 
+		  LEFT JOIN design_cate dc1 
+		    ON dc1.id = j.style 
+		  LEFT JOIN design_cate dc2 
+		    ON dc2.id = j.house_type
+		  WHERE s.`type` = 1 
+		  and j.id=#{id}
+	</select>
+	
+	<!-- 删除日记 -->
+	<delete id="deleteOneTopic">
+	 DELETE FROM jtopic WHERE id=${id}
+	</delete>
+	<!-- 审核商家日记    不通过 -->
+	<update id="noPass">
+	  UPDATE jtopic SET check_time =NOW(),STATUS=-1 WHERE id=${id}
+	</update>
+	
+	<update id="pass">
+	  UPDATE jtopic SET check_time =NOW(),STATUS=1 WHERE id=${id}
+	</update>
+	<!-- web -->
+	
+	
+	<sql id="tbl">jtopic</sql><!-- ysc -->
+	<sql id="temp_tbl">
+		select  aa.* from  <include refid="tbl"/> aa
+	</sql>
+	<select id="getList" resultMap="Jtopic_vmap" parameterType="string" >
+		select t.* from (<include refid="temp_tbl"/>) t where 1=1 ${value}
+	</select>
+	<select id="getListBySpId" resultMap="Jtopic_vmap" parameterType="int" >
+		select t.* from (<include refid="temp_tbl"/>) t where sp_id=#{sp_id}
+	</select>
+	<select id="getPageList" resultMap="Jtopic_vmap" parameterType="com.jkkp.utils.Pager" >
+		select	t.* from (<include refid="temp_tbl"/>) t 
+		where 1=1 ${value} limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string" >
+		select count(*) from (<include refid="temp_tbl"/>) t  where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="Jtopic_vmap" parameterType="int" >
+		select t.* from (<include refid="temp_tbl"/>) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from <include refid="tbl"/> t where 1=1 ${value}
+	</delete><!-- ysc -->
+</mapper>

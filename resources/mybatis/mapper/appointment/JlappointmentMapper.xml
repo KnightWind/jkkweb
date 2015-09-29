@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.appointment.mapper.JlappointmentMapper">
+	<resultMap id="jlappointment_map" type="com.jkkp.modules.appointment.view.VJlappointment">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sub_type" property="subType" jdbcType="TINYINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="space" property="space" jdbcType="FLOAT" />
+		<result column="review_num" property="reviewNum" jdbcType="INTEGER" />
+		<result column="user" property="user" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="get_room" property="getRoom" jdbcType="TINYINT" />
+		<result column="budget" property="budget" jdbcType="FLOAT" />
+		<result column="get_room_date" property="getRoomDate" jdbcType="DATE" />
+		<result column="method" property="method" jdbcType="TINYINT" />
+		<result column="source" property="source" jdbcType="TINYINT" />
+		<result column="admin_id" property="adminId" jdbcType="INTEGER" />
+		<result column="city_domain" property="cityDomain" jdbcType="VARCHAR" />
+		<result column="link_time" property="linkTime" jdbcType="TIMESTAMP" />
+		<result column="company" property="company" jdbcType="VARCHAR" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="review_time" property="reviewTime" jdbcType="TIMESTAMP" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="parlour_ground" property="parlourGround" jdbcType="TINYINT" />
+		<result column="parlour_ground_dismantle" property="parlourGroundDismantle" jdbcType="TINYINT" />
+		<result column="parlour_wall" property="parlourWall" jdbcType="TINYINT" />
+		<result column="parlour_wall_dismantle" property="parlourWallDismantle" jdbcType="TINYINT" />
+		<result column="bedroom_ground" property="bedroomGround" jdbcType="TINYINT" />
+		<result column="bedroom_ground_dismantle" property="bedroomGroundDismantle" jdbcType="TINYINT" />
+		<result column="bedroom_wall" property="bedroomWall" jdbcType="TINYINT" />
+		<result column="bedroom_wall_dismantle" property="bedroomWallDismantle" jdbcType="TINYINT" />
+		<result column="kitchen" property="kitchen" jdbcType="TINYINT" />
+		<result column="kitchen_dismantle" property="kitchenDismantle" jdbcType="TINYINT" />
+		<result column="toilet" property="toilet" jdbcType="TINYINT" />
+		<result column="toilet_dismantle" property="toiletDismantle" jdbcType="TINYINT" />
+		<result column="water" property="water" jdbcType="TINYINT" />
+		<result column="electric" property="electric" jdbcType="TINYINT" />
+		<result column="start_work" property="startWork" jdbcType="DATE" />
+		<result column="ht_bedroom" property="htBedroom" jdbcType="TINYINT" />
+		<result column="ht_living_room" property="htLivingRoom" jdbcType="TINYINT" />
+		<result column="ht_kitchen" property="htKitchen" jdbcType="TINYINT" />
+		<result column="ht_toilet" property="htToilet" jdbcType="TINYINT" />
+		<result column="select_push_id" property="selectPushId" jdbcType="INTEGER" />
+		<result column="payment" property="payment" jdbcType="DECIMAL" />
+		<result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+		<result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+		<result column="pay_type" property="payType" jdbcType="TINYINT" />
+		<result column="bank_gateway" property="bankGateway" jdbcType="VARCHAR" />
+		<result column="finish_time" property="finishTime" jdbcType="TIMESTAMP" />
+		<result column="enable_time" property="enableTime" jdbcType="TIMESTAMP" />
+		<result column="allow_num" property="allowNum" jdbcType="INTEGER" />
+		<result column="dcate_id" property="dcateId" jdbcType="TINYINT" />
+		<result column="zx_time" property="zxTime" jdbcType="TIMESTAMP" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="visit_time" property="visitTime" jdbcType="TIMESTAMP" />
+		<result column="admin" property="admin" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="zt" property="zt" jdbcType="TINYINT" />
+		<result column="su_type" property="suType" jdbcType="TINYINT" />
+		<result column="house_type" property="houseType" jdbcType="TINYINT" />
+		<result column="whole_house" property="wholeHouse" jdbcType="TINYINT" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+		<result column="cate_name" property="cateName" jdbcType="VARCHAR" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		 <result column="pointx" property="pointx" jdbcType="VARCHAR" />
+		<result column="pointy" property="pointy" jdbcType="VARCHAR" />
+		
+		<!-- 拓展属性 -->
+		<result column="vCommunity" property="vCommunity" jdbcType="VARCHAR" />
+		<result column="nickname" property="nickname" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap type="com.jkkp.modules.appointment.view.VJlappointment" id="jlappointment_vmap" extends="jlappointment_map">
+		
+	</resultMap>
+	<resultMap type="com.jkkp.modules.appointment.view.VJlappointment" id="jlappointment_detail" extends="jlappointment_vmap">
+		<association property="engineerings" column="gcd_id" select="com.jkkp.modules.basedata.mapper.EngineeringsMapper.getBeanById"></association>
+	</resultMap>
+	<resultMap id="jlappointmentMap1" type="com.jkkp.modules.appointment.view.VJlappointment1">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="jappid" property="jappid" jdbcType="INTEGER" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="zxstage" property="zxstage" jdbcType="INTEGER" />
+		<result column="gcdid" property="gcdid" jdbcType="INTEGER" />
+		<result column="spid" property="spid" jdbcType="INTEGER" />
+		<result column="spname" property="spname" jdbcType="VARCHAR" />
+		<result column="jlid" property="jlid" jdbcType="INTEGER" />
+		<result column="jlname" property="jlname" jdbcType="VARCHAR" />
+		<result column="jlstatus" property="jlstatus" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 20150708@黄宇健   web后台    监理预约 -->
+	<select id="selectAllJLAppointment" resultMap="jlappointment_map" parameterType="java.util.Map">
+	       SELECT 
+			  a.*,
+			  b.`community` as vCommunity,
+			  c.`nickname` 
+			FROM
+			  jlappointment a 
+			  INNER JOIN engineerings b 
+			    ON a.`gcd_id` = b.`id` 
+			  LEFT JOIN member c 
+			    ON c.`id` = b.`uid` 
+			    Where 1=1
+			    <include refid="webCondition"/>
+			ORDER BY a.`create_time` DESC 
+			limit ${rowStart}, ${limit}
+	</select>
+	
+	<select id="selectAllJLAppointmentCount" parameterType="java.util.Map" resultType="long">
+	     SELECT 
+			 COUNT(1)
+			FROM
+			  jlappointment a 
+			  INNER JOIN engineerings b 
+			    ON a.`gcd_id` = b.`id` 
+			  Where 1=1
+			    <include refid="webCondition"/>
+	</select>
+	
+	<sql id="webCondition">
+	   <if test="status!=null and status!=''">
+	      AND a.`status`=${status}
+	   </if>
+	   
+	   <if test="nickname!=null and nickname!=''">
+	     AND c.`nickname` LIKE  '%${nickname}%'
+	   </if>
+	   
+	   <if test="createStart!=null and createStart!=''">
+	    AND a.`create_time`>'${createStart}'
+	   </if>
+	   
+	   <if test="createEnd!=null and createEnd!=''">
+	    AND a.`create_time` &lt; '${createEnd}'
+	   </if>
+	   
+	   <if test="id!=null and id!=''">
+	     AND a.id=${id}
+	   </if>
+	   
+	   <if test="community!=null and community!=''">
+	    AND b.`community` LIKE '%${community}%'
+	   </if>
+	   
+	</sql>
+	
+	<!-- 关闭监理预约单 -->
+	<update id="closeOneJLAppointment">
+	  UPDATE jlappointment SET STATUS=40 WHERE id=${id}
+	</update>
+	
+	<!-- 重新开启预约   情景1：当push重新推送的时候，预约表状态变为待应单状态 -->
+	<update id="reStartJLAppointment">
+	   UPDATE jlappointment SET STATUS=10 WHERE id=${id}
+	</update>
+	
+	<!-- /web -->
+	<select id="findJlappointmentInfoById" resultMap="jlappointment_map" parameterType="java.util.Map">
+		select 
+			jl.*,
+			ad.city as city,
+			dc.cate_name
+		from
+			jlappointment jl
+		left join
+			area_domain ad
+		on 
+			jl.city_domain = ad.city_domain
+		left join
+			design_cate dc
+		on
+			dc.id = jl.dcate_id
+		where 
+			jl.id = ${_parameter}
+		order by 
+			jl.create_time desc
+	</select>
+	
+	<sql id="condition">
+		<if test="state!=-1">
+			<if test="city!=null and city!=''">
+				and jl.city_domain='${city}'
+			</if>
+			<if test="source!=null and source!=''">
+				and jl.source='${source}'
+			</if>
+			<if test="createBegin!=null and createBegin!=''">
+				and jl.create_time >='${createBegin}'
+			</if>
+			<if test="createEnd!=null and createEnd!=''">
+				and jl.create_time &lt;='${createEnd}'
+			</if>
+			<if test="state!=null and state!=''">
+				and jl.status=${state}
+			</if>
+			<if test="state==0">
+				and jl.status=0
+			</if>
+		</if>
+	</sql>
+	
+	<select id="findPage" resultMap="jlappointment_map">
+		select 
+			jl.id,
+			jl.sub_type,
+			jl.status,
+			jl.user,
+			jl.mobile,
+			jl.address,
+			jl.budget,
+			jl.source,
+			jl.company,
+			jl.create_time,
+			ad.city as city
+		from
+			jlappointment jl
+		left join
+			area_domain ad
+		on 
+			jl.city_domain = ad.city_domain	
+			where 1=1
+			<include refid="condition" />
+		order by 
+			jl.create_time desc
+			limit ${rowStart}, ${limit}
+	</select>
+	
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		select 
+			count(1)
+		from
+			jlappointment jl
+		left join
+			area_domain ad
+		on 
+			jl.city_domain = ad.city_domain	
+		where 1=1
+			<include refid="condition" />
+		order by 
+			jl.create_time desc
+	</select>
+
+	<select id="findOverTimeList" resultMap="jlappointment_map">
+		<![CDATA[
+			select t.* from jlappointment t where not exists (
+				select * from jlappointment_push where aid = t.id and (status <> 0 or status <> 11)
+			) and status <> 0 and TIMESTAMPDIFF(HOUR, create_time, now()) > ${time}
+		]]>
+	</select>
+	<select id="queryJAppDetail" parameterType="java.util.Map"
+		resultMap="jlappointment_map">
+		SELECT *
+		FROM 
+		jlappointment
+		WHERE 1=1
+		<if test="uid!=null and uid!=''">
+			and uid=${uid}
+		</if>
+		<if test="status!=null and status!=''">
+			and status=${status}
+		</if>
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+	
+	<select id="queryJAppDetail1" parameterType="java.util.Map"
+		resultMap="jlappointmentMap1">	
+		SELECT
+		jappeng.jappid,
+		jappeng.engcommunity AS community,
+		jappeng.zx_stage AS zxstage,
+		jappeng.gcd_id AS gcdid,
+		jappeng.spid AS spid,
+		sp.sp_name AS spname,
+		jappeng.jlid AS jlid,
+		jl.sp_name AS jlname,
+		jl.`status` as jlstatus
+		from
+			(SELECT
+				jlappointment.id as jappid,
+				jlappointment.gcd_id,
+				jlappointment.sp_id,
+				jlappointment.uid,
+				eng.id as engid,
+				eng.sp_id as spid,
+				eng.jl_id as jlid,
+				eng.community as engcommunity,
+				eng.zx_stage
+			FROM
+				jlappointment
+			INNER JOIN engineerings AS eng ON jlappointment.gcd_id = eng.id
+		  ) as jappeng
+		LEFT OUTER JOIN supplier AS sp ON jappeng.spid = sp.id
+		LEFT OUTER JOIN supplier AS jl ON jappeng.jlid = jl.id
+		WHERE 1=1
+		<if test="uid!=null and uid!=''">
+			and uid=${uid}
+		</if>
+		<if test="status!=null and status!=''">
+			and status=${status}
+		</if>
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+	
+	<sql id="tbl">jlappointment</sql><!-- ysc -->
+	<sql id="temp_tbl">
+		select  
+		dc.cate_name as cateName,
+		aa.* from  <include refid="tbl"/> aa
+		left join design_cate dc on dc.id=aa.dcate_id
+	</sql>
+	<select id="getList" resultMap="jlappointment_vmap" parameterType="string" >
+		select t.* from (<include refid="temp_tbl"/>) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="jlappointment_vmap" parameterType="com.jkkp.utils.Pager" >
+		select	t.* 
+		from (<include refid="temp_tbl"/>) t 
+		where 1=1 ${value}
+		limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string" >
+		select count(*) from (<include refid="temp_tbl"/>) t  where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="jlappointment_detail" parameterType="int" >
+		select t.* from (<include refid="temp_tbl"/>) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from <include refid="tbl"/> t where 1=1 ${value}
+	</delete><!-- ysc -->
+</mapper>

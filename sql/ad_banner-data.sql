@@ -1,0 +1,1 @@
+alter table ad_banner change city_domain region_id int not null;

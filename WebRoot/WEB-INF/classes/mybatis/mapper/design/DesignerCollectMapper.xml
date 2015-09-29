@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.design.mapper.DesignerCollectMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.design.model.DesignerCollect">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="TINYINT" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<resultMap id="BaseResultMapp" type="com.jkkp.appapi.modules.mapper.Staff">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="TINYINT" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+		<result column="sid" property="sid" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<select id="get"  resultType="long">
+		SELECT COUNT(*) from designer_collect where sid=#{spid}
+	</select>
+	
+</mapper>

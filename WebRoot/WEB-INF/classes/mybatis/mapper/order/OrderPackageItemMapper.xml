@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.order.mapper.OrderPackageItemMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.order.view.VOrderPackageItem">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="order_id" property="orderId" jdbcType="INTEGER" />
+		<result column="package_id" property="packageId" jdbcType="INTEGER" />
+		<result column="item_id" property="itemId" jdbcType="INTEGER" />
+		<result column="item_price" property="itemPrice" jdbcType="DECIMAL" />
+		<result column="itemId" property="vitemId" jdbcType="INTEGER" />
+		<result column="num" property="num" jdbcType="INTEGER" />
+		<result column="itemPrice" property="itemPrice" jdbcType="DECIMAL" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="pid" property="pid" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="orderItemDetail" resultMap="BaseResultMap">
+		SELECT
+		a.`id` AS itemId,
+		a.`pid` AS pid,
+		a.`title` AS title,
+		b.`item_price` AS itemPrice,
+		COUNT(1) AS num
+		FROM
+		item a,
+		order_package_item b,
+		order_id c
+		WHERE a.`id`=b.`item_id`
+		AND c.`id`=b.`order_id`
+		AND c.`id`=#{id}
+		GROUP BY b.`item_id`
+	</select>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierConditionMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.supplier.model.SupplierCondition">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+			<result column="xz_ys" property="xzYs" jdbcType="FLOAT" />
+			<result column="xz_mj" property="xzMj" jdbcType="FLOAT" />
+		    <result column="xz_zxfs" property="xzZxfs" jdbcType="INTEGER" />
+			<result column="xz_ys_mj" property="xzYsMj" jdbcType="FLOAT" />
+				<result column="xz_city" property="xzCity" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<select id="judgeSuppCondition" resultMap="BaseResultMap" parameterType="java.util.Map" >
+			select sc.* from supplier_condition sc
+			LEFT JOIN supplier_condition_city scc on sc.sp_id=scc.sp_id
+			LEFT JOIN supplier s on s.id=sc.sp_id and s.type=1
+			where 1=1 
+			<if test="budget!=null and budget!=''">
+				and sc.xz_ys &lt;= ${budget}
+			</if>
+			<if test="regionId!=null and regionId!=''">
+				and scc.region_id = ${regionId}
+			</if>	
+			<if test="regionid!=null and regionid!=''">
+				and scc.region_id = ${regionid}
+			</if>
+			
+	</select>
+	   
+</mapper>

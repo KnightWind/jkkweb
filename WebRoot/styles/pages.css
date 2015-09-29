@@ -1,0 +1,7 @@
+@charset"utf-8";
+/*----------------------------------CRM管理------------------------------------*/
+.crm{ padding:20px 0;}
+.crm p.btn{ text-align:center; padding-top:20px;}
+.crm ul{ width:50%; margin:0 auto;}
+.crm ul li{line-height:40px; font-size:14px;}
+.crm ul li span{width:45%; text-align:right; display:block; float:left;}

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.StaffOpusMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.supplier.model.StaffOpus">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="staff_id" property="staffId" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<!-- 拓展 -->
+	<resultMap id="VBaseResultMap" type="com.jkkp.modules.supplier.view.VStaffOpus"
+		extends="BaseResultMap">
+		<result column="designerName" property="designerName" jdbcType="VARCHAR" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- 设计师作品查询条件 -->
+	<sql id="condtion">
+	    <if test="title !=null and title !=''">
+		   AND so.title LIKE '%${title}%'
+		</if>
+		<if test="spid !=null and spid !=''">
+		   AND so.sp_id =${spid}
+		</if>
+		<if test="designer !=null and designer !=''">
+		   AND scs.name like '%${designer}%'
+		</if>
+		<if test="status !=null and status !=''">
+		   AND so.status ='${status}'
+		</if>
+	</sql>
+	
+	
+	<select id="getVStaffOpusById" resultMap="VBaseResultMap">
+		SELECT
+			so.*,
+			scs.`name` as designerName,
+			s.`sp_name` as spName
+		FROM
+			staff_opus so
+		LEFT JOIN
+			supplier_company_staff scs
+		ON
+			so.`staff_id` = scs.`id`
+		LEFT JOIN
+			supplier s
+		ON
+			s.`id` = so.`sp_id`
+		WHERE
+			so.id = #{id}
+	</select>
+	
+	<!-- 设计师作品列表 -->
+	<select id="findPage" resultMap="VBaseResultMap">
+		SELECT
+			so.*,
+			scs.`name` as designerName,
+			s.`sp_name` as spName
+		FROM
+			staff_opus so
+		LEFT JOIN
+			supplier_company_staff scs
+		ON
+			so.`staff_id` = scs.`id`
+		LEFT JOIN
+			supplier s
+		ON
+			s.`id` = so.`sp_id`
+		WHERE
+			1 = 1
+		<include refid="condtion"></include>
+		order by so.create_time desc
+		limit ${rowStart}, ${limit}
+	</select>
+	
+	<select id="countPage" resultType="long">
+		SELECT
+			count(1)
+		FROM
+			staff_opus so
+		LEFT JOIN
+			supplier_company_staff scs
+		ON
+			so.`staff_id` = scs.`id`
+		LEFT JOIN
+			supplier s
+		ON
+			s.`id` = so.`sp_id`
+		WHERE
+			1 = 1
+		<include refid="condtion"></include>
+		order by so.create_time desc
+	</select>
+
+</mapper>

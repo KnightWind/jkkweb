@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.sale_theme.mapper.ActivityShareMapper">
+
+	<resultMap id="activityShare" type="com.jkkp.modules.sale_theme.model.ActivityShare">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="activity_id" property="activityId" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="lottery_chance" property="lotteryChance" jdbcType="INTEGER" />
+		<result column="uesed_chance" property="uesedChance" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<!-- web后台管理 -->
+	<select id="findHasLotteryChanceRecords" parameterType="java.util.Map" resultMap="activityShare">
+		  SELECT  *  FROM activity_share a 
+		  where a.lottery_chance > a.uesed_chance 
+		  and a.lottery_chance > 0
+		  and a.activity_id = #{activityId}
+		  and a.phone = #{phone}
+	</select>
+
+</mapper>

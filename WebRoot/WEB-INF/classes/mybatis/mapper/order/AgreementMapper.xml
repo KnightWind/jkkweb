@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.order.mapper.AgreementMapper">
+	<resultMap type="com.jkkp.modules.order.model.Agreement" id="Agreement_map">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+		<result column="appointmentpush_id" property="appointmentpushId" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="user" property="user" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<resultMap id="Agreement_vmap" type="com.jkkp.appapi.modules.mapper.VAgreement" extends="Agreement_map">
+		<association property="engineerings" column="gcd_id" select="com.jkkp.modules.basedata.mapper.EngineeringsMapper.getBeanById"></association>
+	</resultMap>
+	<!-- ↓↓ysc============================================= -->
+	<sql id="tbl">agreement</sql>
+	<sql id="temp_tbl">
+		select	aa.* from <include refid="tbl" />	aa
+	</sql>
+	<select id="getList" resultMap="Agreement_vmap" parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="Agreement_vmap" parameterType="com.jkkp.utils.Pager">
+		select t.*	from (	<include refid="temp_tbl" />) t	where 1=1 ${value}	limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="Agreement_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from	<include refid="tbl" />	t where 1=1 ${value}
+	</delete>
+	<!-- ↑↑ysc============================================= -->
+	
+<resultMap type="com.jkkp.appapi.modules.mapper.VHeTong" id="hetong">
+      <result column="img" property="img" jdbcType="VARCHAR" />
+      <result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+ <select id="queryhetong" resultMap="hetong">
+SELECT 
+(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=g.id and filetype=7 and t3.para_name='PHOTO_PREFIX_URL') as img,
+ g.remark as remark
+ from agreement g where id=#{id}
+</select>
+
+
+<select id="selectByPushId" resultMap="Agreement_map">
+ 	SELECT * from agreement a where a.appointmentpush_id = ${pushId}
+ 	ORDER BY a.id DESC LIMIT 0,1
+</select>
+
+
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.design.mapper.BrandMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.design.model.Brand">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="keyword" property="keyword" jdbcType="VARCHAR" />
+		<result column="logo_pid" property="logoPid" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="estimate_desc" property="estimateDesc"
+			jdbcType="DECIMAL" />
+		<result column="estimate_service" property="estimateService"
+			jdbcType="DECIMAL" />
+		<result column="estimate_efficiency" property="estimateEfficiency"
+			jdbcType="DECIMAL" />
+		<result column="estimate_average" property="estimateAverage"
+			jdbcType="DECIMAL" />
+		<result column="content" property="content" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<sql id="condition">
+		<if test="name!=null and name!=''">
+			AND NAME LIKE '%${name}%'
+		</if>
+		<if test="id!=null and id>0">
+			AND id =${id}
+		</if>
+		<if test="beginTime!=null and beginTime!=''">
+			AND create_time>"${beginTime}"
+		</if>
+		<if test="endTime!=null and endTime!=''">
+			AND create_time &lt;"${endTime}"
+		</if>
+		<if test="status!=null and status!=''">
+			AND STATUS=${status}
+		</if>
+	</sql>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT * FROM brand
+	</select>
+
+	<select id="findPage" resultMap="BaseResultMap">
+		SELECT * FROM brand where 1=1
+		<include refid="condition" />
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		SELECT count(1)
+		FROM brand where 1=1
+		<include refid="condition" />
+	</select>
+
+</mapper>

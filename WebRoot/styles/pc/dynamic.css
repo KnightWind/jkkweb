@@ -1,0 +1,17 @@
+.dynamic{padding: 53px 0 200px;color: #666;}
+.dynamicContent{width: 1000px;margin:0 auto;}
+.dynamic .dynamicText{margin-bottom: 65px;}
+.dynamic .dynamicText p{float: left;width: 100px;height: 76px;border-top:4px solid #3bb8eb;background-color: #fff;text-align: center;font-size: 36px;color: #666;padding-top: 20px;}
+.dynamic .dynamicText span{display: block;font-size: 14px;margin:8px 0 30px 0;}
+.dynamic .dynamicText span.texts{text-indent: 2em;line-height: 25px;}
+.dynamic .left{width:100px;}
+.dynamic .text{width: 770px;padding-top: 14px;}
+.dynamic .text h2{font-size: 24px;font-weight: normal;}
+.dynamic .text h2 span{font-size: 12px;}
+.dynamic .text span{width: 680px;word-break:break-all;}
+/*.dynamic .text b{display: block;width: 676px;height: 375px;background-color: #383838;margin-top: 30px;}*/
+.dynamic .text strong{font-weight: normal;margin: 23px 0 0 5px;display: block;}
+.dynamic b.line{width: 475px;border-bottom: 1px dashed #9d9d9d;display: block;margin:0 0 43px 232px;}
+.dynamic b.longLine{ width: 675px;}
+.dynamic p.arrow{margin-left: 232px;width: 675px;cursor: pointer;}
+.dynamic p.arrow .fl{display: block;float: left;}

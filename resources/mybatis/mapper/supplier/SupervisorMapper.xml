@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupervisorMapper">
+	<resultMap id="Supervisor_map" type="com.jkkp.modules.supplier.model.Supervisor">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+		<result column="inst_id" property="instId" jdbcType="INTEGER" />
+		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+		<result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="stage_id" property="stageId" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap type="com.jkkp.modules.supplier.view.VSupervisor"
+		id="Supervisor_vmap" extends="Supervisor_map">
+		<association property="engineerings" column="gcd_id"
+			select="com.jkkp.modules.basedata.mapper.EngineeringsMapper.getBeanById" />
+		<association property="engineeringStageInst" column="ysjd_id"
+			select="com.jkkp.modules.basedata.mapper.EngineeringStageInstMapper.getBeanById" />
+	</resultMap>
+
+	<!-- 拓展属性 -->
+	<resultMap type="com.jkkp.modules.supplier.view.VSupervisorWeb"
+		id="Supervisor_Web" extends="Supervisor_map">
+      <result column="spName" property="spName" jdbcType="VARCHAR" />
+      <result column="community" property="community" jdbcType="VARCHAR" />
+      <result column="stagName" property="stagName" jdbcType="VARCHAR" />
+      <result column="nickName" property="nickName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- ↓↓ysc============================================= -->
+	<sql id="tbl">supervisor</sql>
+	<sql id="temp_tbl">
+		select aa.* from
+		<include refid="tbl" />
+		aa
+	</sql>
+	<select id="getList" resultMap="Supervisor_vmap" parameterType="string">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="Supervisor_vmap"
+		parameterType="com.jkkp.utils.Pager">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t where 1=1 ${value} limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (
+		<include refid="temp_tbl" />
+		) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="Supervisor_vmap"
+		parameterType="int">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from
+		<include refid="tbl" />
+		t where 1=1 ${value}
+	</delete>
+	<!-- ↑↑ysc============================================= -->
+
+
+
+	<!-- web后台 -->
+	<select id="selectAllSupervisors" parameterType="java.util.Map"
+		resultMap="Supervisor_Web">
+		SELECT
+		a.*,
+		c.`sp_name` AS spName,
+		b.`community`,
+		d.`stag_name` AS
+		stagName
+		FROM
+		supervisor a
+		INNER JOIN engineerings b
+		ON a.`gcd_id` =
+		b.`id`
+		INNER JOIN supplier c
+		ON c.`id` = b.`jl_id`
+		INNER JOIN
+		engineering_stage d
+		ON a.`stage_id` = d.`id`
+		WHERE 1 = 1
+		<include refid="condition" />
+		ORDER BY a.`check_time` DESC
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="selectAllSupervisorsCount" parameterType="java.util.Map"
+		resultType="long">
+		SELECT
+		count(1)
+		FROM
+		supervisor a
+		INNER JOIN engineerings b
+		ON a.`gcd_id` = b.`id`
+		INNER JOIN supplier c
+		ON c.`id` = b.`jl_id`
+		INNER JOIN engineering_stage d
+		ON a.`stage_id` = d.`id`
+		WHERE 1 = 1
+		<include refid="condition" />
+	</select>
+
+    <select id="selectSupervisorDetail" resultMap="Supervisor_Web">
+       SELECT 
+		  a.*,
+		  c.`sp_name` AS spName,
+		  b.`community`,
+		  d.`stag_name` AS stagName ,
+		  e.`nickname` AS  nickName
+		FROM
+		  supervisor a 
+		  INNER JOIN engineerings b 
+		    ON a.`gcd_id` = b.`id` 
+		  INNER JOIN supplier c 
+		    ON c.`id` = b.`jl_id` 
+		  INNER JOIN engineering_stage d 
+		    ON a.`stage_id` = d.`id` 
+		    INNER JOIN member e
+		    ON e.`id`=b.`uid`
+		    WHERE a.`id`=#{id}
+    </select>
+
+	<sql id="condition">
+        <if test="spName!=null and spName!=''">
+          AND c.`sp_name` LIKE '%${spName}%' 
+        </if>
+        <if test="checkBegin!=null and checkBegin!=''">
+          AND a.`begin_time`>'${checkBegin}'
+        </if>
+        <if test="checkEnd!=null and checkEnd!=''">
+          AND a.`begin_time`&lt;'${checkEnd}'
+        </if>
+        <if test="word!=null and word!=''">
+         AND d.`stag_name` LIKE '${word}%'
+        </if>
+	</sql>
+	<!-- web后台 -->
+</mapper>

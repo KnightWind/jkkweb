@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.supplier.mapper.SupplierDomainMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jkkp.modules.supplier.view.VSupplierDomain">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="enable_time" property="enableTime" jdbcType="TIMESTAMP" />
+		<result column="stop_time" property="stopTime" jdbcType="TIMESTAMP" />
+		<result column="bind_status" property="bindStatus" jdbcType="TINYINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="domain" property="domain" jdbcType="VARCHAR" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="sname" property="sname" jdbcType="VARCHAR" />
+		<result column="sname" property="sname" jdbcType="VARCHAR" />
+		<result column="uname" property="uname" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="phto" property="phto" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="splid" property="splid" jdbcType="INTEGER" />
+	</resultMap>
+	<select id="findAll" resultMap="BaseResultMap">
+		select d.*,s.sp_name as sname,s.bank_account as uname, CASE s.type WHEN 1
+		THEN "建材商" WHEN 2 THEN "装修公司" WHEN 3 THEN "工长" WHEN 4 THEN "实体店" WHEN
+		5 THEN "监理" WHEN 6 THEN "设计师" END as type,s.contact_mobile as phto
+		from supplier_domain d,supplier s where d.sp_id=s.id
+	</select>
+	<sql id="condition">
+		<if test="sname!=null and sname!=''">
+			and s.sp_name like '%${sname}%'
+		</if>
+		<if test="uname!=null and uname!=''">
+			and s.contact_user like '%${uname}%'
+		</if>
+		<if test="splid!=null and splid!=''">
+			and s.id=${splid}
+		</if>
+		<if test="city!=null and city!=''">
+			and d.domain like '%${city}%'
+		</if>
+		<if test="type!=null and type!=''">
+			and s.type=${type}
+		</if>
+		<if test="start!=null and start!=''">
+			and d.enable_time >'${start}'
+		</if>
+		<if test="end!=null and end !=''">
+			and d.enable_time &lt;'${end}'
+		</if>
+	</sql>
+	<select id="findPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT
+		d.*,
+		s.sp_name AS sname,
+		s.username AS uname,
+		CASE
+		s.type
+		WHEN 1
+		THEN "建材商"
+		WHEN 2
+		THEN "装修公司"
+		WHEN 3
+		THEN "工长"
+		WHEN 4
+		THEN "实体店"
+		WHEN 5
+		THEN "监理"
+		WHEN 6
+		THEN "设计师"
+		END AS TYPE,
+		s.contact_mobile AS phto,
+		s.contact_user AS NAME,
+		s.id AS splid
+		FROM
+		supplier s
+		LEFT JOIN supplier_domain d
+		ON d.sp_id = s.id
+		WHERE 1 = 1
+		<include refid="condition" />
+		limit ${rowStart},${limit}
+	</select>
+	<select id="countPage" parameterType="java.util.Map" resultType="long">
+		select count(1) from supplier s LEFT JOIN supplier_domain d on
+		d.sp_id=s.id where 1=1
+		<include refid="condition" />
+	</select>
+</mapper>

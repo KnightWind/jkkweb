@@ -1,0 +1,14 @@
+.agreement{width: 1000px;margin: 0 auto;padding-bottom: 60px;}
+.agreement .menu li{float: left;height: 76px;line-height: 76px;font-size: 14px;margin-right: 27px;cursor: pointer;}
+.agreement .menu li.active{color: #03a9f4;}
+.agreement div h2.title{height: 42px;background:url(../images/h2_background.png) repeat-x 0 center;line-height: 42px; color: #666;text-align: center;margin-bottom: 20px;}
+.agreement div h2 span{display: block;background-color: #fff;width: 110px;margin: 0 auto;font-size: 20px;font-weight: normal;line-height: 42px;}
+.agreements ul li{margin-bottom: 20px;}
+.agreements ul li b{display: block;font-weight: normal;font-size: 18px;margin-bottom: 10px;}
+.agreements ul li span{display: block;font-size: 14px;line-height: 25px;}
+.agreements ul li strong{display: block;font-weight: normal;line-height: 25px;font-size: 14px;}
+.freeTerms span{line-height: 25px;font-size: 14px;}
+.copyrightStatement b{font-size: 14px;font-weight: normal;line-height: 25px;}
+.copyrightStatement span{font-size: 14px;line-height: 25px;}
+.copyrightStatement .mt40{margin-top:40px; }
+.agreement div{display: none;}

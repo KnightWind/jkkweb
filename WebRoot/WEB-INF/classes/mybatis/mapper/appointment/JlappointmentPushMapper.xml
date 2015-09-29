@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.appointment.mapper.JlappointmentPushMapper">
+	<resultMap id="JlappointmentPush_map"
+		type="com.jkkp.modules.appointment.view.VJlappointmentPush">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="aid" property="aid" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="admin_id" property="adminId" jdbcType="INTEGER" />
+		<result column="quote" property="quote" jdbcType="DECIMAL" />
+		<result column="parlour_ground_price" property="parlourGroundPrice"
+			jdbcType="INTEGER" />
+		<result column="parlour_wall_price" property="parlourWallPrice"
+			jdbcType="INTEGER" />
+		<result column="bedroom_ground_price" property="bedroomGroundPrice"
+			jdbcType="INTEGER" />
+		<result column="bedroom_wall_price" property="bedroomWallPrice"
+			jdbcType="INTEGER" />
+		<result column="kitchen_price" property="kitchenPrice"
+			jdbcType="INTEGER" />
+		<result column="toilet_price" property="toiletPrice" jdbcType="INTEGER" />
+		<result column="water_price" property="waterPrice" jdbcType="INTEGER" />
+		<result column="electric_price" property="electricPrice"
+			jdbcType="INTEGER" />
+		<result column="other_option" property="otherOption" jdbcType="VARCHAR" />
+		<result column="other_price" property="otherPrice" jdbcType="INTEGER" />
+		<result column="reminder" property="reminder" jdbcType="INTEGER" />
+		<result column="single_time" property="singleTime" jdbcType="TIMESTAMP" />
+		<result column="amount_time" property="amountTime" jdbcType="TIMESTAMP" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="random" property="random" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap id="JlappointmentPush_vmap" type="com.jkkp.modules.appointment.view.VJlappointmentPush" extends="JlappointmentPush_map">
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="uname" property="uname" jdbcType="VARCHAR" />
+		<result column="sp_name" property="spName" jdbcType="VARCHAR" />
+		<result column="nickname" property="nickName" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="JlappointmentPush_detail"  type="com.jkkp.modules.appointment.view.VJlappointmentPush" extends="JlappointmentPush_vmap">
+		<association property="jlappointment" column="aid" select="com.jkkp.modules.appointment.mapper.JlappointmentMapper.getBeanById" />
+		<association property="supplier" column="sp_id" select="com.jkkp.modules.supplier.mapper.SupplierMapper.getBeanById" />
+	</resultMap>
+	<resultMap id="BaseResultMap1" type="com.jkkp.appapi.modules.mapper.VJLAppointmentPush1">
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="aid" property="aid" jdbcType="INTEGER" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="levelFlag" property="levelFlag" jdbcType="FLOAT" />
+		<result column="orderNo" property="orderNo" jdbcType="INTEGER" />
+		<result column="spname" property="spname" jdbcType="VARCHAR" />
+		<result column="random" property="random" jdbcType="INTEGER" />
+	</resultMap>
+
+
+	<!-- 20150625@黄宇健 针对最新的数据库结构更新用户预约推送功能 -->
+	<select id="selectJlAppointmentPushes" parameterType="java.util.Map" resultMap="JlappointmentPush_vmap">
+		SELECT
+		a.*,
+		b.`sp_name`,
+		d.`nickname`
+		FROM
+		jlappointment_push a
+		INNER JOIN
+		jlappointment e
+		ON e.`id`=a.`aid`
+		LEFT JOIN supplier b		ON a.`sp_id` =		b.`id`
+		LEFT JOIN member d		ON e.`uid` = d.id
+		WHERE 1 = 1
+		<include refid="appointmentPusheCondition" />
+		ORDER BY a.`create_time` DESC
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="selectJlAppointmentPushCount" parameterType="java.util.Map"
+		resultType="long">
+		SELECT
+		count(1)
+		FROM
+		jlappointment_push a
+		INNER JOIN jlappointment e
+		ON
+		e.`id`=a.`aid`
+		LEFT JOIN supplier b
+		ON a.`sp_id` = b.`id`
+		LEFT JOIN
+		member d
+		ON e.`uid` = d.id
+		WHERE 1 = 1
+		<include refid="appointmentPusheCondition" />
+	</select>
+
+	<sql id="appointmentPusheCondition">
+		<!-- 商家id 如果为空表示后台获取所有 -->
+		<if test="sId != null and sId !=''">
+			and a.sp_id = ${sId}
+		</if>
+		<if test="status!=null and status!=''">
+			and a.status=${status}
+		</if>
+		<!-- 创建时间 -->
+		<if test="createTimeStart!=null and createTimeStart!=''">
+			AND a.`create_time`>'${createTimeStart}'
+		</if>
+		<if test="createTimeEnd!=null and createTimeEnd!=''">
+			AND a.`create_time`&lt;'${createTimeEnd}'
+		</if>
+		<!-- 应单时间 -->
+		<if test="singleTimeStart!=null and singleTimeStart!=''">
+			AND a.`single_time`>'${singleTimeStart}'
+		</if>
+		<if test="singleTimeEnd!=null and singleTimeEnd!=''">
+			AND a.`single_time`&lt;'${singleTimeEnd}'
+		</if>
+		<!-- 量房时间 -->
+		<if test="amountTimeStart!=null and amountTimeStart!=''">
+			AND a.`amount_time`>'${amountTimeStart}'
+		</if>
+		<if test="amountTimEnd!=null and amountTimEnd!=''">
+			AND a.`amount_time`&lt;'${amountTimEnd}'
+		</if>
+		<!-- id -->
+		<if test="id!=null and id!=''">
+			AND a.`id`=${id}
+		</if>
+		<!-- aid -->
+		<if test="aid!=null and aid!=''">
+			AND a.`aid`=${aid}
+		</if>
+		<!-- 预约商户 -->
+		<if test="spName!=null and spName!=''">
+			AND b.`sp_name` LIKE '%${spName}%'
+		</if>
+		<!-- 预约用户 -->
+		<if test="member!=null and member!=''">
+			AND d.`nickname` LIKE '%${member}%'
+		</if>
+	</sql>
+
+	<!-- web -->
+
+	<!-- 重新推送 -->
+	<update id="openOne">
+		UPDATE jlappointment_push SET STATUS=0 WHERE id=#{id}
+	</update>
+
+	<update id="closeOne">
+		UPDATE jlappointment_push SET STATUS=11 WHERE id=#{id}
+	</update>
+
+	<!-- 关闭预约单所有的推送记录 -->
+	<update id="closeAppointmentPushes">
+		UPDATE jlappointment_push SET STATUS=11 WHERE
+		aid=#{aid}
+	</update>
+
+	<select id="selectAllJLAppointmentPush" resultMap="JlappointmentPush_vmap"
+		parameterType="java.util.Map">
+		SELECT
+		a.*,
+		b.`sp_name`,
+		d.`nickname`
+		FROM
+		jlappointment_push a
+		INNER JOIN
+		supplier b
+		ON a.`sp_id` = b.`id`
+		INNER JOIN jlappointment c
+		ON a.`aid` =
+		c.`id`
+		INNER JOIN member d
+		ON d.`id` = c.`uid`
+		<include refid="webCondition" />
+		ORDER BY a.`create_time` DESC
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="selectAllJLAppointmentPushCount" parameterType="java.util.Map"
+		resultType="long">
+		SELECT
+		COUNT(1)
+		FROM
+		jlappointment_push a
+		INNER JOIN supplier b
+		ON
+		a.`sp_id` = b.`id`
+		INNER JOIN jlappointment c
+		ON a.`aid` = c.`id`
+		INNER
+		JOIN member d
+		ON
+		d.`id` = c.`uid`
+		<include refid="webCondition" />
+	</select>
+
+	<sql id="webCondition">
+		<if test="status!=null and status!=''">
+			AND a.`status`=${status}
+		</if>
+		<if test="id!=null and id!=''">
+			AND a.id=${id}
+		</if>
+		<if test="aid!=null and aid!=''">
+			AND a.`aid`=${aid}
+		</if>
+		<if test="spName!=null and spName!=''">
+			AND b.`sp_name` LIKE '%${spName}%'
+		</if>
+		<if test="member!=null and member!=''">
+			AND d.`nickname` LIKE '%${member}%'
+		</if>
+		<if test="createTimeStart!=null and createTimeStart!=''">
+			AND a.`create_time`>'${createTimeStart}'
+		</if>
+		<if test="createTimeEnd!=null and createTimeEnd!=''">
+			AND a.`create_time`&lt;'${createTimeEnd}'
+		</if>
+		<if test="singleTimeStart!=null and singleTimeStart!=''">
+			AND a.`single_time` >'${singleTimeStart}'
+		</if>
+		<if test="singleTimeEnd!=null and singleTimeEnd!=''">
+			AND a.`single_time` &lt;'${singleTimeEnd}'
+		</if>
+	</sql>
+
+
+	<!-- -web -->
+
+
+
+
+
+
+	<select id="queryJAppPushDetail1" parameterType="java.util.Map" resultMap="BaseResultMap1">
+		SELECT
+		jlappointment_push.id,
+		jlappointment_push.aid AS aid,
+		jlappointment_push.sp_id AS spId,
+		jlappointment_push.status AS status,
+		supplier.estimate_average AS levelFlag,
+		jlappointment_push.random,
+		supplier.sp_name as spname,
+		(select count(1) from
+		engineerings where engineerings.jl_id =
+		jlappointment_push.id ) AS
+		orderNo
+		FROM
+		jlappointment_push
+		LEFT JOIN
+		supplier ON
+		jlappointment_push.sp_id = supplier.id
+		WHERE 1=1
+		<if test="jlapp_id!=null and jlapp_id!=''">
+			and jlappointment_push.aid=${jlapp_id}
+		</if>
+		<if test="jl_id!=null and jl_id!=''">
+			and jlappointment_push.sp_id=${jl_id}
+		</if>
+		<if test="status!=null and status!=''">
+			and jlappointment_push.status=${status}
+		</if>
+		GROUP BY jlappointment_push.sp_id
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+
+
+	<!-- ysc -->
+	<sql id="tbl">jlappointment_push</sql>
+	<sql id="temp_tbl">
+		select
+		dd.su_Type AS suType,
+		dd.method,
+		dd.space,
+		dd.budget as payment,
+		ap.id AS p_id,
+		ap.community,
+		ap.user,
+		ap.address,
+		ap.whole_House AS wholeHouse,
+		ap.house_Type AS houseType,
+		ap.zx_time as zxTime,
+		ap.review_time as smTime,
+		ap.pointx as pointx,
+		ap.pointy as pointy,
+		dc.cate_name as cateName,
+		sp.sp_name as spName,
+		mm.nickName as nickName,
+		aa.* from jlappointment_push aa
+		left join jlappointment pp on pp.id=aa.aid
+		left join engineerings  gc on gc.id=pp.gcd_id
+    	left join design    	dd on dd.id=gc.design_id
+		left join appointment  	ap on ap.id=gc.aid
+		left join design_cate 	dc on dc.id=dd.fengge
+		left join supplier		sp on sp.id=aa.sp_id
+		left join member 		mm on mm.id=pp.uid
+	</sql>
+	<select id="getList" resultMap="JlappointmentPush_vmap"		parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="JlappointmentPush_vmap" parameterType="com.jkkp.utils.Pager">
+		select t.* from (<include refid="temp_tbl" />) t
+		where 1=1 ${value}
+		limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (
+		<include refid="temp_tbl" />
+		) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="JlappointmentPush_detail" 	parameterType="int">
+		select t.* from (
+		<include refid="temp_tbl" />
+		) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from
+		<include refid="tbl" />
+		t where 1=1 ${value}
+	</delete>
+	<!-- ysc -->
+</mapper>

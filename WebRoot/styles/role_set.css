@@ -1,0 +1,9 @@
+@charset"utf-8";
+.access{}
+.access p.btn{ text-align: center; padding: 20px;}
+.access p.btn span.btn{ padding:6px 18px;}
+.access ul li p{ padding: 10px 0; line-height: 30px;}
+.access ul li p span{ display: inline-block;}
+.access ul li p input{ vertical-align: middle;}
+.access ul li p label{ cursor: pointer;}
+.access ul li strong{ height: 40px; line-height: 40px; display: block; background: #E7E8EB; border: 1px solid #ccc; font-size: 16px; text-indent: 24px;}

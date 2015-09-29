@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.EngineeringsMapper">
+	<resultMap id="Engineerings_map" type="com.jkkp.modules.basedata.view.VEngineerings">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="space" property="space" jdbcType="FLOAT" />
+		<result column="budget" property="budget" jdbcType="FLOAT" />
+		<result column="dcate_id" property="dcateId" jdbcType="INTEGER" />
+		<result column="method" property="method" jdbcType="INTEGER" />
+		<result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+		<result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="zx_stage" property="zxStage" jdbcType="INTEGER" />
+		<result column="zx_fund" property="zxFund" jdbcType="FLOAT" />
+		<result column="jg_fund" property="jgFund" jdbcType="FLOAT" />
+		<result column="to_fund" property="toFund" jdbcType="FLOAT" />
+		<result column="sp_id" property="spId" jdbcType="INTEGER" />
+		<result column="sjs_id" property="sjsId" jdbcType="INTEGER" />
+		<result column="design_id" property="designId" jdbcType="INTEGER" />
+		<result column="contract_id" property="contractId" jdbcType="INTEGER" />
+		<result column="jl_id" property="jlId" jdbcType="INTEGER" />
+		<result column="jlbg_id" property="jlbgId" jdbcType="INTEGER" />
+		<result column="comp_id" property="compId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="creauser" property="creauser" jdbcType="VARCHAR" />
+		<result column="note" property="note" jdbcType="VARCHAR" />
+		<result column="aid" property="aid" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="app_push_id" property="appPushId" jdbcType="INTEGER" />
+		<result column="jl_push_id" property="jlPushId" jdbcType="INTEGER" />
+		<result column="pointx" property="pointx" jdbcType="DOUBLE" />
+		<result column="pointy" property="pointy" jdbcType="DOUBLE" />
+	</resultMap>
+	<resultMap id="Engineerings_vmap" type="com.jkkp.modules.basedata.view.VEngineerings" extends="Engineerings_map">
+		<result column="nickName" property="nickName" jdbcType="VARCHAR" />
+		<result column="spName" property="spName" jdbcType="VARCHAR" />
+		<result column="designerName" property="designerName" jdbcType="VARCHAR" />
+		<result column="jlName" property="jlName" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="Engineerings_detail" type="com.jkkp.modules.basedata.view.VEngineerings" extends="Engineerings_vmap">
+		<association property="appointment" column="aid" select="com.jkkp.modules.appointment.mapper.AppointmentMapper.getBeanById"/>
+		
+		<association property="complain" column="comp_id" select="com.jkkp.modules.system.mapper.ComplainMapper.getBeanById"/>
+		<association property="jlSupplier" column="jl_id" select="com.jkkp.modules.supplier.mapper.SupplierMapper.getBeanById"/>
+				
+		<association property="spSupplier" column="sp_id" select="com.jkkp.modules.supplier.mapper.SupplierMapper.getBeanById"/>
+		<association property="design" column="design_id" select="com.jkkp.modules.design.mapper.DesignMapper.getBeanById"/>
+		
+		<!-- 
+		
+		<collection property="jlcomplainList" column="id" select="com.jkkp.modules.supplier.mapper.JlComplainMapper.getListByGcdId"/>
+		-->
+	</resultMap>
+	<resultMap id="BaseEngineersDetialMap" type="com.jkkp.appapi.modules.mapper.VIEngneerings">
+		<result column="engineerings_id" property="engineerings_id"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_community" property="engineerings_community"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_user" property="engineerings_user"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_space" property="engineerings_space"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_budget" property="engineerings_budget"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_dcate_id" property="engineerings_dcate_id"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_method" property="engineerings_method"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_start_time" property="engineerings_start_time"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_end_time" property="engineerings_end_time"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_zx_stage" property="engineerings_zx_stage"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_zx_fund" property="engineerings_zx_fund"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_jg_fund" property="engineerings_jg_fund"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_to_fund" property="engineerings_to_fund"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_sp_id" property="engineerings_sp_id"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_sjs_id" property="engineerings_sjs_id"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_design_id" property="engineerings_design_id"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_contract_id" property="engineerings_contract_id"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_jl_id" property="engineerings_jl_id"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_jlbg_id" property="engineerings_jlbg_id"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_comp_id" property="engineerings_comp_id"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_create_time" property="engineerings_create_time"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_creauser" property="engineerings_creauser"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_note" property="engineerings_note"
+			jdbcType="VARCHAR" />
+		<result column="engineerings_aid" property="engineerings_aid"
+			jdbcType="VARCHAR" />
+		<result column="design_cate_id" property="design_cate_id"
+			jdbcType="VARCHAR" />
+		<result column="design_cate_cate_name" property="design_cate_cate_name"
+			jdbcType="VARCHAR" />
+		<result column="design_cate_label" property="design_cate_label"
+			jdbcType="VARCHAR" />
+		<result column="design_cate_create_time" property="design_cate_create_time"
+			jdbcType="VARCHAR" />
+		<result column="design_cate_admin_id" property="design_cate_admin_id"
+			jdbcType="VARCHAR" />
+		<result column="agreement_id" property="agreement_id" jdbcType="VARCHAR" />		
+		<result column="sutype" property="sutype" jdbcType="VARCHAR" />
+		<result column="housetype" property="housetype" jdbcType="VARCHAR" />
+		<result column="wholehouse" property="wholehouse" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="nickName" property="nickName" jdbcType="VARCHAR" />
+		<result column="realName" property="realName" jdbcType="VARCHAR" />
+		 <result column="pointx" property="pointx" jdbcType="VARCHAR" />
+		 <result column="pointy" property="pointy" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="EngineersDetialMap"
+		type="com.jkkp.appapi.modules.mapper.VIEngneeringsV1">
+		<result column="community" property="community" jdbcType="VARCHAR" />
+		<result column="user" property="user" jdbcType="VARCHAR" />
+		<result column="startTime" property="startTime" jdbcType="VARCHAR" />
+		<result column="space" property="space" jdbcType="VARCHAR" />
+		<result column="budget" property="budget" jdbcType="VARCHAR" />
+		<result column="cateName" property="cateName" jdbcType="VARCHAR" />
+		<result column="method" property="method" jdbcType="VARCHAR" />
+		<result column="engineerId" property="engineerId" jdbcType="VARCHAR" />
+		<result column="supplierId" property="supplierId" jdbcType="VARCHAR" />
+		<result column="sjsId" property="sjsId" jdbcType="VARCHAR" />
+		<result column="designId" property="designId" jdbcType="VARCHAR" />
+		<result column="contraceId" property="contraceId" jdbcType="VARCHAR" />
+		<result column="jlId" property="jlId" jdbcType="VARCHAR" />
+		<result column="jlbgId" property="jlbgId" jdbcType="VARCHAR" />
+		<result column="compId" property="compId" jdbcType="VARCHAR" />
+		<result column="zxStage" property="zxStage" jdbcType="VARCHAR" />
+		<result column="sjsName" property="sjsName" jdbcType="VARCHAR" />
+		<result column="engineerId" property="engineerId" jdbcType="VARCHAR" />
+		<result column="appointmentPushId" property="appointmentPushId"
+			jdbcType="VARCHAR" />
+			<result column="statusname" property="statusname" jdbcType="VARCHAR" />
+			<result column="sf" property="sf" jdbcType="VARCHAR" />
+			<result column="endtime" property="endtime" jdbcType="VARCHAR" />
+			<result column="count" property="count" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="EngineersStageMap" type="com.jkkp.appapi.modules.mapper.VIEngineerings">
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="create_time" property="create_time" jdbcType="VARCHAR" />
+		<result column="startTime" property="startTime" jdbcType="VARCHAR" />
+		<result column="end_time" property="end_time" jdbcType="VARCHAR" />
+		<result column="engineerId" property="engineerId" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="EngineersOpnionMap"
+		type="com.jkkp.appapi.modules.mapper.VIEngineeringsV1">
+		<result column="check_flag" property="check_flag" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="create_time" property="create_time" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="EngineeringsCheckMap" type="com.jkkp.appapi.modules.mapper.VIEngineeringsV2">
+		<result column="blueprint_flag" property="blueprint_flag" jdbcType="VARCHAR" />
+		<result column="blueprint_item" property="blueprint_item" jdbcType="VARCHAR" />
+		<result column="quoted_flag" property="quoted_flag" jdbcType="VARCHAR" />
+				<result column="oblivion_item" property="oblivion_item" jdbcType="VARCHAR" />
+		<result column="other_requirement" property="other_requirement" jdbcType="VARCHAR" />
+		<result column="fileUrl" property="fileUrl" jdbcType="VARCHAR" />
+		<result column="condition" property="condition" jdbcType="VARCHAR" />
+		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
+		<result column="engineerId" property="engineerId" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+
+
+	<select id="qryEngineerDetialByid" parameterType="java.util.Map"
+		resultMap="BaseEngineersDetialMap">
+	    SELECT
+		e.id AS engineerings_id,
+		a.community AS engineerings_community,
+    e.pointx as pointx,
+    e.pointy as pointy,
+    a.address as address,
+		e.uid AS engineerings_user,
+    M.nickname AS nickName,
+    M.reall_name AS realName,
+		g.space AS engineerings_space,
+		g.budget AS engineerings_budget,
+		e.dcate_id AS engineerings_dcate_id,
+		g.method AS engineerings_method,
+		e.start_time AS engineerings_start_time,
+		(SELECT date_add(a.zx_time, interval g.duration day)) AS engineerings_end_time,
+		e.zx_stage AS engineerings_zx_stage,
+		e.zx_fund AS engineerings_zx_fund,
+		e.jg_fund AS engineerings_jg_fund,
+		e.to_fund AS engineerings_to_fund,
+		e.sp_id AS engineerings_sp_id,
+		e.sjs_id AS engineerings_sjs_id,
+		e.design_id AS engineerings_design_id,
+		e.contract_id AS engineerings_contract_id,
+		e.jl_id AS engineerings_jl_id,
+		e.jlbg_id AS engineerings_jlbg_id,
+		e.comp_id AS engineerings_comp_id,
+		e.create_time AS engineerings_create_time,
+		e.creauser AS engineerings_creauser,
+		e.note AS engineerings_note,
+		e.aid AS engineerings_aid,
+    d.id AS design_cate_id,
+		d.cate_name AS design_cate_cate_name,
+		d.label AS design_cate_label,
+		d.create_time AS design_cate_create_time,
+		d.admin_id AS design_cate_admin_id,
+		CASE a.su_type
+    WHEN 1 THEN '新房'
+    WHEN 2 THEN '老房'
+    end as sutype,
+    CASE a.house_type
+    WHEN 1 THEN '出租'
+    WHEN 2 THEN '自用'
+    WHEN 3 THEN '婚房'
+    WHEN 4 THEN '儿童房'
+    WHEN 5 THEN '会所'
+    WHEN 6 THEN '工装'
+    end as housetype,
+    CASE a.whole_house
+    WHEN 1 THEN '整装'
+    WHEN 2 THEN '局部'
+     end as wholehouse
+		FROM
+		engineerings e
+    LEFT JOIN appointment a ON e.aid=a.id 
+    LEFT JOIN member M ON e.uid = M.id
+    LEFT JOIN design g on g.id=e.design_id
+    LEFT  JOIN design_cate d  ON g.fengge = d.id
+    where 1=1
+		<if test="engineerings_id!=null and engineerings_id!=''">
+			and e.id=${engineerings_id}
+		</if>
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+
+	<select id="qryEngStartWorkByEngId" parameterType="java.util.Map"
+		resultMap="EngineersStageMap">
+  		select t1.address,t2.create_time,t.start_time,t.end_time,t.id as
+		engineerId
+		from appointment t1,engineerings t LEFT JOIN agreement t2 on t.id =
+		t2.gcd_id
+		where t.aid=t1.id
+		<if test="engineerId!=null and engineerId!=''">
+			and t.id=${engineerId}
+		</if>
+
+
+	</select>
+
+	<select id="qryEngOpinionByEngId" parameterType="java.util.Map"
+		resultMap="EngineersOpnionMap">
+		SELECT t.check_flag,t.content,t.create_time
+		from owner_opinion t ,engineerings t1
+		where t.eng_id=t1.id
+		<if test="engineerId!=null and engineerId!=''">
+			and t.id=${engineerId}
+		</if>
+		order by t.create_time DESC
+
+	</select>
+
+	<!-- web后台 工程单管理 -->
+	<select id="selectAllEngineerings" parameterType="java.util.Map"
+		resultMap="Engineerings_vmap">
+		SELECT 
+		  a.*,
+		  b.`nickname` AS nickName,
+		  c.`sp_name` AS spName,
+		  d.`sp_name`  AS jlName
+		FROM
+		  engineerings a 
+		  LEFT JOIN member b 
+		    ON a.`uid` = b.`id` 
+		  LEFT JOIN supplier c 
+		    ON a.`sp_id` = c.`id` 
+		  LEFT JOIN supplier d 
+		    ON a.`jl_id` = d.`id` 
+		WHERE 1 = 1 
+		<include refid="condition" />
+		ORDER BY a.`create_time` DESC
+		limit #{rowStart}, #{limit}
+	</select>
+
+	<select id="selectEngineeringsCount" parameterType="java.util.Map"
+		resultType="long">
+		SELECT
+		count(1)
+		FROM
+		  engineerings a 
+		  LEFT JOIN member b 
+		    ON a.`uid` = b.`id` 
+		  LEFT JOIN supplier c 
+		    ON a.`sp_id` = c.`id` 
+		  LEFT JOIN supplier d 
+		    ON a.`jl_id` = d.`id` 
+		WHERE 1 = 1 
+		<include refid="condition" />
+	</select>
+
+	<sql id="condition">
+	    <if test="spid!=null and spid!=''">
+	    AND a.`sp_id`=${spid}
+	    </if>
+	    <if test="jlid!=null and jlid!=''">
+	     AND a.`jl_id`=${jlid}
+	    </if>
+		<if test="status!=null and status!='' and status &lt; 90">
+			AND a.`zx_stage`='${status}'
+		</if>
+		<if test="status!=null and status!='' and status==100">
+			AND (
+				    a.`pointx`  IS NULL 
+				    OR a.`pointy` IS NULL
+				    OR a.`pointx`=0
+                    OR a.`pointy`=0
+				  )
+		</if>
+		<if test="nickName!=null and nickName!=''">
+			AND b.`nickname` LIKE'%${nickName}%'
+		</if>
+		<if test="spName!=null and spName!=''">
+			AND c.`sp_name` LIKE '%${spName}%'
+		</if>
+		<if test="createBegin!=null and createBegin!=''">
+			AND a.`create_time` > '${createBegin}'
+		</if>
+		<if test="createEnd!=null and createEnd!=''">
+			AND a.`create_time` &lt; '${createEnd}'
+		</if>
+		<if test="startBegin!=null and startBegin!=''">
+			AND a.`start_time`> '${startBegin}'
+		</if>
+		<if test="startEnd!=null and startEnd!=''">
+			AND a.`start_time`&lt;'${startEnd}'
+		</if>
+		<if test="endBegin!=null and endBegin!=''">
+			AND a.`end_time`> '${endBegin}'
+		</if>
+		<if test="endEnd!=null and endEnd!=''">
+			AND a.`end_time`&lt;'${endEnd}'
+		</if>
+	</sql>
+	
+	<select id="engineeringDetail" resultMap="Engineerings_vmap">
+	 SELECT 
+		  a.*,
+		  b.`nickname` AS nickName,
+		  c.`sp_name` AS spName,
+		  d.`name` AS designerName,
+		  e.`sp_name` AS jlName 
+		FROM
+		  engineerings a 
+		  LEFT JOIN member b 
+		    ON a.`uid` = b.`id` 
+		  LEFT JOIN supplier c 
+		    ON a.`sp_id` = c.`id` 
+		  LEFT JOIN supplier_company_staff d 
+		    ON a.`sjs_id` = d.`id` 
+		  LEFT JOIN supplier e 
+		    ON a.`jl_id` = e.`id` 
+		    WHERE a.id=#{id}
+	</select>
+	
+	<!-- 更新坐标 -->
+	<update id="updatePoint">
+	    UPDATE engineerings SET pointx=#{pointx},pointy =#{pointy} WHERE id=#{id}
+	</update>
+   <!-- /web -->
+
+	<!-- ysc -->
+	<sql id="tbl">engineerings</sql>
+	<sql id="temp_tbl">
+		select
+		d0.method as method2,
+		d0.space as mianji,
+		d0.budget as baojia,
+		d01.cate_name huxing,
+		d02.cate_name fengge,
+		d1.cate_name as cateName,
+		sjs.name as designerName,
+		sp.sp_name as spName,
+		jl.sp_name as jlName,
+		uu.nickName as nickName,
+		app.address as address,
+		aa.* from <include refid="tbl" /> aa
+		left join design d0 on d0.id=aa.design_id
+		left join design_cate d01 on d01.id=d0.huxing
+		left join design_cate d02 on d02.id=d0.fengge
+		left join design_cate d1 on d1.id=aa.dcate_id
+		left join supplier_company_staff sjs on sjs.id=aa.sjs_id
+		left join supplier 	sp on sp.id=aa.sp_id
+		left join supplier 	jl on jl.id=aa.jl_id
+		left join member	uu on uu.id=aa.uid
+		left join appointment app on app.id=aa.aid
+	</sql>
+	<select id="getList" resultMap="Engineerings_vmap" parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getPageList" resultMap="Engineerings_vmap"
+		parameterType="com.jkkp.utils.Pager">
+		select t.* from (<include refid="temp_tbl" />) t
+		where 1=1 ${value}
+		ORDER BY t.id DESC
+		limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="Engineerings_detail" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from <include refid="tbl" /> t where 1=1 ${value}
+	</delete>
+	<!-- ysc -->
+	
+	<select id="qryEngineerDetialByAid" parameterType="java.util.Map"
+	resultMap="Engineerings_map">
+	SELECT
+	*
+	FROM
+	engineerings
+	WHERE 1=1 and engineerings.aid=#{aid}
+	</select>
+	
+	<select id="qryEngCheckByEngId" parameterType="java.util.Map"
+	resultMap="EngineeringsCheckMap">
+	select t.blueprint_flag,t.blueprint_item,t.quoted_flag,t.oblivion_item,t.other_requirement,GROUP_CONCAT(t3.para_value,t2.filepath) as fileUrl,
+       t.condition,t.remarks,t.gcd_id as engineerId
+     from sysconfig t3, start_engineerings t LEFT JOIN attachment t2  on  t.id =t2.mainid and t2.filetype=8
+     where  t3.para_name='PHOTO_PREFIX_URL'  
+		<if test="engineerId!=null and engineerId!=''">
+			and t.gcd_id = ${engineerId}
+		</if>
+	</select>
+	<resultMap id="PingJiaMap" type="com.jkkp.appapi.modules.mapper.VIPingJiaSV">
+		<result column="jiage" property="jiage" jdbcType="VARCHAR" />
+		<result column="quming" property="quming" jdbcType="VARCHAR"/>
+		<result column="name" property="name" jdbcType="VARCHAR" />
+	</resultMap>
+ <select id="getPingJia" resultMap="PingJiaMap">
+ SELECT 
+zx_fund as jiage,
+community as quming,
+e.sp_id as spid,
+(SELECT sp_name from supplier where id=e.sp_id) as name,
+(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=e.sp_id and filetype=4 and t3.para_name='PHOTO_PREFIX_URL') as img
+ from  engineerings e WHERE id=#{gcdid}
+</select>
+
+<select id="getPingJiaJl" resultMap="PingJiaMap">
+SELECT 
+zx_fund as jiage,
+e.jl_id as spid,
+community as quming,
+(SELECT sp_name from supplier where id=e.jl_id) as name,
+(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=e.sp_id and filetype=4 and t3.para_name='PHOTO_PREFIX_URL') as img
+ from  engineerings e WHERE id=#{gcdid}
+</select>
+
+<select id="getPingJiaSjs" resultMap="PingJiaMap">
+SELECT
+zx_fund as jiage,
+community as quming,
+e.sjs_id as spid,
+(SELECT name from supplier_company_staff where id=e.sjs_id) as name,
+(SELECT  GROUP_CONCAT(CONCAT(t3.para_value,a.filepath)) from attachment a,sysconfig t3 WHERE a.mainid=e.sjs_id and filetype=3 and t3.para_name='PHOTO_PREFIX_URL') as img
+ from  engineerings e WHERE id=#{gcdid}
+</select>
+
+	<select id="qryEngByUid" parameterType="java.util.Map"
+	resultMap="Engineerings_map">
+SELECT *
+ from  engineerings  WHERE 1=1 and uid=#{uid}
+ order by engineerings.id desc
+</select>
+<select id="qrySuppEngBySpId" parameterType="java.util.Map"
+		resultMap="EngineersDetialMap">
+		SELECT t.id AS engineerId,
+	(SELECT COUNT(*) from check_request c where c.gcd_id=t.id AND c.stage_id=t.zx_stage) as count,
+       apt.community as community,
+       t3.nickname AS user,
+      apt.zx_time AS startTime,
+       g.space  as space,
+       g.budget as budget,
+       g.method as method,
+       t1.cate_name AS cateName,
+       t.sp_id AS supplierId,
+       t.sjs_id AS sjsId,
+       t2.name AS sjsName,
+       t.design_id AS designId,
+       t.contract_id AS contraceId,
+       t.jl_id AS jlId,
+       t.jlbg_id AS jlbgId,
+       t.comp_id AS compId,
+       t.zx_stage AS zxStage,
+       t.app_push_id AS appointmentPushId,
+(SELECT date_add(apt.zx_time, interval g.duration day)) as endtime,
+       CASE t.zx_stage
+          WHEN 10 THEN '准备'
+          WHEN 20 THEN '开工'
+          WHEN 30 THEN '水电'
+          WHEN 40 THEN '瓦木'
+          WHEN 50 THEN '竣工(含油漆)'
+       END
+          AS statusname,
+       t.status
+          AS sf
+  FROM engineerings t
+       LEFT JOIN supplier_company_staff t2 ON t.sjs_id = t2.id
+       LEFT JOIN member t3 ON t3.id = t.uid
+       LEFT JOIN appointment apt on apt.id=t.aid
+       LEFT JOIN design g on g.id=t.design_id
+       LEFT JOIN design_cate t1 ON  t1.id=g.fengge
+ WHERE 1 = 1 
+		
+		<if test="supplierId!=null and supplierId!=''">
+			and t.sp_id=${supplierId}
+		</if>
+		<if test="zxStage!=null and zxStage!='' and zxStage!='20'">
+			and t.zx_stage=${zxStage}
+		</if>
+		<if test="zxStage==20">
+			and  (t.zx_stage=20 or  t.zx_stage=30 or  t.zx_stage=40 or  exists (SELECT * from engineerings s where s.id=t.id and s.zx_stage=50 and s.status is null))
+		</if>
+		<if test="engineerId!=null and engineerId!=''">
+			and t.id=${engineerId}
+		</if>
+		ORDER BY t.id desc
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>
+	</select>
+	
+	<select id="queryEngineerings" parameterType="java.util.Map"
+	resultMap="Engineerings_map">
+	<![CDATA[
+			select * from engineerings a ,
+			(select * from engineering_stage_inst where pid=50) b
+				where a.id=b.gcd_id and  a.status=0 
+				and TIMESTAMPDIFF(DAY, b.pass_time, now()) = #{days}
+	]]>
+	</select>
+	
+	<update id="updateEngineeringsStatus" parameterType="java.util.Map">
+	    UPDATE engineerings SET status=#{status} WHERE id=#{id}
+	</update>
+</mapper>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.crowdfunding.mapper.CrowdItemMapper" >
+  <resultMap id="BaseResult" type="com.jkkp.modules.crowdfunding.model.CrowdItem" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="activity_id" property="activityId" jdbcType="TIMESTAMP" />
+    <result column="top_price" property="topPrice" jdbcType="FLOAT" />
+    <result column="low_price" property="lowPrice" jdbcType="FLOAT" />
+    <result column="num_people" property="numPeople" jdbcType="FLOAT" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="flag" property="flag" jdbcType="BIT" />
+    <result column="is_refund" property="refund" jdbcType="INTEGER" />
+    <result column="refund_proportion" property="proportion" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="plat_price" property="platPrice" jdbcType="DECIMAL" />
+    <result column="price_grad" property="priceGrad" jdbcType="DECIMAL" />
+    <result column="privilege" property="privilege" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <resultMap id="VBaseResult" type="com.jkkp.modules.crowdfunding.view.VCrowdItem" extends="BaseResult">
+  		<result column="statusString" property="statusString" jdbcType="VARCHAR" />
+  		<result column="spName" property="spName" jdbcType="VARCHAR" />
+  		<result column="title" property="title" jdbcType="VARCHAR" />
+  		<result column="startTime" property="startTime" jdbcType="TIMESTAMP" />
+  		<result column="endTime" property="endTime" jdbcType="TIMESTAMP" />
+  		<result column="flagString" property="flagString" jdbcType="VARCHAR" />
+  		<result column="activityName" property="activityName" jdbcType="VARCHAR" />
+  		<result column="cateName" property="cateName" jdbcType="VARCHAR" />
+  		<result column="stock" property="stock" jdbcType="INTEGER" />
+  		<result column="detail" property="detail" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <!-- 家可可后台审核取消众筹列表 -->
+  	<select id="cancelCrowdItemList" parameterType="java.util.Map" resultMap="VBaseResult">
+  		SELECT ic.`name` as cateName,s.sp_name as spName,zi.*,i.* FROM zc_item zi
+		LEFT JOIN item i on i.id = zi.item_id
+		LEFT JOIN item_category ic on ic.id = i.cate
+		left join supplier s on s.id = i.sp_id
+		WHERE zi.status = ${status}
+		AND i.`status` = 0
+		ORDER BY zi.id DESC LIMIT ${rowStart}, ${limit}
+  	</select>
+  	
+  	<select id="cancelCrowdItemListCount" parameterType="java.util.Map" resultType="long">
+  		SELECT count(1) FROM zc_item zi
+  		LEFT JOIN item i on i.id = zi.item_id
+  		AND i.`status` = 0
+		WHERE zi.status = ${status}
+  	</select>
+  <!-- 家可可后台审核取消众筹列表 -->
+  
+  	
+  	<select id="findByItemId" resultMap="BaseResult">
+  		SELECT * FROM zc_item zi where zi.item_id = ${itemId}
+  	</select>
+  	
+  	
+  
+  	 <sql id="condtion">
+  	 	<if test="spId != null and spId != ''">
+  	 		and i.`sp_id` = #{spId}
+  	 	</if>
+     	<if test="name != null and name != ''">
+     		and i.`title` like '%${name}%'
+     	</if>
+     	<if test="status != null and status != -2">
+     		and zi.status = #{status}
+     	</if>
+     </sql>
+     
+     
+     <select id="zcItemInfo" resultMap="VBaseResult">
+     	select i.detail,i.title,ic.`name` cateName,i.stock,zi.*,za.start_time startTime,za.end_time endTime
+		from zc_item zi
+		left join zc_activity za on zi.activity_id = za.id
+		left join item i on i.id = zi.item_id
+		left join item_category ic on ic.id = i.cate
+		where zi.id = #{id}
+     </select>
+     
+     <select id="findPage" parameterType="java.util.Map" resultMap="VBaseResult">
+     	SELECT s.`sp_name` spName,i.`title` title,za.`start_time` startTime,za.`end_time` endTime,zi.*,za.activityName,
+		(CASE WHEN zi.flag = 1 THEN '进行中' ELSE '已结束' END) flagString,
+		(CASE WHEN zi.`status` = 1 THEN '已审核'
+		      WHEN zi.`status` = -1 THEN '未通过'
+			  ELSE '未审核' END) statusString
+		FROM zc_activity za 
+		INNER JOIN zc_item zi ON zi.`activity_id` = za.`id`
+		INNER JOIN item i ON i.`id` = zi.`item_id` 
+		INNER JOIN supplier s ON s.`id` = i.`sp_id`
+     	where 1 = 1 <include refid="condtion" />
+     	ORDER BY za.id DESC LIMIT ${rowStart}, ${limit}
+     </select>
+     
+     <select id="countPage" parameterType="java.util.Map" resultType="long">
+     	 SELECT count(1)
+		 FROM zc_activity za 
+		 INNER JOIN zc_item zi ON zi.`activity_id` = za.`id`
+		 INNER JOIN item i ON i.`id` = zi.`item_id` 
+		 INNER JOIN supplier s ON s.`id` = i.`sp_id`
+     	 where 1 = 1 <include refid="condtion" />
+     </select>
+  
+     
+</mapper>

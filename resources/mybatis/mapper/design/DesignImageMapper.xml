@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.design.mapper.DesignImageMapper" >
+  <resultMap id="BaseResultMap" type="com.jkkp.modules.design.model.DesignImage" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="design_id" property="designId" jdbcType="INTEGER" />
+    <result column="pid" property="pid" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="is_desk_top" property="isDeskTop" jdbcType="INTEGER" />
+  </resultMap>
+  
+    <resultMap id="BaseResultMapV1" type="com.jkkp.appapi.modules.mapper.VIDesign" >
+    <id column="fileUrl" property="fileUrl" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="VARCHAR" />
+    <result column="fielType" property="fielType" jdbcType="VARCHAR" />
+    <result column="designerid" property="designerid" jdbcType="INTEGER" />
+    <result column="designid" property="designid" jdbcType="INTEGER" />
+    <result column="designname" property="designname" jdbcType="VARCHAR" />
+    <result column="aid" property="aid" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="BaseResultMapV2" type="com.jkkp.appapi.modules.mapper.VIDesign2" >
+    <id column="designid" property="designid" jdbcType="INTEGER" />
+    <result column="spid" property="spid" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+  <delete id="deleteByIds" parameterType="java.util.List">
+      
+      delete 
+      from
+      	design_image
+      where 
+      	pid
+      in
+      	<if test="params != null">
+      	   <foreach collection="params" index="index" item="item" open="(" separator="," close=")">
+		        #{item}
+		   </foreach>
+      	</if>
+      		
+  </delete>
+  
+  
+  	<select id="queryDesignDetail" parameterType="java.util.Map" resultMap="BaseResultMapV1">
+		SELECT CONCAT(t3.para_value,t4.filepath)as fileUrl,t2.type
+		as fielType,t2.pid,t1.remark from appointment_push t
+		LEFT JOIN design t1 on t.id = t1.aid LEFT JOIN design_image t2 on
+		t2.design_id=t1.id LEFT JOIN attachment t4 on t2.pid=t4.id,sysconfig t3
+		where t3.para_name='PHOTO_PREFIX_URL' 
+		<if test="appointmentPushId!=null and appointmentPushId!=''">
+			and t.id=${appointmentPushId}
+		</if>
+		<if test="opType!=null and opType!=''">
+			and t2.type=${opType}
+		</if>
+	</select>
+	
+	<select id="queryDesignDetailByDesignerId" parameterType="java.util.Map" resultMap="BaseResultMapV1">
+		SELECT CONCAT(t3.para_value,t4.filepath)as fileUrl,t2.type
+		as fielType,t2.pid,t1.remark,t.designid,t1.staffid as designerid,t1.design_name as designname,t1.aid
+		FROM
+		design_collect t LEFT JOIN
+		design t1 on t.designid=t1.id
+		LEFT JOIN design_image t2 on
+		t2.design_id=t1.id LEFT JOIN attachment t4 on t2.pid=t4.id,sysconfig t3
+		where t3.para_name='PHOTO_PREFIX_URL'
+		<if test="uid!=null and uid!=''">
+			and t.userid=${uid}
+		</if>
+		<if test="opType!=null and opType!=''">
+			and t2.type=${opType}
+		</if>
+		GROUP BY designerid 
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>	
+	</select>
+	
+	<select id="queryAllDesign" parameterType="java.util.Map" resultMap="BaseResultMapV1">
+		SELECT CONCAT(t3.para_value,t4.filepath)as fileUrl,t2.type
+		as fielType,t2.pid,t1.remark,t1.staffid as designerid,t1.design_name as designname,t1.aid,t1.id as designid
+		FROM
+		design t1
+		LEFT JOIN design_image t2 on t2.design_id=t1.id and t2.is_desk_top=1 
+		LEFT JOIN attachment t4 on t2.pid=t4.id,sysconfig t3
+		where t3.para_name='PHOTO_PREFIX_URL' and t1.`status`=1
+	    ORDER BY designid DESC
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>	
+	</select>
+	
+	<select id="queryOneDesign" parameterType="java.util.Map" resultMap="BaseResultMapV1">
+		SELECT CONCAT(t3.para_value,t4.filepath)as fileUrl,t2.type
+		as fielType,t2.pid,t1.remark,t1.staffid as designerid,t1.design_name as designname,t1.aid,t1.id as designid
+		FROM
+		design t1
+		LEFT JOIN design_image t2 on t2.design_id=t1.id 
+		LEFT JOIN attachment t4 on t2.pid=t4.id,sysconfig t3
+		where t3.para_name='PHOTO_PREFIX_URL' 
+	    <if test="designid!=null and designid!=''">
+			and t1.id=${designid}
+		</if>
+		<if test="curpage!=null and curpage!=''">
+			limit ${curpage}, ${pageSize}
+		</if>	
+	</select>
+	
+	
+	<select id="queryDesignDetail2" parameterType="java.util.Map" resultMap="BaseResultMapV2">
+		SELECT
+			design_image.design_id as designid,
+			design.sp_id as sjsid
+			FROM
+			design
+			LEFT JOIN design_image ON design_image.design_id = design.id
+			WHERE 1=1
+		<if test="AppId!=null and AppId!=''">
+			and design.aid=${AppId}
+		</if>
+		GROUP BY design.aid
+	</select>
+</mapper>

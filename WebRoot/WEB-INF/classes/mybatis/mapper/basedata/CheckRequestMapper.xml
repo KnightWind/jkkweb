@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.CheckRequestMapper">
+	<resultMap id="CheckRequest_map" type="com.jkkp.modules.basedata.model.CheckRequest">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="gcd_id" property="gcdId" jdbcType="INTEGER" />
+		<result column="stage_id" property="stageId" jdbcType="INTEGER" />
+		<result column="create_user" property="createUser" jdbcType="INTEGER" />
+		<result column="request_type" property="requestType" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap id="CheckRequest_vmap" type="com.jkkp.modules.basedata.view.VCheckRequest" extends="CheckRequest_map">
+		
+	</resultMap>
+	<resultMap type="com.jkkp.modules.basedata.view.VCheckRequest" id="CheckRequest_detail" extends="CheckRequest_vmap">
+		<association property="engineerings" column="gcd_id" select="com.jkkp.modules.basedata.mapper.EngineeringsMapper.getBeanById"/>
+		<association property="engineeringStage" column="stage_id" select="com.jkkp.modules.basedata.mapper.EngineeringStageMapper.getBeanById"/>
+	</resultMap>
+	<!-- ↓↓ysc============================== -->
+	<sql id="tbl">check_request</sql>
+	<sql id="temp_tbl">
+		select
+		es.stag_name as stagName,
+		es.abbreviation as abbreviation,
+		aa.* from <include refid="tbl" /> aa
+		left join engineering_stage es on es.id=aa.stage_id
+	</sql>
+	<select id="getList" resultMap="CheckRequest_vmap" parameterType="string">
+		select t.* from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getListByStageId" resultMap="CheckRequest_vmap" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where stage_id=#{stageId}
+	</select>
+	<select id="getPageList" resultMap="CheckRequest_vmap" parameterType="com.jkkp.utils.Pager">
+		select t.* from (<include refid="temp_tbl" />) t
+		where 1=1 ${value} limit #{rowStart},#{limit}
+	</select>
+	<select id="getCount" resultType="long" parameterType="string">
+		select count(*) from (<include refid="temp_tbl" />) t where 1=1 ${value}
+	</select>
+	<select id="getBeanById" resultMap="CheckRequest_detail" parameterType="int">
+		select t.* from (<include refid="temp_tbl" />) t where id=#{id}
+	</select>
+	<delete id="deleteByAnd" parameterType="string">
+		delete t from <include refid="tbl" /> t where 1=1 ${value}
+	</delete>
+	<!-- ↑↑ysc============================== -->
+<select id="queryCheck" resultMap="CheckRequest_map">
+ SELECT * from check_request c where c.gcd_id=#{engineerId} and c.stage_id=#{stageId}  ORDER BY check_time desc
+</select>
+<select id="queryCreate" resultMap="CheckRequest_map">
+ SELECT * from check_request c where c.gcd_id=#{engineerId} and c.stage_id=#{stageId}  ORDER BY create_time desc limit 0,1
+</select>
+</mapper>

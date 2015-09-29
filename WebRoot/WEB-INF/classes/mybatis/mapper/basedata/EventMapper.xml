@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jkkp.modules.basedata.mapper.EventMapper">
+	<resultMap id="BaseResultMap" type="com.jkkp.modules.basedata.view.VEvent">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="btype" property="btype" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="selectUserEvent" resultMap="BaseResultMap">
+		SELECT
+		a.*,b.`type` AS `btype`
+		FROM
+		`event` a,
+		event_type b
+		WHERE a.`type` = b.`id`
+		AND a.`mobile`=#{mobile}
+	</select>
+</mapper>
